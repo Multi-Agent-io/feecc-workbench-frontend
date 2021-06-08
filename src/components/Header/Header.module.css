@@ -1,0 +1,17 @@
+.wrapper {
+    min-height: 9vh;
+    /*border: 1px solid #000000;*/
+    display: grid;
+    grid-template-columns: 1fr 5fr;
+}
+.iconsCorner {
+    margin-left: 1vh;
+    margin-top: 1vh;
+    /*border: 1px solid #000000;*/
+}
+.mvasLogo{
+    height: 70px;
+}
+.geoscanLogo{
+    height: 70px;
+}
