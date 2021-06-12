@@ -1,8 +1,10 @@
 import {combineReducers, createStore} from "redux"
-import productParametersReducer from "./reducers/productParametersReducer"
+import productParametersReducer from "./reducers/Geoscan/productParametersReducer"
+import endoStarsReducer from "./reducers/EndoStars/endoStarsReducer";
 
 let reducers = combineReducers({
-    productParameters: productParametersReducer
+    // productParameters: productParametersReducer,
+    endoStars: endoStarsReducer
 })
 
 

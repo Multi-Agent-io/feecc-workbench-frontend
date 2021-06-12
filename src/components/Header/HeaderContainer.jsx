@@ -3,7 +3,7 @@ import Header from "./Header";
 
 let mapStateToProps = (state) => {
     return {
-        stageNumber: state.productParameters.stageCounter,
+        stageNumber: state.endoStars.generalStageNumber
     }
 }
 

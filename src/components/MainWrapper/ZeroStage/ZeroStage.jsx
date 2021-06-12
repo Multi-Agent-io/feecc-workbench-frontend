@@ -8,14 +8,14 @@ import axios from "axios";
 class ZeroStage extends React.Component {
 
     componentDidMount() {
-        const checkAuthorization = () => {
+        // const checkAuthorization = () => {
             // axios.get()
-            if (false) {
-                this.props.nextStage()
+            // if (false) {
+            //     this.props.nextStage()
                 // debugger;
-            }
-        }
-        setInterval(checkAuthorization, 1000)
+            // }
+        // }
+        // setInterval(checkAuthorization, 1000)
     }
 
     render() {

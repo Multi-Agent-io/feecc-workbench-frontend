@@ -1,6 +1,7 @@
 import {connect} from "react-redux";
 import FourthStage from "./FourthStage";
-import {toStageZero} from "../../../redux/reducers/productParametersReducer";
+import {toStageZero} from "../../../redux/reducers/Geoscan/productParametersReducer";
+import {setGeneralStage} from "../../../redux/reducers/EndoStars/endoStarsReducer";
 
 let mapStateToProps = (state) => {
     return {
@@ -11,7 +12,7 @@ let mapStateToProps = (state) => {
 let mapDispatchToProps = (dispatch) => {
     return {
         goToStart: () => {
-            dispatch(toStageZero())
+            dispatch(setGeneralStage(0))
         }
 
     }

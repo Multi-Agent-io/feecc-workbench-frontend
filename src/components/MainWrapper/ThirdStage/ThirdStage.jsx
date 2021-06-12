@@ -1,7 +1,7 @@
 import React from 'react'
 import s from "./ThirdStage.module.css"
 import axios from "axios";
-import {timerTick} from "../../../redux/reducers/productParametersReducer";
+import {timerTick} from "../../../redux/reducers/Geoscan/productParametersReducer";
 
 class ThirdStage extends React.Component {
     componentDidMount() {
