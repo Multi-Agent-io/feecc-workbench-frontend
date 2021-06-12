@@ -1,0 +1,28 @@
+.wrapper {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    margin-left: 20vw;
+    margin-right: 20vw;
+    margin-top: 5vh;
+}
+.innerWrapper {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+}
+.content {
+
+}
+.timers {
+    /*border-left: 1px solid #000000;*/
+}
+.contentWithImage {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+
+}
+.contentDescription {
+    padding-top: 2vh;
+}
