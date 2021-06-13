@@ -1,11 +1,11 @@
 import MainWrapper from "./MainWrapper";
 import {connect} from "react-redux";
 import {
-    cancelWork,
+    cancelWork, countStageDuration,
     nextGeneralStage,
     nextStage,
     previousStage,
-    setGeneralStage
+    setGeneralStage, setStageStartTime
 } from "../../redux/reducers/EndoStars/endoStarsReducer";
 
 let mapStateToProps = (state) => {
@@ -35,7 +35,14 @@ let mapDispatchToProps = (dispatch) => {
         },
         cancelWork: () => {
             dispatch(cancelWork())
+        },
+        setStageStartTime: (stageNumber) => {
+            dispatch(setStageStartTime(stageNumber))
+        },
+        countStageDuration: (stageNumber) => {
+            dispatch(countStageDuration(stageNumber))
         }
+
     }
 }
 

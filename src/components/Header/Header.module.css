@@ -13,5 +13,25 @@
     height: 70px;
 }
 .geoscanLogo{
+    margin-left: 1vw;
     height: 70px;
+}
+.info{
+    display: flex;
+    justify-content: space-around;
+    margin-right: 20vw;
+    margin-top: 3vh;
+    margin-left: 4vw;
+    font-size: 22px;
+    font-weight: 300;
+}
+.mainTimer {
+    font-size: 22px;
+    font-weight: 400;
+}
+.progressBar {
+    margin-top: 5vh;
+    margin-left: 4vw;
+    margin-right: 20vw;
+    /*width: 50vw;*/
 }

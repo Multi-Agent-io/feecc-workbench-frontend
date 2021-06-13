@@ -10,3 +10,11 @@
     font-size: 30px;
     text-align: center;
 }
+.load {
+    display: flex;
+    justify-content: center;
+}
+.loading {
+    margin-top: 5vh;
+    /*width: 200px;*/
+}

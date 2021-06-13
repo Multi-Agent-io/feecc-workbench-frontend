@@ -1,10 +1,5 @@
 import React from 'react'
 import s from "./MainWrapper.module.css"
-// import FirstStageContainer from "./Geoscan/FirstStage/FirstStageContainer";
-// import SecondStageContainer from "./Geoscan/SecondStage/SecondStageContainer";
-// import ThirdStageContainer from "./Geoscan/ThirdStage/ThirdStageContainer";
-// import FourthStageContainer from "./FourthStage/FourthStageContainer";
-// import CleanContentContainer from "./Templates/CleanContent/CleanContentContainer";
 import CleanContent from "./Templates/CleanContent/CleanContent";
 import ZeroStageContainer from "./ZeroStage/ZeroStageContainer";
 import FourthStageContainer from "./FourthStage/FourthStageContainer";
@@ -14,18 +9,18 @@ import axios from "axios";
 class MainWrapper extends React.Component {
 
     componentDidMount() {
-        let checkStatus = () => {
+        // let checkStatus = () => {
 
-            axios.get("http://localhost:5000/state").then(response => {
-                this.props.setGeneralStageNumber(response.data.state_no)
+            // axios.get("http://localhost:5000/state").then(response => {
+            //     this.props.setGeneralStageNumber(response.data.state_no)
                 // if (response.data[0] === 1 && this.props.endoStars.generalStageNumber !== 1){
                 //     this.props.setGeneralStageNumber(1)
                 //     console.log("echo)")
                 // }
-            })
+            // })
 
-        }
-        setInterval(checkStatus, 1000)
+        // }
+        // setInterval(checkStatus, 1000)
     }
 
     render() {
@@ -52,15 +47,34 @@ class MainWrapper extends React.Component {
         // }
         // console.log(this.props.endoStars)
         let buttonsHolder
-        if (this.props.endoStars.generalStageNumber !== 1){
+
+        if (this.props.endoStars.generalStageNumber !== 1) {
             buttonsHolder = <div></div>
         } else {
-            buttonsHolder = <div className={s.buttons}>
-                <button onClick={this.props.nextStage} className={s.sendButton}>Продолжить</button>
-                <button onClick={this.props.previousStage} className={s.backButton}>Назад</button>
-                <button onClick={this.props.cancelWork} className={s.cancelButton}>Отмена</button>
-            </div>
+            if (this.props.endoStars.stageNumber === 0) {
+                buttonsHolder =
+                    <div className={s.buttons}>
+                        <button onClick={this.props.nextStage} className={s.sendButton}>Продолжить</button>
+                        {/*<button onClick={this.props.previousStage} className={s.backButton}>Назад</button>*/}
+                        <button onClick={this.props.cancelWork} className={s.cancelButton}>Отмена</button>
+                    </div>
+            } else if (this.props.endoStars.stageNumber === 14) {
+                buttonsHolder =
+                    <div className={s.buttons}>
+                        <button onClick={this.props.nextGeneralStage} className={s.sendButton}>Завершить сборку</button>
+                        {/*<button onClick={this.props.previousStage} className={s.backButton}>Назад</button>*/}
+                        {/*<button onClick={this.props.cancelWork} className={s.cancelButton}>Отмена</button>*/}
+                    </div>
+            } else {
+                buttonsHolder =
+                    <div className={s.buttons}>
+                        <button onClick={this.props.nextStage} className={s.sendButton}>Продолжить</button>
+                        {/*<button onClick={this.props.previousStage} className={s.backButton}>Назад</button>*/}
+                        {/*<button onClick={this.props.cancelWork} className={s.cancelButton}>Отмена</button>*/}
+                    </div>
+            }
         }
+
         let wrapperContent
         switch (this.props.endoStars.generalStageNumber) {
             case 0:
@@ -73,9 +87,14 @@ class MainWrapper extends React.Component {
                             useImg={this.props.endoStars.productionStages.useImg[this.props.endoStars.stageNumber]}
                             imgUrl={this.props.endoStars.productionStages.imgUrls[this.props.endoStars.stageNumber]}
                             stageDescription={this.props.endoStars.productionStages.stageDescription[this.props.endoStars.stageNumber]}
+                            stageIdealDuration={this.props.endoStars.productionStages.stageIdealDuration[this.props.endoStars.stageNumber]}
+                            startTime={this.props.endoStars.productionStages.stageStartTime[this.props.endoStars.stageNumber]}
+                            endTime={this.props.endoStars.productionStages.stageEndTime[this.props.endoStars.stageNumber]}
+                            stageNumber={this.props.endoStars.stageNumber}
+                            setStageStartTime={this.props.setStageStartTime}
+                            countStageDuration={this.props.countStageDuration}
+                            stageDuration={this.props.endoStars.productionStages.stageDuration[this.props.endoStars.stageNumber]}
                         />
-                        {/*<button onClick={this.props.nextStage}>next stage</button>*/}
-
                     </div>
                 break
             case 2:
@@ -92,7 +111,6 @@ class MainWrapper extends React.Component {
             <div className={s.wrapper}>
                 {wrapperContent}
                 {buttonsHolder}
-
             </div>
         )
     }

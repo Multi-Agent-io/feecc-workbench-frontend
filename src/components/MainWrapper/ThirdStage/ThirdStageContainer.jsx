@@ -1,26 +1,23 @@
 import {connect} from "react-redux";
-// import from "../../../redux/reducers/productParametersReducer";
 import ThirdStage from "./ThirdStage";
-import {timerTick, timerToZero, toStageFour} from "../../../redux/reducers/Geoscan/productParametersReducer";
-import {nextGeneralStage} from "../../../redux/reducers/EndoStars/endoStarsReducer";
+import {timerTick, timerToZero} from "../../../redux/reducers/Geoscan/productParametersReducer";
+import {nextGeneralStage, setCallTimer} from "../../../redux/reducers/EndoStars/endoStarsReducer";
 
 let mapStateToProps = (state) => {
     return {
-        startTime: state.productParameters.startTime,
-        compositionDuration: state.productParameters.compositionDuration
+        startTime: state.endoStars.sessionStartTime,
+        sessionDuration: state.endoStars.sessionDuration,
+        timer: state.endoStars.serverAuthorizationTimer
     }
 }
 
 let mapDispatchToProps = (dispatch) => {
     return {
-        timerTick: () => {
-            dispatch(timerTick())
-        },
-        timerToZero: () => {
-            dispatch(timerToZero())
-        },
         finishComposition: () => {
             dispatch(nextGeneralStage())
+        },
+        setCallTimer: (timer) => {
+            dispatch(setCallTimer(timer))
         }
 
     }

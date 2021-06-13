@@ -9,13 +9,24 @@ class ZeroStage extends React.Component {
 
     componentDidMount() {
         // const checkAuthorization = () => {
-            // axios.get()
-            // if (false) {
-            //     this.props.nextStage()
-                // debugger;
-            // }
         // }
-        // setInterval(checkAuthorization, 1000)
+
+        this.props.setTimer(setInterval(() => {
+
+            this.props.nextGeneralStage()
+            this.props.startSession()
+            // axios.get("https://localhost:5000/state").then((response) => {
+            //     if (response.data.state_no === 1) {
+            //         this.props.nextGeneralStage()
+            //     }
+            // })
+
+        }, 5000))
+
+    }
+
+    componentWillUnmount() {
+        clearInterval(this.props.timer)
     }
 
     render() {

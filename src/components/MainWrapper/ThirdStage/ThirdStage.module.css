@@ -23,11 +23,13 @@
 }
 
 .finishComposition {
-    width: 150px;
-    height: 40px;
+    width: 300px;
+    height: 60px;
     border: none;
     border-radius: 5px;
     background-color: indianred;
+    font-weight: 500;
+    font-size: 20px;
 }
 
 .finishComposition:active {
