@@ -1,16 +1,26 @@
 import React from 'react'
 import s from "./CleanContent.module.css"
 import axios from "axios";
-import {setStageStartTime} from "../../../../redux/reducers/EndoStars/endoStarsReducer";
 
 class CleanContent extends React.Component {
 
     componentDidMount() {
+        // Записываем время старта этапа
         this.props.setStageStartTime(this.props.stageNumber)
+        // Отправляем на сервак информацию о старте конкретного этапа сборки (используется только для первого этапа, тк
+        // остальные не монтируют компоненту заново)
+        axios.post(this.props.socket.concat("/api/unit/".concat(this.props.unitInternalID).concat("/start")),
+            {
+                "workbench_no": this.props.workbenchNumber,
+                "production_stage_name" : this.props.stageName,
+                "additional_info" : ""
+            })
+            .then(response => {
+                console.log(response.data.status)
+            })
 
         let countDuration = () => {
             if (this.props.stageStartTime === 0) {
-
                 this.props.setStageStartTime(this.props.stageNumber)
             }
             if (this.props.generalStageNumber === 1) {

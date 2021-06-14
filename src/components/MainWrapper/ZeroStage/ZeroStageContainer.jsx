@@ -2,13 +2,15 @@ import {connect} from "react-redux";
 import ZeroStage from "./ZeroStage";
 import {
     nextGeneralStage,
-    setAuthorizationTimer, setCompositionID, setUserName, startSession
+    setAuthorizationTimer, setCompositionID, setUserInfo, startSession
 } from "../../../redux/reducers/EndoStars/endoStarsReducer";
 
 let mapStateToProps = (state) => {
     return {
         stageNumber: state.endoStars.generalStageNumber,
-        timer: state.endoStars.serverAuthorizationTimer
+        timer: state.endoStars.serverAuthorizationTimer,
+        workbenchNumber: state.endoStars.workbenchNumber,
+        socket: state.endoStars.socket
     }
 }
 
@@ -21,8 +23,8 @@ let mapDispatchToProps = (dispatch) => {
         setTimer: (timer) => {
             dispatch(setAuthorizationTimer(timer))
         },
-        setUserInfo: (userName) => {
-            dispatch(setUserName(userName))
+        setUserInfo: (userName, userPosition) => {
+            dispatch(setUserInfo(userName, userPosition))
         },
         setCompositionID: (ID) => {
             dispatch(setCompositionID(ID))

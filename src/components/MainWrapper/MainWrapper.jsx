@@ -10,43 +10,10 @@ import CleanContentContainer from "./Templates/CleanContent/CleanContentContaine
 class MainWrapper extends React.Component {
 
     componentDidMount() {
-        // let checkStatus = () => {
 
-            // axios.get("http://localhost:5000/state").then(response => {
-            //     this.props.setGeneralStageNumber(response.data.state_no)
-                // if (response.data[0] === 1 && this.props.endoStars.generalStageNumber !== 1){
-                //     this.props.setGeneralStageNumber(1)
-                //     console.log("echo)")
-                // }
-            // })
-
-        // }
-        // setInterval(checkStatus, 1000)
     }
 
     render() {
-        // let stageComponent;
-        // switch (this.props.stageNumber) {
-        //     case 0:
-        //         stageComponent = <ZeroStageContainer/>
-        //         break
-        //     case 1:
-        //         stageComponent = <FirstStageContainer />
-        //         break
-        //     case 2:
-        //         stageComponent = <SecondStageContainer />
-        //         break
-        //     case 3:
-        //         stageComponent = <ThirdStageContainer />
-        //         break;
-        //     case 4:
-        //         stageComponent = <FourthStageContainer />
-        //         break;
-        //     default:
-        //         stageComponent = <div>Stage number {this.props.stageNumber}</div>
-        //         break
-        // }
-        // console.log(this.props.endoStars)
         let buttonsHolder
 
         if (this.props.endoStars.generalStageNumber !== 1) {

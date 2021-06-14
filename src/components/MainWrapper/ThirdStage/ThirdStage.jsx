@@ -10,6 +10,7 @@ class ThirdStage extends React.Component {
             })
         }, 1000))
     }
+
     componentWillUnmount() {
         clearInterval(this.props.timer)
     }
@@ -21,12 +22,13 @@ class ThirdStage extends React.Component {
                 <div className={s.time}>
                     {parseInt(this.props.sessionDuration / 1000 / 3600)}
                     :
-                    {parseInt(this.props.sessionDuration / 1000 / 60) < 10 ? "0" + parseInt(this.props.sessionDuration / 1000 / 60) : parseInt(this.props.sessionDuration / 1000 / 60)}
+                    {parseInt((this.props.sessionDuration / 1000 / 60) % 60) < 10 ? "0" + parseInt((this.props.sessionDuration / 1000 / 60) % 60) : parseInt((this.props.sessionDuration / 1000 / 60) % 60)}
                     :
                     {parseInt((this.props.sessionDuration / 1000) % 60) < 10 ? "0" + parseInt((this.props.sessionDuration / 1000) % 60) : parseInt((this.props.sessionDuration / 1000) % 60)}
                 </div>
                 <div className={s.buttons}>
-                    <button onClick={this.props.finishComposition} className={s.finishComposition}>Распечатать паспорт</button>
+                    <button onClick={this.props.finishComposition} className={s.finishComposition}>Распечатать паспорт
+                    </button>
                 </div>
             </div>
         )

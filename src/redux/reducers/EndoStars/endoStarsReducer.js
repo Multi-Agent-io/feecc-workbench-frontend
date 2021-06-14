@@ -1,3 +1,6 @@
+import config from "../../../configs/configs.json"
+import axios from "axios";
+
 const NEXT_STAGE = "NEXT_STAGE"
 const NEXT_GENERAL_STAGE = "NEXT_GENERAL_STAGE"
 const SET_GENERAL_STAGE = "SET_GENERAL_STAGE"
@@ -9,10 +12,12 @@ const SET_STAGE_START_TIME = "SET_STAGE_START_TIME"
 const COUNT_STAGE_DURATION = "COUNT_STAGE_DURATION"
 const COUNT_SESSION_DURATION = "COUNT_SESSION_DURATION"
 const SET_AUTHORIZATION_TIMER = "SET_AUTHORIZATION_TIMER"
-const SET_USER_NAME = "SET_USER_NAME"
+const SET_USER_INFO = "SET_USER_INFO"
 const SET_COMPOSITION_ID = "SET_COMPOSITION_ID"
 const SET_CALL_TIMER = "SET_CALL_TIMER"
 // 123
+
+
 let initialState = {
     productionStages: {
         stageNumber: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15],
@@ -138,7 +143,8 @@ let initialState = {
             null
         ]
     },
-    generalStageNumber: 0,
+    workbenchNumber: config.workbench_no,
+    generalStageNumber: 1,
     stageNumber: 0,
     sessionStartTime: null,
     sessionEndTime: null,
@@ -146,7 +152,9 @@ let initialState = {
     serverAuthorizationTimer: null,
     callTimer: null,
     userName: "test",
-    compositionID: "1D85C6"
+    userPosition: "dungeon master",
+    compositionID: "1D85C6",
+    socket: config.socket
 }
 
 
@@ -168,6 +176,30 @@ const endoStarsReducer = (state = initialState, action) => {
                 generalStageNumber: action.stageNumber
             }
         case NEXT_STAGE: {
+            // Отправка запроса о завершении текущего этапа
+            axios
+                .post(state.socket.concat("/api/unit/").concat(state.compositionID).concat("/end"),
+                    {
+                        "workbench_no": state.workbenchNumber,
+                        "production_stage_name": state.productionStages.stageName[state.stageNumber],
+                        "additional_info": ""
+                    })
+                .then(response => {
+                    console.log(state.productionStages.stageName[state.stageNumber].concat(".Record finished."))
+                })
+            // Отправка запроса о старте новой записи для следующего этапа
+            if (state.stageNumber + 1 <= 14) {
+                axios
+                    .post(state.socket.concat("/api/unit/").concat(state.compositionID).concat("/start"),
+                        {
+                            "workbench_no": state.workbenchNumber,
+                            "production_stage_name": state.productionStages.stageName[state.stageNumber + 1],
+                            "additional_info": ""
+                        })
+                    .then(response => {
+                        console.log(state.productionStages.stageName[state.stageNumber+1].concat(". Record started."))
+                    })
+            }
             return {
                 ...state,
                 productionStages: {
@@ -264,13 +296,14 @@ const endoStarsReducer = (state = initialState, action) => {
                 productionStages: {...state.productionStages},
                 callTimer: action.timer
             }
-        case SET_USER_NAME:
+        case SET_USER_INFO:
             return {
                 ...state,
                 productionStages: {
                     ...state.productionStages
                 },
-                userName: action.userName
+                userName: action.userName,
+                userPosition: action.userPosition
             }
         case SET_COMPOSITION_ID: {
             return {
@@ -294,8 +327,10 @@ const endoStarsReducer = (state = initialState, action) => {
             }
     }
 }
+
+
 export const setCallTimer = (timer) => ({type: SET_CALL_TIMER, timer: timer})
-export const setUserName = (name) => ({type: SET_USER_NAME, userName: name})
+export const setUserInfo = (name, position) => ({type: SET_USER_INFO, userName: name, userPosition: position})
 export const setCompositionID = (ID) => ({type: SET_COMPOSITION_ID, ID: ID})
 export const setAuthorizationTimer = (timer) => ({type: SET_AUTHORIZATION_TIMER, timer: timer})
 export const startSession = () => ({type: STAR_SESSION})

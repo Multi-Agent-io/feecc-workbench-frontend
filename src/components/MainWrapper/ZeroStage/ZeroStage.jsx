@@ -10,18 +10,32 @@ class ZeroStage extends React.Component {
     componentDidMount() {
         // const checkAuthorization = () => {
         // }
-
         this.props.setTimer(setInterval(() => {
 
-            this.props.nextGeneralStage()
-            this.props.startSession()
-            // axios.get("https://localhost:5000/state").then((response) => {
-            //     if (response.data.state_no === 1) {
-            //         this.props.nextGeneralStage()
-            //     }
-            // })
+            // Проверяем логин пользователя
+            axios
+                .get(this.props.socket.concat("/api/workbench/").concat(this.props.workbenchNumber).concat("/status"))
+                .then((response) => {
 
-        }, 5000))
+                    if (response.data.employee_logged_in === true) {
+
+                        this.props.setCompositionID(response.data.unit_internal_id)
+                        this.props.setUserInfo(response.data.employee.name, response.data.employee.position)
+                        // Если с логином всё ок, то создаём новый юнит
+                        axios.post(this.props.socket.concat("/api/unit/new",
+                            {
+                                "workbench_no" : this.props.workbenchNumber
+                            }
+                        )).then(response => {
+                            if (response.data.status === true){
+                                // Если юнит успешно создан, то отправляем пользователя на следующий этап
+                                this.props.nextGeneralStage()
+                            }
+                        })
+                    }
+                })
+
+        }, 1000))
 
     }
 

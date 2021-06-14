@@ -4,15 +4,13 @@ import {
     cancelWork, countStageDuration,
     nextGeneralStage,
     nextStage,
-    previousStage,
+    previousStage, setAuthorizationTimer,
     setGeneralStage, setStageStartTime
 } from "../../redux/reducers/EndoStars/endoStarsReducer";
 
 let mapStateToProps = (state) => {
-    // debugger;
-    // console.log(state.endoStars)
     return {
-        endoStars: state.endoStars
+        endoStars: state.endoStars,
         // stageNumber: state.productParameters.stageCounter,
         // firstStage: state.productParameters.firstStage,
         // secondStage: state.productParameters.secondStage
