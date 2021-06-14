@@ -10,6 +10,9 @@ class ThirdStage extends React.Component {
             })
         }, 1000))
     }
+    componentWillUnmount() {
+        clearInterval(this.props.timer)
+    }
 
     render() {
         return (

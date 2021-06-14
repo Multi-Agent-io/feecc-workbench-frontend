@@ -12,18 +12,18 @@ class CleanContent extends React.Component {
             if (this.props.stageStartTime === 0) {
 
                 this.props.setStageStartTime(this.props.stageNumber)
-                // debugger
             }
-            // debugger
-            this.props.countStageDuration(this.props.stageNumber)
-            // debugger
+            if (this.props.generalStageNumber === 1) {
+                this.props.countStageDuration(this.props.stageNumber)
+            }
         }
-        setInterval(countDuration, 1000)
+        this.props.setCallTimer(setInterval(countDuration, 1000))
+    }
+    componentWillUnmount() {
+        clearInterval(this.props.timer)
     }
 
-
     render() {
-        // this.props.setStageStartTime(this.props.stageNumber)
         let contentComponent
         if (this.props.useImg === 1) {
             contentComponent =
@@ -64,7 +64,6 @@ class CleanContent extends React.Component {
                             {parseInt(((this.props.stageDuration / 1000) / 60) % 60) < 10 ? "0" + parseInt(((this.props.stageDuration / 1000) / 60) % 60) : parseInt(((this.props.stageDuration / 1000) / 60) % 60)}
                             :
                             {parseInt((this.props.stageDuration / 1000) % 60) < 10 ? "0" + parseInt((this.props.stageDuration / 1000) % 60) : parseInt((this.props.stageDuration / 1000) % 60)}
-                            {/*{parseInt(this.props.stageDuration / 1000)}*/}
                         </div>
                     </div>
                 </div>

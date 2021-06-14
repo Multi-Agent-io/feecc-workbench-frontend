@@ -7,7 +7,7 @@ let mapStateToProps = (state) => {
     return {
         startTime: state.endoStars.sessionStartTime,
         sessionDuration: state.endoStars.sessionDuration,
-        timer: state.endoStars.serverAuthorizationTimer
+        timer: state.endoStars.callTimer
     }
 }
 

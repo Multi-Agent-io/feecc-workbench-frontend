@@ -7,6 +7,11 @@ import {LinearProgress} from "@material-ui/core";
 class FourthStage extends React.Component {
     componentDidMount() {
         this.props.setCallTimer(setInterval(()=>{
+            // axios.get().then(response => {
+            //     if (response.data.printed === 1){
+            //         this.props.goToStart()
+            //     }
+            // })
             if (false){
                 this.props.goToStart()
             }
