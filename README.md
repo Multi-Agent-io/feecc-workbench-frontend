@@ -1,4 +1,4 @@
-## Frontend for MWAV production monitoring system based on Feecc platform
+## Frontend for MWAS production monitoring system based on Feecc platform
 
 ### Before start
 Clone repositoyr in your workig directory.
