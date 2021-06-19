@@ -1,6 +1,6 @@
 import {connect} from "react-redux";
 import FourthStage from "./FourthStage";
-import {toStageZero} from "../../../redux/reducers/Geoscan/productParametersReducer";
+// import {toStageZero} from "../../../redux/reducers/Geoscan/productParametersReducer";
 import {setCallTimer, setGeneralStage} from "../../../redux/reducers/EndoStars/endoStarsReducer";
 
 let mapStateToProps = (state) => {

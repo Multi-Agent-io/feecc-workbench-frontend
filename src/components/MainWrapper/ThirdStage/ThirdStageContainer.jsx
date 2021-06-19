@@ -1,6 +1,6 @@
 import {connect} from "react-redux";
 import ThirdStage from "./ThirdStage";
-import {timerTick, timerToZero} from "../../../redux/reducers/Geoscan/productParametersReducer";
+// import {timerTick, timerToZero} from "../../../redux/reducers/Geoscan/productParametersReducer";
 import {nextGeneralStage, setCallTimer} from "../../../redux/reducers/EndoStars/endoStarsReducer";
 
 let mapStateToProps = (state) => {

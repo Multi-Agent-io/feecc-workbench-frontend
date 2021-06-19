@@ -16,6 +16,12 @@
     margin-left: 1vw;
     height: 70px;
 }
+.userInfo {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
 .info{
     display: flex;
     justify-content: space-around;
@@ -26,6 +32,7 @@
     font-weight: 300;
 }
 .mainTimer {
+    margin-left: 3vw;
     font-size: 22px;
     font-weight: 400;
 }

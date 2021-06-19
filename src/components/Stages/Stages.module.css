@@ -1,0 +1,34 @@
+.buttonAndTime {
+    display: flex;
+    flex-direction: row;
+}
+
+.timeAtButton {
+    margin-top: 0.5vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.finishText {
+    display: flex;
+    justify-content: center;
+}
+.passportPrinting{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+.passportHeader {
+    margin-top: 1vh;
+    display: flex;
+    justify-content: center;
+}
+.passportProgress {
+    margin-top: 2vh;
+    display: flex;
+    justify-content: center;
+}
+.paperDuration{
+    padding: 10px;
+}

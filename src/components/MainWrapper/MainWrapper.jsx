@@ -1,76 +1,49 @@
 import React from 'react'
 import s from "./MainWrapper.module.css"
-import CleanContent from "./Templates/CleanContent/CleanContent";
-import ZeroStageContainer from "./ZeroStage/ZeroStageContainer";
+// import CleanContent from "./Templates/CleanContent/CleanContent";
+// import ZeroStageContainer from "./ZeroStage/ZeroStageContainer";
 import FourthStageContainer from "./FourthStage/FourthStageContainer";
 import ThirdStageContainer from "./ThirdStage/ThirdStageContainer";
-import axios from "axios";
-import CleanContentContainer from "./Templates/CleanContent/CleanContentContainer";
+// import CleanContentContainer from "./Templates/CleanContent/CleanContentContainer";
+import Stages from "../Stages/Stages";
+import {useSelector} from "react-redux";
+import ZeroStage from "./ZeroStage/ZeroStage";
 
-class MainWrapper extends React.Component {
+const MainWrapper = (props) => {
 
-    componentDidMount() {
+    const generalStageNumber = useSelector((state)=> state.endoStarsState.generalStageNumber)
+    const stageNumber = useSelector((state) => state.endoStarsState.stageNumber)
 
+
+    let wrapperContent
+    switch (generalStageNumber) {
+        case 0:
+            wrapperContent = <ZeroStage/>
+            break
+        case 1:
+            wrapperContent = <Stages/>
+            break
+        case 2:
+            wrapperContent = <Stages/>
+            // wrapperContent = <ThirdStageContainer/>
+            break
+        case 3:
+            wrapperContent = <FourthStageContainer/>
+            break
+        // Тестирование нормального вида
+        case 10:
+            wrapperContent = <Stages/>
+            break
+        default:
+            wrapperContent = <ZeroStage/>
+            break
     }
+    return (
+        <div className={s.wrapper}>
+            {wrapperContent}
+        </div>
+    )
 
-    render() {
-        let buttonsHolder
-
-        if (this.props.endoStars.generalStageNumber !== 1) {
-            buttonsHolder = <div></div>
-        } else {
-            if (this.props.endoStars.stageNumber === 0) {
-                buttonsHolder =
-                    <div className={s.buttons}>
-                        <button onClick={this.props.nextStage} className={s.sendButton}>Продолжить</button>
-                        {/*<button onClick={this.props.previousStage} className={s.backButton}>Назад</button>*/}
-                        <button onClick={this.props.cancelWork} className={s.cancelButton}>Отмена</button>
-                    </div>
-            } else if (this.props.endoStars.stageNumber === 14) {
-                buttonsHolder =
-                    <div className={s.buttons}>
-                        <button onClick={this.props.nextGeneralStage} className={s.sendButton}>Завершить сборку</button>
-                        {/*<button onClick={this.props.previousStage} className={s.backButton}>Назад</button>*/}
-                        {/*<button onClick={this.props.cancelWork} className={s.cancelButton}>Отмена</button>*/}
-                    </div>
-            } else {
-                buttonsHolder =
-                    <div className={s.buttons}>
-                        <button onClick={this.props.nextStage} className={s.sendButton}>Продолжить</button>
-                        {/*<button onClick={this.props.previousStage} className={s.backButton}>Назад</button>*/}
-                        {/*<button onClick={this.props.cancelWork} className={s.cancelButton}>Отмена</button>*/}
-                    </div>
-            }
-        }
-
-        let wrapperContent
-        switch (this.props.endoStars.generalStageNumber) {
-            case 0:
-                wrapperContent = <ZeroStageContainer/>
-                break
-            case 1:
-                wrapperContent =
-                    <div>
-                        <CleanContentContainer />
-                    </div>
-                break
-            case 2:
-                wrapperContent = <ThirdStageContainer/>
-                break
-            case 3:
-                wrapperContent = <FourthStageContainer/>
-                break
-            default:
-                wrapperContent = <ZeroStageContainer/>
-                break
-        }
-        return (
-            <div className={s.wrapper}>
-                {wrapperContent}
-                {buttonsHolder}
-            </div>
-        )
-    }
 }
 
 export default MainWrapper
