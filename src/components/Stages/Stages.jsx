@@ -1,4 +1,4 @@
-import React, {Component, useEffect, useLayoutEffect, useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {makeStyles} from "@material-ui/core/styles";
 import Stepper from "@material-ui/core/Stepper";
 import Step from "@material-ui/core/Step";
@@ -13,14 +13,15 @@ import {
     nextPage,
     countStageDuration,
     setStageStartTime,
-    setTimer
+    setTimer, setPages
 } from "../../redux/reducers/EndoStars/endoReducer";
 import {ThemeProvider} from "@material-ui/styles";
 import {createMuiTheme} from '@material-ui/core/styles';
-// import purple from '@m aterial-ui/core/colors/purple'
-import {blue, deepPurple, indigo, lightBlue} from "@material-ui/core/colors";
+import {indigo} from "@material-ui/core/colors";
 import s from "./Stages.module.css"
 import {CircularProgress} from "@material-ui/core";
+import {readString} from "react-papaparse";
+import csvFile from "../../configs/pages.csv"
 
 // Styles for material-ui stepper
 const useStyles = makeStyles((theme) => ({
@@ -63,15 +64,23 @@ const Stages = (props) => {
 
     const classes = useStyles();
     const dispatch = useDispatch()
+
     useEffect(() => {
+        // Читаем данные из файла
+        fetch(csvFile)
+            .then(response => response.text())
+            .then((text) => {
+                dispatch(setPages(readString(text, {header: true})))
+                dispatch(setStageStartTime())
+            })
         dispatch(setTimer(setInterval(() => {
             dispatch(countStageDuration())
+
         }, 1000)))
-
     }, [])
-
     useEffect(() => {
-        if (pages[currStep].startTime === null) {
+        if (pages[currStep].startTime === "null") {
+            // debugger
             dispatch(setStageStartTime())
         }
     })
