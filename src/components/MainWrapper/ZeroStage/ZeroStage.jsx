@@ -18,6 +18,7 @@ const ZeroStage = () => {
     let workbenchNumber = useSelector((state) => state.endoStarsState.workbenchNumber)
 
     useEffect(() => {
+            // Тестовый переход на следующий этап
             // Проверить если пользователь атворизовался
             dispatch(setCompositionTimer(setInterval(() => {
                     // console.log("checking authorization")
@@ -45,6 +46,8 @@ const ZeroStage = () => {
                 }, 1000)
                 )
             )
+            dispatch(startComposition())
+
         },
         []
     )

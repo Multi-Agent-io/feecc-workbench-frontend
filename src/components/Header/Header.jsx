@@ -13,9 +13,9 @@ const Header = (props) => {
     let user = useSelector((state) => state.endoStarsState.users[userNumber])
     let generalStageNumber = useSelector((state) => state.endoStarsState.generalStageNumber)
     let compositionID = useSelector((state) => state.endoStarsState.compositionID)
-    let startTime = useSelector((state) => state.endoStarsState.compositionStartTime)
+    // let startTime = useSelector((state) => state.endoStarsState.compositionStartTime)
     let duration = useSelector((state) => state.endoStarsState.compositionDuration)
-    let timer = useSelector((state) => state.endoStarsState.compositionTimer)
+    // let timer = useSelector((state) => state.endoStarsState.compositionTimer)
     let dispatch = useDispatch()
 
 
@@ -24,13 +24,16 @@ const Header = (props) => {
     useEffect(() => {
         dispatch(setCompositionTimer(setInterval(() => {
             dispatch(countCompositionDuration())
-        }, 1000)))
-    }, [])
+            console.log("counting")
+        }, 500)))
+    },[])
 
     if (generalStageNumber === 0) {
+        console.log("test")
         icons = <div></div>
         headerInfo = <div className={s.navigation}></div>
     } else {
+        // console.log("test2")
         icons =
             <div>
                 <img className={s.mvasLogo} src={mvas} alt="mvasLogo"/>

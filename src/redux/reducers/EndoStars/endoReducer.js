@@ -44,19 +44,19 @@ let initialState = {
     ],
     users: [
         {
-            name: "Fucking",
-            surname: "slave",
-            position: "dungeon master"
+            name: "Name",
+            surname: "Surname",
+            position: "Engineer"
         }
     ],
     userNumber: 0,
     workbenchNumber: 0,
-    compositionID: "88005553535",
+    compositionID: "12345D31S",
     compositionStartTime: null,
     compositionEndTime: null,
     compositionDuration: null,
     compositionIdealDuration: 6000, // В секундах
-    generalStageNumber: 1,
+    generalStageNumber: 0,
     currentPageNumber: 0,
     socket: config.socket,
     stageTimer: null, // Переменная дла хранения таймера, который будет убиваться

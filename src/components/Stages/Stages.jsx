@@ -153,7 +153,7 @@ const Stages = (props) => {
                         <div className={s.passportPrinting}>
                             <div className={s.passportHeader}>Идёт печать паспорта</div>
                             <div className={s.passportProgress}>
-                                <CircularProgress/>
+                                <CircularProgress />
                             </div>
                         </div>
                     </div>
