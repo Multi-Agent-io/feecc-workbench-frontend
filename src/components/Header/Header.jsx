@@ -2,9 +2,11 @@ import React, {useEffect} from 'react'
 import s from "./Header.module.css"
 import mvas from "../../static/logo_mvas.png"
 import geoscan from "../../static/logo_geoskan.png"
-import {Slider} from "@material-ui/core";
+// import {Slider} from "@material-ui/core";
 import {useDispatch, useSelector} from "react-redux";
-import {countCompositionDuration, setCompositionTimer} from "../../redux/reducers/EndoStars/endoReducer";
+import {countCompositionDuration, setCompositionTimer, setPages} from "../../redux/reducers/EndoStars/endoReducer";
+import csvFile from "../../configs/pages.csv";
+import {readString} from "react-papaparse";
 
 const Header = (props) => {
 
@@ -21,15 +23,26 @@ const Header = (props) => {
 
     let icons;
     let headerInfo;
+
+    useEffect(() => {
+        // Читаем данные из файла
+        fetch(csvFile)
+            .then(response => response.text())
+            .then((text) => {
+                // console.log(readString(text, {header: true, delimiter: ";"}).data)
+                dispatch(setPages(readString(text, {header: true, delimiter: ";"})))
+            })
+    }, [])
+
     useEffect(() => {
         dispatch(setCompositionTimer(setInterval(() => {
             dispatch(countCompositionDuration())
-            console.log("counting")
+            // console.log("counting")
         }, 500)))
-    },[])
+    }, [])
 
     if (generalStageNumber === 0) {
-        console.log("test")
+        // console.log("test")
         icons = <div></div>
         headerInfo = <div className={s.navigation}></div>
     } else {

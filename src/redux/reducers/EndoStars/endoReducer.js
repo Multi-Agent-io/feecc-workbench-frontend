@@ -222,10 +222,50 @@ const endoReducer = (state = initialState, action) => {
                 printTimer: action.timer
             }
         case SET_PAGES:
-            // console.log(action.pages.data.slice())
             return {
                 ...state,
-                pages: action.pages.data.slice()
+                pages: action.pages.data.map((item) => {
+                    item.duration = 0
+                    item.startTime = "null"
+                    item.endTime = "null"
+
+                    return item
+                })
+            }
+        case SET_LOGOUT_TIMER:
+            return {
+                ...state,
+                pages: state.pages,
+                logoutTimer: action.timer
+            }
+        case LOGOUT_USER_CHECK:
+            // debugger
+            if (state.generalStageNumber === 2) {
+                // debugger
+                axios
+                    .post(state.socket.concat("/api/employee/log-out"), {
+                        "workbench_no": state.workbenchNumber
+                    })
+                    .then((response) => {
+                        if (response.data.status === true) {
+                            logoutUser()
+                        } else {
+                            console.log("Logout false. Try again")
+                        }
+                    })
+            }
+            return {
+                ...state,
+                pages: state.pages
+            }
+        case LOGOUT_USER:
+            return {
+                ...state,
+                pages: state.pages.map((item) => {
+                    item.duration = 0
+                    item.startTime = "null"
+                    item.endTime = "null"
+                })
             }
         default:
             return {
