@@ -71,11 +71,11 @@ const Header = (props) => {
 
                     <div className={s.mainTimer}>
                         <div className={s.timerHeader}>
-                            Длительность текущей сборки:{" "}
+                            Длительность сессии:{" "}
                         </div>
                         <div className={s.timer}>
                             {/*{parseInt((duration))}*/}
-                            {parseInt(duration / 1000 / 3600)%24}
+                            {parseInt(duration / 1000 / 3600) % 24}
                             :
                             {parseInt((duration / 1000 / 60) % 60) < 10 ? "0" + parseInt((duration / 1000 / 60) % 60) : parseInt((duration / 1000 / 60) % 60)}
                             :

@@ -43,10 +43,11 @@ const ZeroStage = () => {
                             }
 
                         })
-                }, 1000)
+                    dispatch(startComposition())
+                }, 2000)
                 )
             )
-            dispatch(startComposition())
+
 
         },
         []

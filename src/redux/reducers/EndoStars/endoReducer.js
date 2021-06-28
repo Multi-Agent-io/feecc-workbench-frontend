@@ -13,7 +13,9 @@ const SET_COMPOSITION_ID = "set_composition_id_from_server"
 const SET_USER_INFO = "set_user_info_and_position"
 const SET_PRINT_TIMER = "set_printed_check_timer"
 const SET_PAGES = "set_pages_via_papaparser"
-
+const LOGOUT_USER = "log_use_out_after_composition_finish"
+const SET_LOGOUT_TIMER = "set_logout_timer"
+const LOGOUT_USER_CHECK = "try_to_logout_user"
 
 let initialState = {
     pages: [
@@ -62,7 +64,7 @@ let initialState = {
     stageTimer: null, // Переменная дла хранения таймера, который будет убиваться
                       // при переходе на новый этап производства
     compositionTimer: null,
-    printTimer: null
+    logoutTimer: null
 }
 
 const endoReducer = (state = initialState, action) => {
@@ -171,7 +173,6 @@ const endoReducer = (state = initialState, action) => {
                 })
             }
         case COUNT_STAGE_DURATION:
-            // console.log("stage tick")
             return {
                 ...state,
                 pages: state.pages.map((item, index) => {
@@ -296,3 +297,6 @@ export const setUserInfo = (name, surname, position, userNumber) => ({
 })
 export const setPrintTimer = (timer) => ({type: SET_PRINT_TIMER, timer: timer})
 export const setPages = (pages) => ({type: SET_PAGES, pages: pages})
+export const setLogoutTimer = (timer) => ({type: SET_LOGOUT_TIMER, timer: timer})
+export const logoutUserCheck = () => ({type: LOGOUT_USER_CHECK})
+export const logoutUser = () => ({type:LOGOUT_USER})
