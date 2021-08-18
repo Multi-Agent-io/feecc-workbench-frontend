@@ -1,0 +1,28 @@
+.messagesWrapper {
+    position: fixed;
+    top: 0;
+    left: 35vw;
+    max-width: 30vw;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+}
+
+.messageFrame {
+    display: flex;
+    flex-direction: row;
+    z-index: 2;
+}
+
+.messageText {
+    padding-right: 30px;
+}
+
+.close {
+    z-index:3;
+    position: relative;
+    left: -5px;
+    transform: scale(1.5);
+    overflow: visible;
+
+}

@@ -1,0 +1,11 @@
+key,ru,en
+CompositionNumber,Номер сборки,Composition number
+AuthorizedEmployee,Авторизованный сотрудник:,Authorized employee:
+Position,Должность:,Position:
+CompositionNumber,Номер сборки:,Composition number:
+LastSessionDuration,Длительность прошлой сессии:,Last composition duration
+SessionDuration,Длительность сборки:,Composition duration
+StartComposition,Начать сборку,Start composition
+FinishSession,Закончить сессию,Finish session
+Finish,Закончить,Finish
+Next,Далее,Next

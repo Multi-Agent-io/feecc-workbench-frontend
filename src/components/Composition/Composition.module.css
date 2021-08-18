@@ -1,0 +1,20 @@
+.button {
+    margin-top: 20px;
+}
+
+.controls {
+    display: flex;
+    justify-content: flex-start;
+    flex-direction: row;
+}
+.timerWrapper{
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+}
+.wrapper {
+    margin: 0 20vw;
+}
+.startButton {
+    margin-left: 100px;
+}

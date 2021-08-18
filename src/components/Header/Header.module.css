@@ -1,0 +1,38 @@
+.wrapper {
+  min-height: 9vh;
+  display: grid;
+  grid-template-columns: 1fr 5fr;
+}
+
+.icons{
+  margin: 1vh 0 0 1vw;
+  width: 200px;
+}
+.robonomicsLogo {
+  max-height: 100px;
+}
+.mvasLogo {
+  padding: 10px 0;
+  max-height: 80px;
+}
+
+.info{
+  display: flex;
+  justify-content: space-between;
+  margin-right: 20vw;
+  margin-top: 3vh;
+  margin-left: 4vw;
+  font-size: 22px;
+  font-weight: 300;
+}
+
+.userInfo {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.mainTimer {
+  margin-left: 3vw;
+  font-size: 22px;
+  font-weight: 400;
+}
