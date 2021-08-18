@@ -12,7 +12,7 @@ import {
   doStopStepRecord
 } from "@reducers/stagesActions";
 import { replace } from "connected-react-router";
-// import StopWatch from "@components/Stopwatch/Stopwatch"
+import Stopwatch from "@components/Stopwatch/Stopwatch";
 
 const stylesMaterial = {
   root            : {
@@ -45,6 +45,11 @@ export default withStyles(stylesMaterial)(withTranslation()(connect(
     raiseNotification: (notificationMessage) => doRaiseNotification(dispatch, notificationMessage)
   })
 )(class Composition extends React.Component {
+  
+  constructor(props) {
+    super(props);
+    this.stageStopwatch = React.createRef()
+  }
   
   state = {
     activeStep: -1,
@@ -117,6 +122,17 @@ export default withStyles(stylesMaterial)(withTranslation()(connect(
       })
   }
   
+  componentDidUpdate(prevProps, prevState, snapshot) {
+    if (this.stageStopwatch !== undefined){
+      this.stageStopwatch?.current?.start()
+    }
+  }
+
+  timeToRegular = (seconds) => {
+    const hours = (seconds/3600).toFixed(0)
+    const minutes = (seconds/60).toFixed(0)
+    return `${(`0${hours}`).slice(-2)}:${(`0${minutes}`).slice(-2)}:${(`0${seconds}`).slice(-2)}`
+  }
   
   render() {
     const { classes, t, steps } = this.props
@@ -151,8 +167,8 @@ export default withStyles(stylesMaterial)(withTranslation()(connect(
                       {activeStep === Object.entries(steps).length - 1 ? t('Finish') : t('Next')}
                     </Button>
                     <div className={styles.timerWrapper}>
-                      00:00:00
-                      {/*<StopWatch/>*/}
+                      <Stopwatch ref={this.stageStopwatch}/>
+                      {this.timeToRegular(item.duration)}
                     </div>
                   </div>
                 </div>

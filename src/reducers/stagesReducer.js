@@ -4,8 +4,8 @@ import { types } from './common'
 
 export const stagesInitialState = fromJS({
     steps: {
-      '0': {'title': 'title1', 'context': 'context1' },
-      '1': {'title': 'title2', 'context': 'context2' }
+      '0': {'title': 'title1', 'context': 'context1', 'duration': 300 },
+      '1': {'title': 'title2', 'context': 'context2', 'duration': 250 }
     },
     user: {
         'name':' Vasya Pupkin',

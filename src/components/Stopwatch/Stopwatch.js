@@ -56,19 +56,7 @@ class Stopwatch extends React.Component {
   render() {
     return (
       <div className={'stopwatch'}>
-        {/*{this.state.running === false && (*/}
-        {/*  <button onClick={this.start}>START</button>*/}
-        {/*)}*/}
-        {/*{this.state.running === true && (*/}
-        {/*  <button onClick={this.stop}>STOP</button>*/}
-        {/*)}*/}
         {(`0${this.state.currentTimeHrs}`).slice(-2)}:{(`0${ this.state.currentTimeMin }`.slice(-2))}:{(`0${this.state.currentTimeSec}`).slice(-2)}
-        {/*<button onClick={this.reset}>RESET</button>*/}
-        {/*<StopwatchDisplay*/}
-        {/*  ref="display"*/}
-        {/*  {...this.state}*/}
-        {/*  formatTime={this.formatTime}*/}
-        {/*/>*/}
       </div>
     );
   }

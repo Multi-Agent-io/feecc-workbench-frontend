@@ -9,3 +9,5 @@ StartComposition,Начать сборку,Start composition
 FinishSession,Закончить сессию,Finish session
 Finish,Закончить,Finish
 Next,Далее,Next
+QualityMonitoringSystem,"Система контроля качества производства на базе платформы ""Feecc""","Production quality control system based on the ""Feecc"" platform"
+AuthorizeToProceed,Для начала сборки авторизуйтесь,Authorize to proceed

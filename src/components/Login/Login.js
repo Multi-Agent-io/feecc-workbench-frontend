@@ -51,7 +51,7 @@ export default withTranslation()(connect(
     const { t } = this.props
     return (
       <div className={styles.wrapper}>
-        <div className={styles.header}>Система контроля качества производства на базе платформы "Feecc"</div>
+        <div className={styles.header}>{t('QualityMonitoringSystem')}</div>
         <div className={styles.icons}>
           <div className={styles.icon}><img className={styles.mvasLogo} src={MVASLogo} alt="MVAS-logo(img1)"/></div>
           <div className={styles.icon}><img className={styles.robonomicsLogo} src={robonomicsLogo}
@@ -59,7 +59,7 @@ export default withTranslation()(connect(
           <div className={styles.icon}><img className={styles.geoscanLogo} src={geoscanLogo} alt="geoscan-logo(img3)"/>
           </div>
         </div>
-        <div className={styles.message}>Для начала сборки авторизуйтесь</div>
+        <div className={styles.message}>{t('AuthorizeToProceed')}</div>
       </div>
     )
   }

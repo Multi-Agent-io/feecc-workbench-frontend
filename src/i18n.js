@@ -3,6 +3,7 @@ import { initReactI18next } from 'react-i18next'
 
 import Backend from 'i18next-http-backend'
 import fullCSV from '../public/translation.csv'
+import config from '../configs/config.json'
 
 const resources = {
   ru: {
@@ -19,7 +20,7 @@ i18n
   .init({
     resources,
     fallbackLng: 'ru',
-    lng        : 'ru',
+    lng        : config.interface_language,
     debug      : true,
   })
 

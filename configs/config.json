@@ -1,5 +1,6 @@
 {
   "socket": "http://localhost:5000",
   "unit_type": "TestName",
-  "workbench_number": 1
+  "workbench_number": 1,
+  "interface_language": "en"
 }
