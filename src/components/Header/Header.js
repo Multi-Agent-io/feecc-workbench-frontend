@@ -5,7 +5,7 @@ import styles from './Header.module.css'
 import robonomicsLogo from '../../static/imageCenter.png'
 import MVASLogo from '../../static/imageLeft.png'
 import { push, replace } from "connected-react-router";
-import StopWatch from "@components/Stopwatch/Stopwatch";
+// import StopWatch from "@components/Stopwatch/Stopwatch";
 
 export default withTranslation()(connect(
   (store) => ({
@@ -21,7 +21,6 @@ export default withTranslation()(connect(
   
   constructor(props) {
     super(props)
-    this.stopwatch = React.createRef()
   }
   
   componentDidMount() {
@@ -34,10 +33,6 @@ export default withTranslation()(connect(
       if (!this.props.composition.employee_logged_in)
         this.props.redirectToLogin()
 
-    if (this.props.composition.operation_ongoing && prevProps !== this.props.composition.operation_ongoing) {
-      console.log(this.stopwatch)
-    }
-    
     if (this.props.unitID !== undefined && this.props.unitID !== prevProps.unitID)
       this.props.redirectToComposition()
   }
@@ -63,7 +58,8 @@ export default withTranslation()(connect(
               {composition.operation_ongoing ?
                 <>
                   <div>{t('SessionDuration')}</div>
-                  <div><StopWatch ref={this.stopwatch} /></div>
+                  00:00:00
+                  {/*<div><StopWatch /></div>*/}
                 </>
                 :
                 <>

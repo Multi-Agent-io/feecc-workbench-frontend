@@ -12,7 +12,7 @@ import {
   doStopStepRecord
 } from "@reducers/stagesActions";
 import { replace } from "connected-react-router";
-import StopWatch from "@components/Stopwatch/Stopwatch";
+// import StopWatch from "@components/Stopwatch/Stopwatch"
 
 const stylesMaterial = {
   root            : {
@@ -150,7 +150,10 @@ export default withStyles(stylesMaterial)(withTranslation()(connect(
                     >
                       {activeStep === Object.entries(steps).length - 1 ? t('Finish') : t('Next')}
                     </Button>
-                    <div className={styles.timerWrapper}><StopWatch/></div>
+                    <div className={styles.timerWrapper}>
+                      00:00:00
+                      {/*<StopWatch/>*/}
+                    </div>
                   </div>
                 </div>
               </StepContent>
