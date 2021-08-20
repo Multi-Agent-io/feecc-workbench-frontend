@@ -209,17 +209,17 @@ export default withStyles(stylesMaterial)(withTranslation()(connect(
       <div className={styles.wrapper}>
         {activeStep === -1 && (
           <Button
-          color="blue1"
-          radius="10px"
-          staticWidth="240px"
-          disabled={loading}
-          onClick={() => {
-            this.handleNextCompositionStep(steps[0].title)
-            this.props.doFetchComposition(() => {
-              return true
-            }, null)
-          }}
-          className={classes.buttonStart}>{t('StartComposition')}</Button>
+            color="blue1"
+            radius="10px"
+            staticWidth="240px"
+            disabled={loading}
+            onClick={() => {
+              this.handleNextCompositionStep(steps[0].title)
+              this.props.doFetchComposition(() => {
+                return true
+              }, null)
+            }}
+            className={classes.buttonStart}>{t('StartComposition')}</Button>
         )}
         
         <Stepper className={clsx(classes.root, styles.button)} activeStep={activeStep} orientation="vertical">
@@ -245,7 +245,7 @@ export default withStyles(stylesMaterial)(withTranslation()(connect(
                       {activeStep === Object.entries(steps).length - 1 ? t('Finish') : t('Next')}
                     </Button>
                     <div className={styles.timerWrapper}>
-                      <Stopwatch ref={this.stageStopwatch}/>
+                      <Stopwatch setStepDuration={this.setStepDuration} ref={this.stageStopwatch}/>
                       {this.timeToRegular(item.duration)}
                     </div>
                   </div>
