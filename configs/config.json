@@ -2,5 +2,7 @@
   "socket": "http://localhost:5000",
   "unit_type": "TestName",
   "workbench_number": 1,
-  "interface_language": "en"
+  "interface_language": "ru",
+  "use_dev_steps": false,
+  "idiot_protection": true
 }

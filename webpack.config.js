@@ -70,6 +70,11 @@ module.exports = {
                 test: /translation.csv$/,
                 exclude: /node_modules/,
                 use: [path.resolve('./loaders/i18next-custom-loader.js'), 'csv-loader?header=true?skipEmptyLines=true'],
+            },
+            {
+                test: /\.csv$/,
+                exclude: /node_modules/,
+                use: 'csv-loader?header=true'
             }
         ]
     },

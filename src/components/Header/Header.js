@@ -9,12 +9,13 @@ import Stopwatch from "@components/Stopwatch/Stopwatch";
 
 export default withTranslation()(connect(
   (store) => ({
-    composition: store.stages.get('composition').toJS(),
-    location   : store.router.location.pathname,
-    unitID     : store.stages.getIn(['unit', 'unit_internal_id'])
+    composition : store.stages.get('composition').toJS(),
+    location    : store.router.location.pathname,
+    unitID      : store.stages.getIn(['unit', 'unit_internal_id']),
   }),
   (dispatch) => ({
-    redirectToLogin: () => dispatch(replace('/')),
+    redirectToLogin      : () => dispatch(replace('/')),
+    goToMenu          : () => dispatch(replace({ pathname: '/menu' })),
     redirectToComposition: () => dispatch(push('/composition')),
   })
 )(class Header extends React.Component {
@@ -30,14 +31,35 @@ export default withTranslation()(connect(
   }
   
   componentDidUpdate(prevProps, prevState, snapshot) {
+    // If employee_logged_in status changed ->
     if (this.props.composition.employee_logged_in !== prevProps.composition.employee_logged_in)
+      // If employee_logged_in status is false
       if (!this.props.composition.employee_logged_in)
+        // Do user logout
         this.props.redirectToLogin()
-    // console.log(this.props.composition)
-    if (this.props.composition.operation_ongoing)
+    // If backend returned operation_ongoing === true
+    if (this.props?.composition.operation_ongoing)
       this.stopwatchRef?.current?.start()
-    else
-      this.stopwatchRef?.current?.stop()
+    else {
+      if (this.props.location.split('/')[1] !== 'menu'
+        && (this.props.unitID === '' || this.props.unitID === undefined)
+        && (this.props.composition.unit_internal_id === '' || this.props.composition.unit_internal_id === undefined)
+        && this.props.composition.employee_logged_in) {
+        this.props.goToMenu()
+      }
+      setTimeout(()=>{
+        if (this.props?.composition.operation_ongoing){
+          this.stopwatchRef?.current?.stop()
+        }
+      },500)
+      
+    }
+    
+    if (this.props.composition.operation_ongoing === true && this.props.location.split('/')[1] !== 'composition'){
+      this.props.redirectToComposition()
+    }
+    
+    // If unitID
     if (this.props.unitID !== undefined && this.props.unitID !== prevProps.unitID) {
       this.props.redirectToComposition()
     }
@@ -64,7 +86,7 @@ export default withTranslation()(connect(
               {composition.operation_ongoing ?
                 <>
                   <div>{t('SessionDuration')}</div>
-                  <Stopwatch ref={this.stopwatchRef} />
+                  <Stopwatch ref={this.stopwatchRef}/>
                 </>
                 :
                 <>

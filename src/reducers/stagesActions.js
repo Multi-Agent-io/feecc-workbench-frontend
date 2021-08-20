@@ -109,3 +109,11 @@ export const doRemoveNotification = (dispatch, notificationID) => {
     notificationID: notificationID
   })
 }
+
+export const doSetSteps = (dispatch, steps) => {
+  dispatch({
+    type : types.STAGES__SET_STEPS,
+    steps: steps
+  })
+}
+

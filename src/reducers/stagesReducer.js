@@ -27,10 +27,11 @@ export const stagesReducer = (state={}, action) => {
         case types.STAGES__REPORT_ERROR:
             return state
               .setIn(['notifications', 'error'], fromJS(action.error))
-        
         case types.STAGES__FETCH_COMPOSITION:
             return state
               .set('composition', fromJS(action))
+              .setIn(['unit', 'unit_internal_id'], action.unit_internal_id !== '' ? action.unit_internal_id : (state.getIn(['unit', 'unit_internal_id']) !== '' ? state.getIn(['unit', 'unit_internal_id']) : ''))
+              .setIn(['unit', 'unit_biography'], action.unit_biography !== null ? fromJS(action.unit_biography) : '')
               .deleteIn(['composition', 'type'])
         case types.STAGES__CREATE_NEW_UNIT:
             return state
@@ -44,6 +45,10 @@ export const stagesReducer = (state={}, action) => {
         case types.STAGES__RESET_UNIT:
             return state
               .deleteIn(['unit'])
+        case types.STAGES__SET_STEPS:
+            return state
+              .set('steps', fromJS(action.steps))
+              .deleteIn(['steps', Object.entries(action.steps).length-1])
         default:
             return state
     }
