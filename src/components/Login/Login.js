@@ -8,17 +8,24 @@ import geoscanLogo from '../../static/imageRight.png'
 import { push, replace } from "connected-react-router";
 import { setIn } from "immutable";
 import { doFetchComposition } from "@reducers/stagesActions";
+import PropTypes from "prop-types";
 
 export default withTranslation()(connect(
   (store) => ({
     authorized: store.stages.getIn(['composition', 'employee_logged_in']),
-    stages    : store.stages.toJS()
   }),
   (dispatch) => ({
     goToMenu          : () => dispatch(replace({ pathname: '/menu' })),
     doFetchComposition: (successChecker, errorChecker) => doFetchComposition(dispatch, successChecker, errorChecker)
   })
 )(class Login extends React.Component {
+  
+  static propTypes = {
+    authorized: PropTypes.bool,
+    
+    goToMenu          : PropTypes.func.isRequired,
+    doFetchComposition: PropTypes.func.isRequired
+  }
   
   state = {
     timerID: null
@@ -27,22 +34,14 @@ export default withTranslation()(connect(
   componentDidMount() {
     this.setState({
       timerID: setInterval(() => {
-        this.props.doFetchComposition(
-          (r) => {
-            return true
-          },
-          null
-        )
+        this.props.doFetchComposition((r) => { return true }, null)
       }, 1000)
     })
-    if (this.props.authorized === true) {
-      // console.log('push')
+    if (this.props.authorized === true)
       this.props.goToMenu()
-    }
   }
   
   componentDidUpdate(prevProps, prevState, snapshot) {
-  
     if (this.props.authorized === true)
       this.props.goToMenu()
   }

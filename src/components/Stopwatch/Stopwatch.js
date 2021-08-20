@@ -1,8 +1,11 @@
 import React from 'react';
-// import ReactDOM from 'react-dom';
-// import StopwatchDisplay from './StopwatchDisplay.jsx';
+import PropTypes from "prop-types";
 
-class Stopwatch extends React.Component {
+export default class Stopwatch extends React.Component {
+  static propTypes = {
+    setStepDuration: PropTypes.func
+  }
+  
   constructor(props) {
     super(props);
     
@@ -17,6 +20,10 @@ class Stopwatch extends React.Component {
   
   componentWillUnmount() {
     clearInterval(this.watch)
+  }
+  
+  sendTime = () => {
+    this.props.setStepDuration && this.props.setStepDuration(this.state.currentTimeSec + this.state.currentTimeMin * 60 + this.state.currentTimeHrs * 3600)
   }
   
   start = () => {
@@ -42,6 +49,7 @@ class Stopwatch extends React.Component {
     if (this.state.currentTimeMin >= 60) {
       this.setState({ currentTimeHrs: this.state.currentTimeHrs + 1, currentTimeMin: 0})
     }
+    this.sendTime()
   };
   
   reset = () => {
@@ -61,5 +69,3 @@ class Stopwatch extends React.Component {
     );
   }
 }
-
-export default Stopwatch;

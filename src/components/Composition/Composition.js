@@ -14,6 +14,8 @@ import {
 import { replace } from "connected-react-router";
 import Stopwatch from "@components/Stopwatch/Stopwatch";
 import Button from "@/uikit/Button";
+import config from '../../../configs/config.json'
+import PropTypes from "prop-types";
 
 const stylesMaterial = {
   root            : {
@@ -35,7 +37,6 @@ const stylesMaterial = {
 export default withStyles(stylesMaterial)(withTranslation()(connect(
   (store) => ({
     steps             : store.stages.get('steps').toJS(),
-    unitID            : store.stages.getIn(['unit', 'unit_internal_id']),
     unit              : store.stages.get('unit')?.toJS(),
     compositionOngoing: store.stages.getIn(['composition', 'operation_ongoing']),
     compositionID     : store.stages.getIn(['composition', 'unit_internal_id'])
@@ -50,77 +51,109 @@ export default withStyles(stylesMaterial)(withTranslation()(connect(
   })
 )(class Composition extends React.Component {
   
+  static propTypes = {
+    
+    unit              : PropTypes.object,
+    compositionOngoing: PropTypes.bool,
+    compositionID     : PropTypes.string,
+    
+    goToMenu          : PropTypes.func.isRequired,
+    startStepRecord   : PropTypes.func.isRequired,
+    stopStepRecord    : PropTypes.func.isRequired,
+    uploadComposition : PropTypes.func.isRequired,
+    doFetchComposition: PropTypes.func.isRequired,
+    raiseNotification : PropTypes.func.isRequired,
+  }
+  
   constructor(props) {
     super(props);
     this.stageStopwatch = React.createRef()
   }
   
   state = {
-    activeStep: -1,
-    loading: false
+    activeStep  : -1,
+    stepDuration: 0,
+    loading     : false
   }
+  
+  setStepDuration = (duration) => {
+    this.setState({ stepDuration: duration })
+  }
+  
   
   successChecker = (res) => {
     if (res.status === false) {
       this.props.raiseNotification(res.comment)
-      this.setState({loading: false})
+      this.setState({ loading: false })
       return false
     }
     return true
   }
   
   handleNextCompositionStep = (productionStageName) => {
-    this.setState({loading: true})
+    this.setState({ loading: true })
+    let smartProtectionBlock = false
     let finishFlag = this.state.activeStep === -1
-    if (this.state.activeStep !== -1) {
-      this.props.stopStepRecord(
-        {},
-        this.props.unitID,
-        (res) => {
-          if (!this.successChecker(res))
-            return false
-          finishFlag = true
-          return true
-        }, (res) => {
-          if (res !== undefined) {
-            this.props.raiseNotification('Error while stopping record. Server connection error')
-            this.setState({loading: false})
-          }
-        })
-    }
     
-    setTimeout(() => {
-      if (finishFlag && this.state.activeStep === Object.entries(this.props.steps).length - 1) {
-        this.props.uploadComposition(
-          this.props.unitID,
+    if (this.state.activeStep !== -1) {
+      if (config.smart_protection) {
+        if (this.state.stepDuration < 3) {
+          smartProtectionBlock = true
+          this.props.raiseNotification(this.props.t('NotEnoughDuration'))
+          setTimeout(() => this.setState({ loading: false }), 100)
+        }
+      }
+      if (!smartProtectionBlock) {
+        this.props.stopStepRecord(
+          {},
+          this.props.unit.unit_internal_id,
           (res) => {
             if (!this.successChecker(res))
               return false
-            this.props.doFetchComposition(() => {
-              return true
-            }, null)
-            this.props.goToMenu()
+            finishFlag = true
             return true
-          },
-          (res) => {
-            if (res !== undefined)
+          }, (res) => {
+            if (res !== undefined) {
               this.props.raiseNotification('Error while stopping record. Server connection error')
-            this.setState({loading: false})
+              this.setState({ loading: false })
+            }
           })
-        
       }
-    }, 100)
-    setTimeout(() => {
-      if (finishFlag && this.state.activeStep !== Object.entries(this.props.steps).length - 1) {
-        this.handleStageRecordStart(productionStageName)
-      } else if (finishFlag !== true)
-        this.setState({ 'activeStep': this.state.activeStep + 1 })
-    }, 100)
+    }
+    if (!smartProtectionBlock) {
+      setTimeout(() => {
+        if (finishFlag && this.state.activeStep === Object.entries(this.props.steps).length - 1) {
+          this.props.uploadComposition(
+            this.props.unit.unit_internal_id,
+            (res) => {
+              if (!this.successChecker(res))
+                return false
+              this.props.doFetchComposition(() => {
+                return true
+              }, null)
+              this.props.goToMenu()
+              return true
+            },
+            (res) => {
+              if (res !== undefined)
+                this.props.raiseNotification('Error while stopping record. Server connection error')
+              this.setState({ loading: false })
+            })
+          
+        }
+      }, 100)
+      setTimeout(() => {
+        if (finishFlag && this.state.activeStep !== Object.entries(this.props.steps).length - 1) {
+          this.handleStageRecordStart(productionStageName)
+        } else if (finishFlag !== true)
+          this.setState({ 'activeStep': this.state.activeStep + 1 })
+      }, 100)
+    }
   }
   
   handleStageRecordStart = (productionStageName) => {
     this.props.startStepRecord(
-      this.props.unitID,
+      this.props.unit.unit_internal_id,
       productionStageName,
       {},
       (res) => {
@@ -128,13 +161,13 @@ export default withStyles(stylesMaterial)(withTranslation()(connect(
           return false
         // console.log('moving')
         this.setState({ 'activeStep': this.state.activeStep + 1 })
-        this.setState({loading: true})
-  
+        this.setState({ loading: true })
+        
         return true
       }, (res) => {
         if (res !== undefined)
           this.props.raiseNotification('Error while sending data to server (return code !== 200)')
-        this.setState({loading: false})
+        this.setState({ loading: false })
       })
   }
   

@@ -6,19 +6,30 @@ import robonomicsLogo from '../../static/imageCenter.png'
 import MVASLogo from '../../static/imageLeft.png'
 import { push, replace } from "connected-react-router";
 import Stopwatch from "@components/Stopwatch/Stopwatch";
+import PropTypes from "prop-types";
 
 export default withTranslation()(connect(
   (store) => ({
-    composition : store.stages.get('composition').toJS(),
-    location    : store.router.location.pathname,
-    unitID      : store.stages.getIn(['unit', 'unit_internal_id']),
+    composition: store.stages.get('composition').toJS(),
+    location   : store.router.location.pathname,
+    unitID     : store.stages.getIn(['unit', 'unit_internal_id']),
   }),
   (dispatch) => ({
     redirectToLogin      : () => dispatch(replace('/')),
-    goToMenu          : () => dispatch(replace({ pathname: '/menu' })),
+    goToMenu             : () => dispatch(replace({ pathname: '/menu' })),
     redirectToComposition: () => dispatch(push('/composition')),
   })
 )(class Header extends React.Component {
+  
+  static propTypes = {
+    composition: PropTypes.object,
+    location   : PropTypes.string,
+    unitID     : PropTypes.string,
+    
+    redirectToLogin      : PropTypes.func.isRequired,
+    goToMenu             : PropTypes.func.isRequired,
+    redirectToComposition: PropTypes.func.isRequired
+  }
   
   constructor(props) {
     super(props)
@@ -47,15 +58,15 @@ export default withTranslation()(connect(
         && this.props.composition.employee_logged_in) {
         this.props.goToMenu()
       }
-      setTimeout(()=>{
-        if (this.props?.composition.operation_ongoing){
+      setTimeout(() => {
+        if (this.props?.composition.operation_ongoing) {
           this.stopwatchRef?.current?.stop()
         }
-      },500)
+      }, 500)
       
     }
     
-    if (this.props.composition.operation_ongoing === true && this.props.location.split('/')[1] !== 'composition'){
+    if (this.props.composition.operation_ongoing === true && this.props.location.split('/')[1] !== 'composition') {
       this.props.redirectToComposition()
     }
     

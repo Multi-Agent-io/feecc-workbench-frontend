@@ -4,7 +4,7 @@ import React from 'react'
 import styles from './Menu.module.css'
 import { doCreateUnit, doLogout, doRaiseNotification } from "@reducers/stagesActions";
 import Button from "@/uikit/Button";
-
+import PropTypes from "prop-types"
 
 export default withTranslation()(connect(
   (store) => ({
@@ -12,22 +12,30 @@ export default withTranslation()(connect(
   }),
   (dispatch) => ({
     raiseNotification: (notificationMessage) => doRaiseNotification(dispatch, notificationMessage),
-    doCreateUnit: () => doCreateUnit(dispatch, (r) => {
+    doCreateUnit     : () => doCreateUnit(dispatch, (r) => {
       if (r.status === false) {
         this.props.raiseNotification(r.comment)
-        this.setState({createLoading: false})
+        this.setState({ createLoading: false })
         return false
       }
       return true
     }, (r) => {
       if (r !== undefined) {
         this.props.raiseNotification('Error connecting to server, try again later. (Response code != 200)')
-        this.setState({createLoading: false})
+        this.setState({ createLoading: false })
       }
     }),
-    doLogout    : (successChecker, errorChecker) => doLogout(dispatch, successChecker, errorChecker)
+    doLogout         : (successChecker, errorChecker) => doLogout(dispatch, successChecker, errorChecker)
   })
 )(class Menu extends React.Component {
+  
+  static propTypes = {
+    unitID           : PropTypes.string,
+    
+    raiseNotification: PropTypes.func.isRequired,
+    doCreateUnit     : PropTypes.func.isRequired,
+    doLogout         : PropTypes.func.isRequired
+  }
   
   state = {
     createLoading: false,
@@ -35,18 +43,18 @@ export default withTranslation()(connect(
   }
   
   handleCreateUnit = () => {
-    this.setState({createLoading: true})
+    this.setState({ createLoading: true })
     this.props.doCreateUnit()
   }
   
   handleUserLogout = () => {
-    this.setState({logoutLoading: true})
+    this.setState({ logoutLoading: true })
     this.props.doLogout(
       (r) => {
-        this.setState({logoutLoading: false})
+        this.setState({ logoutLoading: false })
         return true
       }, (r) => {
-        this.setState({logoutLoading: false})
+        this.setState({ logoutLoading: false })
       }
     )
   }
