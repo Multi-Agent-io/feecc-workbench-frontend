@@ -17,7 +17,7 @@
 # О структуре
 
 Проект на писан с использованием Redux и immutableJS. Вся собрка производится при помощи Webpack.
-При работе с Redux store важно это помнить и не пытаться сделать так `unitID: store.stages.get.unit.unit_internal_id`.
+При работе с Redux store важно помнить про ImmutableJS и не пытаться сделать так `unitID: store.stages.get.unit.unit_internal_id`.
 А делать так `unitID: store.stages.getIn(['unit', 'unit_internal_id']}`. 
 Если не понимаешь как работает ImmutableJS, то `stagesReducer` лучше не трогать. 
 
