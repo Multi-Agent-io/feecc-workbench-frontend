@@ -72,7 +72,7 @@ module.exports = {
                 use: [path.resolve('./loaders/i18next-custom-loader.js'), 'csv-loader?header=true?skipEmptyLines=true'],
             },
             {
-                test: /\.csv$/,
+                test: /pages.csv$/,
                 exclude: /node_modules/,
                 use: 'csv-loader?header=true'
             }
