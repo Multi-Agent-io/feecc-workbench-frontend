@@ -1,6 +1,7 @@
 import React from 'react'
 import { fromJS, List } from 'immutable'
 import { types } from './common'
+import config from '../../configs/config.json'
 
 export const stagesInitialState = fromJS({
     steps: {
@@ -20,8 +21,9 @@ export const stagesInitialState = fromJS({
 export const stagesReducer = (state={}, action) => {
     if (!action.type.startsWith('STAGES__'))
         return state
-    if (action.type !== types.STAGES__FETCH_COMPOSITION)
-    console.log('reducer-stages', action)
+    if (config.dev_show_reducers)
+        if (action.type !== types.STAGES__FETCH_COMPOSITION)
+            console.log('reducer-stages', action)
 
     switch (action.type){
         case types.STAGES__REPORT_ERROR:

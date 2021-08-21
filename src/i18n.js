@@ -21,7 +21,7 @@ i18n
     resources,
     fallbackLng: 'ru',
     lng        : config.interface_language,
-    debug      : true,
+    debug      : config.dev_show_reducers,
   })
 
 export default i18n
