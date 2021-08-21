@@ -90,7 +90,7 @@ export default withStyles(stylesMaterial)(withTranslation()(connect(
     return true
   }
   
-  handleNextCompositionStep = (productionStageName) => {
+  handleNextCompositionStep = (productionStageName, stepID) => {
     this.setState({ loading: true })
     let smartProtectionBlock = false
     let finishFlag = this.state.activeStep === -1
@@ -144,14 +144,14 @@ export default withStyles(stylesMaterial)(withTranslation()(connect(
       }, 100)
       setTimeout(() => {
         if (finishFlag && this.state.activeStep !== Object.entries(this.props.steps).length - 1) {
-          this.handleStageRecordStart(productionStageName)
+          this.handleStageRecordStart(productionStageName, stepID)
         } else if (finishFlag !== true)
           this.setState({ 'activeStep': this.state.activeStep + 1 })
       }, 100)
     }
   }
   
-  handleStageRecordStart = (productionStageName) => {
+  handleStageRecordStart = (productionStageName, stepID) => {
     this.props.startStepRecord(
       this.props.unit.unit_internal_id,
       productionStageName,
@@ -161,8 +161,15 @@ export default withStyles(stylesMaterial)(withTranslation()(connect(
           return false
         // console.log('moving')
         this.setState({ 'activeStep': this.state.activeStep + 1 })
-        this.setState({ loading: true })
-        
+        this.setState({ loading: false })
+        setTimeout(() => {
+          let el = document.getElementById(stepID)
+          el.scrollIntoView({
+            block: "center",
+            inline: "center",
+            behavior: "smooth"
+          })
+        }, 100)
         return true
       }, (res) => {
         if (res !== undefined)
@@ -224,7 +231,7 @@ export default withStyles(stylesMaterial)(withTranslation()(connect(
         
         <Stepper className={clsx(classes.root, styles.button)} activeStep={activeStep} orientation="vertical">
           {Object.values(steps).map((item, index) =>
-            (<Step key={item.context}>
+            (<Step id={`step_${index}`} key={item.context}>
               <StepLabel>{item.title}</StepLabel>
               <StepContent>
                 <Typography>{item.context}</Typography>
@@ -238,7 +245,7 @@ export default withStyles(stylesMaterial)(withTranslation()(connect(
                       loading={loading}
                       disabled={loading}
                       onClick={() => {
-                        this.handleNextCompositionStep(steps[index + 1]?.title)
+                        this.handleNextCompositionStep(steps[index + 1]?.title, `step_${index+1}`)
                       }}
                       className={classes.button}
                     >

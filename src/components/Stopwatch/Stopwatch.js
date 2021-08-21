@@ -29,7 +29,7 @@ export default class Stopwatch extends React.Component {
   start = () => {
     if (!this.state.running) {
       this.setState({ running: true });
-      this.watch = setInterval(() => this.pace(), 10);
+      this.watch = setInterval(() => this.pace(), 100);
     }
   };
   
@@ -39,7 +39,7 @@ export default class Stopwatch extends React.Component {
   };
   
   pace = () => {
-    this.setState({ currentTimeMs: this.state.currentTimeMs + 10 });
+    this.setState({ currentTimeMs: this.state.currentTimeMs + 100 });
     if (this.state.currentTimeMs >= 1000) {
       this.setState({ currentTimeSec: this.state.currentTimeSec + 1, currentTimeMs: 0 });
     }
