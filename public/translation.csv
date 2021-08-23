@@ -13,3 +13,4 @@ QualityMonitoringSystem,"Система контроля качества про
 AuthorizeToProceed,Для начала сборки авторизуйтесь,Authorize to proceed
 NotEnoughDuration,Слишком малая длительность этапа!,Step duration is too small!
 CancelComposition,Отменить сборку,Cancel composition
+SavePassport,Сохранить паспорт,Save passport

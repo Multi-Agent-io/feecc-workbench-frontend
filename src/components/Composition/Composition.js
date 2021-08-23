@@ -35,6 +35,9 @@ const stylesMaterial = {
   },
   buttonCancel    : {
     marginLeft: "20px"
+  },
+  uploadButton    : {
+    marginBottom: "40px"
   }
 }
 
@@ -85,7 +88,6 @@ export default withStyles(stylesMaterial)(withTranslation()(connect(
     this.setState({ stepDuration: duration })
   }
   
-  
   successChecker = (res) => {
     if (res.status === false) {
       this.props.raiseNotification(res.comment)
@@ -127,28 +129,12 @@ export default withStyles(stylesMaterial)(withTranslation()(connect(
     }
     if (!smartProtectionBlock) {
       setTimeout(() => {
-        if (finishFlag && this.state.activeStep === Object.entries(this.props.steps).length - 1) {
-          this.props.uploadComposition(
-            this.props.unit.unit_internal_id,
-            (res) => {
-              if (!this.successChecker(res))
-                return false
-              this.props.doFetchComposition(() => {
-                return true
-              }, null)
-              this.props.goToMenu()
-              return true
-            },
-            (res) => {
-              if (res !== undefined)
-                this.props.raiseNotification('Error while stopping record. Server connection error')
-              this.setState({ loading: false })
-            })
-          
-        }
+        if (finishFlag && this.state.activeStep === Object.entries(this.props.steps).length - 1)
+          this.setState({ loading: false, activeStep: this.state.activeStep + 1 })
       }, 100)
+      
       setTimeout(() => {
-        if (finishFlag && this.state.activeStep !== Object.entries(this.props.steps).length - 1) {
+        if (finishFlag && this.state.activeStep < Object.entries(this.props.steps).length - 1) {
           this.handleStageRecordStart(productionStageName, stepID)
         } else if (finishFlag !== true)
           this.setState({ 'activeStep': this.state.activeStep + 1 })
@@ -174,13 +160,34 @@ export default withStyles(stylesMaterial)(withTranslation()(connect(
             inline  : "center",
             behavior: "smooth"
           })
-        }, 100)
+        }, 200)
         return true
       }, (res) => {
         if (res !== undefined)
           this.props.raiseNotification('Error while sending data to server (return code !== 200)')
         this.setState({ loading: false })
       })
+  }
+  
+  handleCompositionUpload = () => {
+    this.setState({ loading: true })
+    this.props.uploadComposition(
+      this.props.unit.unit_internal_id,
+      (res) => {
+        if (!this.successChecker(res))
+          return false
+        this.props.doFetchComposition(() => {
+          return true
+        }, null)
+        this.props.goToMenu()
+        return true
+      },
+      (res) => {
+        if (res !== undefined)
+          this.props.raiseNotification('Error while uploading passport. Server connection error')
+        this.setState({ loading: false })
+      }
+    )
   }
   
   componentDidMount() {
@@ -198,14 +205,14 @@ export default withStyles(stylesMaterial)(withTranslation()(connect(
           if (index !== -1) {
             this.setState({ activeStep: index })
             setTimeout(() => {
-              let el = document.getElementById(`step_${index + 1}`)
+              console.log(`step_${index}`)
+              let el = document.getElementById(`step_${index}`)
               el.scrollIntoView({
                 block   : "center",
                 inline  : "center",
                 behavior: "smooth"
               })
-            }, 100)
-            
+            }, 200)
           }
         }
       })
@@ -284,6 +291,16 @@ export default withStyles(stylesMaterial)(withTranslation()(connect(
               </StepContent>
             </Step>))}
         </Stepper>
+        {activeStep === Object.entries(steps).length && (
+          <Button
+            color="blue1"
+            radius="10px"
+            staticWidth="240px"
+            loading={loading}
+            disabled={loading}
+            onClick={this.handleCompositionUpload}
+            className={classes.uploadButton}>{t('SavePassport')}</Button>
+        )}
       </div>
     )
   }
