@@ -117,3 +117,8 @@ export const doSetSteps = (dispatch, steps) => {
   })
 }
 
+export const doRevertCompositionStart = (dispatch) => {
+  dispatch({
+    type : types.STAGES__RESET_UNIT
+  })
+}

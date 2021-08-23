@@ -8,6 +8,7 @@ import {
   doCompositionUpload,
   doFetchComposition,
   doRaiseNotification,
+  doRevertCompositionStart,
   doStartStepRecord,
   doStopStepRecord
 } from "@reducers/stagesActions";
@@ -31,6 +32,9 @@ const stylesMaterial = {
   buttonStart     : {
     marginTop : "20px",
     marginLeft: "20px"
+  },
+  buttonCancel    : {
+    marginLeft: "20px"
   }
 }
 
@@ -42,12 +46,13 @@ export default withStyles(stylesMaterial)(withTranslation()(connect(
     compositionID     : store.stages.getIn(['composition', 'unit_internal_id'])
   }),
   (dispatch) => ({
-    goToMenu          : () => dispatch(replace({ pathname: '/menu' })),
-    startStepRecord   : (unitID, productionStageName, additionalInfo, successChecker, errorChecker) => doStartStepRecord(dispatch, unitID, productionStageName, additionalInfo, successChecker, errorChecker),
-    stopStepRecord    : (additionalInfo, unitInternalID, successChecker, errorChecker) => doStopStepRecord(dispatch, unitInternalID, additionalInfo, successChecker, errorChecker),
-    uploadComposition : (unitID, successChecker, errorChecker) => doCompositionUpload(dispatch, unitID, successChecker, errorChecker),
-    doFetchComposition: (successChecker, errorChecker) => doFetchComposition(dispatch, successChecker, errorChecker),
-    raiseNotification : (notificationMessage) => doRaiseNotification(dispatch, notificationMessage)
+    goToMenu              : () => dispatch(replace({ pathname: '/menu' })),
+    startStepRecord       : (unitID, productionStageName, additionalInfo, successChecker, errorChecker) => doStartStepRecord(dispatch, unitID, productionStageName, additionalInfo, successChecker, errorChecker),
+    stopStepRecord        : (additionalInfo, unitInternalID, successChecker, errorChecker) => doStopStepRecord(dispatch, unitInternalID, additionalInfo, successChecker, errorChecker),
+    uploadComposition     : (unitID, successChecker, errorChecker) => doCompositionUpload(dispatch, unitID, successChecker, errorChecker),
+    doFetchComposition    : (successChecker, errorChecker) => doFetchComposition(dispatch, successChecker, errorChecker),
+    raiseNotification     : (notificationMessage) => doRaiseNotification(dispatch, notificationMessage),
+    revertCompositionStart: () => doRevertCompositionStart(dispatch)
   })
 )(class Composition extends React.Component {
   
@@ -165,8 +170,8 @@ export default withStyles(stylesMaterial)(withTranslation()(connect(
         setTimeout(() => {
           let el = document.getElementById(stepID)
           el.scrollIntoView({
-            block: "center",
-            inline: "center",
+            block   : "center",
+            inline  : "center",
             behavior: "smooth"
           })
         }, 100)
@@ -190,8 +195,18 @@ export default withStyles(stylesMaterial)(withTranslation()(connect(
       const title = Object.values(this.props.unit.unit_biography)[length_1 - 1].stage
       Object.values(this.props.steps).map((item, index) => {
         if (item.title === title) {
-          if (index !== -1)
+          if (index !== -1) {
             this.setState({ activeStep: index })
+            setTimeout(() => {
+              let el = document.getElementById(`step_${index + 1}`)
+              el.scrollIntoView({
+                block   : "center",
+                inline  : "center",
+                behavior: "smooth"
+              })
+            }, 100)
+            
+          }
         }
       })
     }
@@ -215,18 +230,29 @@ export default withStyles(stylesMaterial)(withTranslation()(connect(
     return (
       <div className={styles.wrapper}>
         {activeStep === -1 && (
-          <Button
-            color="blue1"
-            radius="10px"
-            staticWidth="240px"
-            disabled={loading}
-            onClick={() => {
-              this.handleNextCompositionStep(steps[0].title)
-              this.props.doFetchComposition(() => {
-                return true
-              }, null)
-            }}
-            className={classes.buttonStart}>{t('StartComposition')}</Button>
+          <div>
+            <Button
+              color="blue1"
+              radius="10px"
+              staticWidth="240px"
+              disabled={loading}
+              onClick={() => {
+                this.handleNextCompositionStep(steps[0].title)
+                this.props.doFetchComposition(() => {
+                  return true
+                }, null)
+              }}
+              className={classes.buttonStart}>{t('StartComposition')}</Button>
+            <Button
+              color="red1"
+              radius="10px"
+              staticWidth="240px"
+              onClick={() => {
+                this.props.revertCompositionStart()
+                this.props.goToMenu()
+              }}
+              className={classes.buttonCancel}>{t('CancelComposition')}</Button>
+          </div>
         )}
         
         <Stepper className={clsx(classes.root, styles.button)} activeStep={activeStep} orientation="vertical">
@@ -245,7 +271,7 @@ export default withStyles(stylesMaterial)(withTranslation()(connect(
                       loading={loading}
                       disabled={loading}
                       onClick={() => {
-                        this.handleNextCompositionStep(steps[index + 1]?.title, `step_${index+1}`)
+                        this.handleNextCompositionStep(steps[index + 1]?.title, `step_${index + 1}`)
                       }}
                       className={classes.button}
                     >
