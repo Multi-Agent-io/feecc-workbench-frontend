@@ -149,6 +149,7 @@ export default withStyles(stylesMaterial)(withTranslation()(connect(
       {},
       (res) => {
         if (!this.successChecker(res))
+          this.setState({ loading: false })
           return false
         // console.log('moving')
         this.setState({ 'activeStep': this.state.activeStep + 1 })
