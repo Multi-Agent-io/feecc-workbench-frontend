@@ -14,3 +14,5 @@ AuthorizeToProceed,Для начала сборки авторизуйтесь,A
 NotEnoughDuration,Слишком малая длительность этапа!,Step duration is too small!
 CancelComposition,Отменить сборку,Cancel composition
 SavePassport,Сохранить паспорт,Save passport
+SpecifyCompositionType,Укажите вариант сборки,Specify composition type
+Back,Назад,Back

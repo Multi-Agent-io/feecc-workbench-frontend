@@ -18,7 +18,7 @@ export const doFetchComposition = (dispatch, successChecker, errorChecker) => {
   ).then(errorChecker)
 }
 
-export const doCreateUnit = (dispatch, successChecker, errorChecker) => {
+export const doCreateUnit = (dispatch, unit_type, successChecker, errorChecker) => {
   axiosWrapper(
     dispatch,
     types.STAGES__CREATE_NEW_UNIT,
@@ -26,7 +26,7 @@ export const doCreateUnit = (dispatch, successChecker, errorChecker) => {
       method: "post",
       url   : `${config.socket}/api/unit/new`,
       data  : {
-        unit_type: config.unit_type
+        unit_type: unit_type
       }
     },
     successChecker

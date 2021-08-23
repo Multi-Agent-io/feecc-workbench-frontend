@@ -2,9 +2,12 @@ import { withTranslation } from "react-i18next";
 import { connect } from "react-redux";
 import React from 'react'
 import styles from './Menu.module.css'
-import { doCreateUnit, doLogout, doRaiseNotification } from "@reducers/stagesActions";
+import { doCreateUnit, doLogout, doRaiseNotification, doSetSteps } from "@reducers/stagesActions";
 import Button from "@/uikit/Button";
 import PropTypes from "prop-types"
+import config from '../../../configs/config.json'
+import steps_unit_1 from '@steps/pages_unit_1.csv'
+import steps_unit_2 from '@steps/pages_unit_2.csv'
 
 export default withTranslation()(connect(
   (store) => ({
@@ -12,7 +15,7 @@ export default withTranslation()(connect(
   }),
   (dispatch) => ({
     raiseNotification: (notificationMessage) => doRaiseNotification(dispatch, notificationMessage),
-    doCreateUnit     : () => doCreateUnit(dispatch, (r) => {
+    doCreateUnit     : (unit_type) => doCreateUnit(dispatch, unit_type, (r) => {
       if (r.status === false) {
         this.props.raiseNotification(r.comment)
         this.setState({ createLoading: false })
@@ -25,12 +28,13 @@ export default withTranslation()(connect(
         this.setState({ createLoading: false })
       }
     }),
-    doLogout         : (successChecker, errorChecker) => doLogout(dispatch, successChecker, errorChecker)
+    doLogout         : (successChecker, errorChecker) => doLogout(dispatch, successChecker, errorChecker),
+    setSteps         : (steps) => doSetSteps(dispatch, steps)
   })
 )(class Menu extends React.Component {
   
   static propTypes = {
-    unitID           : PropTypes.string,
+    unitID: PropTypes.string,
     
     raiseNotification: PropTypes.func.isRequired,
     doCreateUnit     : PropTypes.func.isRequired,
@@ -38,13 +42,19 @@ export default withTranslation()(connect(
   }
   
   state = {
-    createLoading: false,
-    logoutLoading: false
+    createLoading     : false,
+    logoutLoading     : false,
+    chooseVariantModal: false
   }
   
-  handleCreateUnit = () => {
+  handleCreateUnit = (unitType) => {
+    if (unitType === config.unit_type_1)
+      this.props.setSteps(steps_unit_1)
+    if (unitType === config.unit_type_2)
+      this.props.setSteps(steps_unit_2)
+    
     this.setState({ createLoading: true })
-    this.props.doCreateUnit()
+    this.props.doCreateUnit(unitType)
   }
   
   handleUserLogout = () => {
@@ -61,25 +71,57 @@ export default withTranslation()(connect(
   
   render() {
     const { t } = this.props
-    const { createLoading, logoutLoading } = this.state
+    const { createLoading, logoutLoading, chooseVariantModal } = this.state
     return (
       <div className={styles.wrapper}>
-        <div className={styles.buttons}>
-          <Button
-            button
-            color="blue1"
-            radius="15px"
-            onClick={this.handleCreateUnit}
-            className={styles.startComposition} loading={createLoading}>{t('StartComposition')}</Button>
-        </div>
-        <div className={styles.buttons}>
-          <Button
-            button
-            color="red1"
-            radius="15px"
-            onClick={this.handleUserLogout}
-            className={styles.startComposition} loading={logoutLoading}>{t('FinishSession')}</Button>
-        </div>
+        {!chooseVariantModal ? (
+            <div>
+              <div className={styles.buttons}>
+                <Button
+                  button
+                  color="blue1"
+                  radius="15px"
+                  onClick={() => this.setState({ chooseVariantModal: true })}
+                  className={styles.startComposition} loading={createLoading}>{t('StartComposition')}</Button>
+              </div>
+              <div className={styles.buttons}>
+                <Button
+                  button
+                  color="red1"
+                  radius="15px"
+                  onClick={this.handleUserLogout}
+                  className={styles.startComposition} loading={logoutLoading}>{t('FinishSession')}</Button>
+              </div>
+            </div>
+          ) :
+          <div>
+            <div className={styles.header}>{t('SpecifyCompositionType')}</div>
+            <div className={styles.buttons}>
+              <Button
+                button
+                color="blue1"
+                radius="15px"
+                onClick={() => this.handleCreateUnit(config.unit_type_1)}
+                className={styles.chooseOptions} loading={createLoading}>{config.unit_type_1}</Button>
+            </div>
+            <div className={styles.buttons}>
+              <Button
+                button
+                color="blue1"
+                radius="15px"
+                onClick={() => this.handleCreateUnit(config.unit_type_2)}
+                className={styles.chooseOptions} loading={logoutLoading}>{config.unit_type_2}</Button>
+            </div>
+            <div className={styles.buttons}>
+              <Button
+                button
+                color="red1"
+                radius="15px"
+                onClick={() => this.setState({ chooseVariantModal: false })}
+                className={styles.startComposition} loading={logoutLoading}>{t('Back')}</Button>
+            </div>
+          </div>
+        }
       </div>
     )
   }

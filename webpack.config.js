@@ -67,15 +67,19 @@ module.exports = {
                 exclude: /\.module\.css$/
             },
             {
+                test: /\.csv$/,
+                exclude: [
+                  /node_modules/,
+                  /translation.csv$/
+                ],
+                use: 'csv-loader?header=true'
+            },
+            {
                 test: /translation.csv$/,
                 exclude: /node_modules/,
                 use: [path.resolve('./loaders/i18next-custom-loader.js'), 'csv-loader?header=true?skipEmptyLines=true'],
-            },
-            {
-                test: /pages.csv$/,
-                exclude: /node_modules/,
-                use: 'csv-loader?header=true'
             }
+            
         ]
     },
     devServer: {
@@ -92,7 +96,8 @@ module.exports = {
         alias: {
             '@': path.resolve(__dirname, 'src'),
             '@components': path.resolve(__dirname, 'src/components'),
-            '@reducers': path.resolve(__dirname, 'src/reducers')
+            '@reducers': path.resolve(__dirname, 'src/reducers'),
+            '@steps': path.resolve(__dirname, 'configs/unitsSteps')
         }
     }
 };

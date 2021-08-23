@@ -8,7 +8,7 @@ import {
   doCompositionUpload,
   doFetchComposition,
   doRaiseNotification,
-  doRevertCompositionStart,
+  doRevertCompositionStart, doSetSteps,
   doStartStepRecord,
   doStopStepRecord
 } from "@reducers/stagesActions";
@@ -17,6 +17,8 @@ import Stopwatch from "@components/Stopwatch/Stopwatch";
 import Button from "@/uikit/Button";
 import config from '../../../configs/config.json'
 import PropTypes from "prop-types";
+import steps_unit_1 from '@steps/pages_unit_1.csv'
+import steps_unit_2 from '@steps/pages_unit_2.csv'
 
 const stylesMaterial = {
   root            : {
@@ -55,7 +57,8 @@ export default withStyles(stylesMaterial)(withTranslation()(connect(
     uploadComposition     : (unitID, successChecker, errorChecker) => doCompositionUpload(dispatch, unitID, successChecker, errorChecker),
     doFetchComposition    : (successChecker, errorChecker) => doFetchComposition(dispatch, successChecker, errorChecker),
     raiseNotification     : (notificationMessage) => doRaiseNotification(dispatch, notificationMessage),
-    revertCompositionStart: () => doRevertCompositionStart(dispatch)
+    revertCompositionStart: () => doRevertCompositionStart(dispatch),
+    setSteps: (steps) => doSetSteps(dispatch, steps)
   })
 )(class Composition extends React.Component {
   
@@ -118,6 +121,7 @@ export default withStyles(stylesMaterial)(withTranslation()(connect(
             if (!this.successChecker(res))
               return false
             finishFlag = true
+            // this.setState({ loading: false })
             return true
           }, (res) => {
             if (res !== undefined) {
@@ -148,9 +152,10 @@ export default withStyles(stylesMaterial)(withTranslation()(connect(
       productionStageName,
       {},
       (res) => {
-        if (!this.successChecker(res))
+        if (!this.successChecker(res)) {
           this.setState({ loading: false })
           return false
+        }
         // console.log('moving')
         this.setState({ 'activeStep': this.state.activeStep + 1 })
         this.setState({ loading: false })
@@ -192,6 +197,10 @@ export default withStyles(stylesMaterial)(withTranslation()(connect(
   }
   
   componentDidMount() {
+    // If no steps were specified but composition needs to be restored try first file and then next
+    if(this.props.steps[0].title === 'title1') {
+      this.props.setSteps(steps_unit_1)
+    }
     if (
       this.props.steps !== undefined
       && this.props.unit.unit_biography !== undefined
@@ -201,12 +210,13 @@ export default withStyles(stylesMaterial)(withTranslation()(connect(
     ) {
       const length_1 = Object.values(this.props.unit.unit_biography).length
       const title = Object.values(this.props.unit.unit_biography)[length_1 - 1].stage
+      let stepFound = false
       Object.values(this.props.steps).map((item, index) => {
         if (item.title === title) {
+          stepFound = true
           if (index !== -1) {
             this.setState({ activeStep: index })
             setTimeout(() => {
-              console.log(`step_${index}`)
               let el = document.getElementById(`step_${index}`)
               el.scrollIntoView({
                 block   : "center",
@@ -217,6 +227,27 @@ export default withStyles(stylesMaterial)(withTranslation()(connect(
           }
         }
       })
+      if (!stepFound){
+        this.props.setSteps(steps_unit_2)
+        setTimeout(()=>{
+          Object.values(this.props.steps).map((item, index) => {
+            if (item.title === title) {
+              if (index !== -1) {
+                this.setState({ activeStep: index })
+                setTimeout(() => {
+                  let el = document.getElementById(`step_${index}`)
+                  el.scrollIntoView({
+                    block   : "center",
+                    inline  : "center",
+                    behavior: "smooth"
+                  })
+                }, 200)
+              }
+            }
+          })
+        },200)
+        
+      }
     }
   }
   
