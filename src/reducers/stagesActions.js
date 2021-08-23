@@ -24,7 +24,7 @@ export const doCreateUnit = (dispatch, successChecker, errorChecker) => {
     types.STAGES__CREATE_NEW_UNIT,
     {
       method: "post",
-      url   : `http://localhost:5000/api/unit/new`,
+      url   : `${config.socket}/api/unit/new`,
       data  : {
         unit_type: config.unit_type
       }
