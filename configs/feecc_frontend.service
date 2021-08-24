@@ -7,3 +7,6 @@ Type=forking
 OOMScoreAdjust=-100
 ExecStart=/usr/bin/node /home/iota02/Documents/Dev/MVAS_2/feecc-hub-frontend/nodeServer.js
 Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target
