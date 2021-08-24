@@ -29,16 +29,20 @@ const stylesMaterial = {
     marginBottom: "20px",
   },
   button          : {
+    // color       : "#20639B",
     marginRight: "20px"
   },
   buttonStart     : {
+    // color       : "#20639B",
     marginTop : "20px",
     marginLeft: "20px"
   },
   buttonCancel    : {
-    marginLeft: "20px"
+    marginLeft: "20px",
+    // color     : "#ED553B"
   },
   uploadButton    : {
+    // color       : "#20639B",
     marginBottom: "40px"
   }
 }
@@ -269,7 +273,7 @@ export default withStyles(stylesMaterial)(withTranslation()(connect(
         {activeStep === -1 && (
           <div>
             <Button
-              color="blue1"
+              color="#20639B"
               radius="10px"
               staticWidth="240px"
               disabled={loading}
@@ -281,7 +285,7 @@ export default withStyles(stylesMaterial)(withTranslation()(connect(
               }}
               className={classes.buttonStart}>{t('StartComposition')}</Button>
             <Button
-              color="red1"
+              color="#ED553B"
               radius="10px"
               staticWidth="240px"
               onClick={() => {
@@ -302,7 +306,7 @@ export default withStyles(stylesMaterial)(withTranslation()(connect(
                   <div className={styles.controls}>
                     <Button
                       variant="contained"
-                      color="blue1"
+                      color="#20639B"
                       radius="10px"
                       staticWidth="120px"
                       loading={loading}
@@ -325,7 +329,7 @@ export default withStyles(stylesMaterial)(withTranslation()(connect(
         </Stepper>
         {activeStep === Object.entries(steps).length && (
           <Button
-            color="blue1"
+            color="#20639B"
             radius="10px"
             staticWidth="240px"
             loading={loading}

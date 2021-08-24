@@ -34,8 +34,7 @@ export default withTranslation()(connect(
 )(class Menu extends React.Component {
   
   static propTypes = {
-    unitID: PropTypes.string,
-    
+    unitID           : PropTypes.string,
     raiseNotification: PropTypes.func.isRequired,
     doCreateUnit     : PropTypes.func.isRequired,
     doLogout         : PropTypes.func.isRequired
@@ -79,7 +78,7 @@ export default withTranslation()(connect(
               <div className={styles.buttons}>
                 <Button
                   button
-                  color="blue1"
+                  color="#20639B"
                   radius="15px"
                   onClick={() => this.setState({ chooseVariantModal: true })}
                   className={styles.startComposition} loading={createLoading}>{t('StartComposition')}</Button>
@@ -87,7 +86,7 @@ export default withTranslation()(connect(
               <div className={styles.buttons}>
                 <Button
                   button
-                  color="red1"
+                  color="#ED553B"
                   radius="15px"
                   onClick={this.handleUserLogout}
                   className={styles.startComposition} loading={logoutLoading}>{t('FinishSession')}</Button>
@@ -99,7 +98,7 @@ export default withTranslation()(connect(
             <div className={styles.buttons}>
               <Button
                 button
-                color="blue1"
+                color="#20639B"
                 radius="15px"
                 onClick={() => this.handleCreateUnit(config.unit_type_1)}
                 className={styles.chooseOptions} loading={createLoading}>{config.unit_type_1}</Button>
@@ -107,7 +106,7 @@ export default withTranslation()(connect(
             <div className={styles.buttons}>
               <Button
                 button
-                color="blue1"
+                color="#20639B"
                 radius="15px"
                 onClick={() => this.handleCreateUnit(config.unit_type_2)}
                 className={styles.chooseOptions} loading={logoutLoading}>{config.unit_type_2}</Button>
@@ -115,7 +114,7 @@ export default withTranslation()(connect(
             <div className={styles.buttons}>
               <Button
                 button
-                color="red1"
+                color="#ED553B"
                 radius="15px"
                 onClick={() => this.setState({ chooseVariantModal: false })}
                 className={styles.startComposition} loading={logoutLoading}>{t('Back')}</Button>
