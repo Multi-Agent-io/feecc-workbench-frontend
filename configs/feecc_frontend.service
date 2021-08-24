@@ -5,5 +5,5 @@ Description=Node.js for Feecc frontend
 Environment=NODE_PORT=8080
 Type=forking
 OOMScoreAdjust=-100
-ExecStart=/usr/bin/node ~/Documents/Dev/MVAS_2/feecc-hub-frontend/nodeServer.js
+ExecStart=/usr/bin/node /home/iota02/Documents/Dev/MVAS_2/feecc-hub-frontend/nodeServer.js
 Restart=on-failure
