@@ -1,11 +1,14 @@
 [Unit]
-Description=Node.js for Feecc frontend
+Description=Node.js server for Frontend of Feecc QA system
+After=network.target
 
 [Service]
-Environment=NODE_PORT=8080
 Type=forking
-OOMScoreAdjust=-100
-ExecStart=/usr/bin/node /home/iota02/Documents/Dev/MVAS_2/feecc-hub-frontend/nodeServer.js
+WorkingDirectory=FRONTEND_DIRECTORY
+Environment=NODE_PORT=3000
+ExecStart=/usr/bin/node /FRONTEND_DIRECTORY/nodeServer.js
+User=PROJECT_USER
+StartLimitBurst=10
 Restart=on-failure
 
 [Install]
