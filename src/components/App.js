@@ -8,12 +8,17 @@ import Login from "@components/Login/Login"
 import Menu from "@components/Menu/Menu"
 import Composition from "@components/Composition/Composition"
 import Notifications from "@components/Notifications/Notifications"
+import { doGetWorkbenchNumber, doRaiseNotification } from "@reducers/stagesActions";
 
 
 export default withTranslation()(connect(
   (store) => ({
-    location: store.router.location.pathname
+    location       : store.router.location.pathname,
   }),
+  (dispatch) => ({
+    raiseNotification : (notificationMessage) => doRaiseNotification(dispatch, notificationMessage),
+    getWorkbenchNumber: (successChecker, errorChecker) => doGetWorkbenchNumber(dispatch, successChecker, errorChecker)
+  })
 )(class App extends Component {
   
   static propTypes = {
@@ -32,12 +37,26 @@ export default withTranslation()(connect(
     super(props)
   }
   
+  componentDidMount() {
+    this.props.getWorkbenchNumber(
+      (res) => {
+        if (!res.status) {
+          this.props.raiseNotification(res.comment)
+          return false
+        }
+        return true
+      },
+      null
+    )
+  }
+  
   route = path => this.routes.find(r => path.match(r[0]) !== null)?.[1]?.()
+  
   render() {
     const { t } = this.props
     return (
       <div>
-        <Header />
+        <Header/>
         {this.route(this.props.location)}
         <Notifications/>
       </div>

@@ -15,7 +15,8 @@ export const stagesInitialState = fromJS({
     },
     composition: {},
     unit: {},
-    modalsNotifications: {}
+    modalsNotifications: {},
+    workbench_no: 0
 })
 
 export const stagesReducer = (state={}, action) => {
@@ -51,6 +52,9 @@ export const stagesReducer = (state={}, action) => {
             return state
               .set('steps', fromJS(action.steps))
               .deleteIn(['steps', Object.entries(action.steps).length-1])
+        case types.STAGES__SET_WORKBENCH_NO:
+            return state
+              .set('workbench_number', 2)
         default:
             return state
     }

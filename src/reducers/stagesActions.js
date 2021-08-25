@@ -1,11 +1,12 @@
 import { axiosWrapper, fetchWrapper, types } from "@reducers/common";
+import store from './main'
 import config from '../../configs/config.json'
 import axios from "axios";
 
 export const doFetchComposition = (dispatch, successChecker, errorChecker) => {
   fetchWrapper(
     dispatch,
-    `/api/workbench/${config.workbench_number}/status`,
+    `/api/workbench/${store.getState().stages.get('workbench_no')}/status`,
     types.STAGES__FETCH_COMPOSITION,
     {
       method : 'GET',
@@ -41,7 +42,7 @@ export const doLogout = (dispatch, successChecker, errorChecker) => {
       method: 'post',
       url   : `${config.socket}/api/employee/log-out`,
       data  : {
-        workbench_no: config.workbench_number
+        workbench_no: store.getState().stages.get('workbench_no')
       }
     },
     successChecker
@@ -56,7 +57,7 @@ export const doStartStepRecord = (dispatch, unitInternalID, productionStageName,
       method: 'post',
       url   : `${config.socket}/api/unit/${unitInternalID}/start`,
       data  : {
-        workbench_no         : config.workbench_number,
+        workbench_no         : store.getState().stages.get('workbench_no'),
         production_stage_name: productionStageName,
         additional_info      : additionalInfo
       }
@@ -73,7 +74,7 @@ export const doStopStepRecord = (dispatch, unitInternalID, additionalInfo, succe
       method: 'post',
       url   : `${config.socket}/api/unit/${unitInternalID}/end`,
       data  : {
-        workbench_no   : config.workbench_number,
+        workbench_no   : store.getState().stages.get('workbench_no'),
         additional_info: additionalInfo
       }
     },
@@ -89,7 +90,7 @@ export const doCompositionUpload = (dispatch, unitInternalID, successChecker, er
       method: 'post',
       url   : `${config.socket}/api/unit/${unitInternalID}/upload`,
       data  : {
-        workbench_no: config.workbench_number
+        workbench_no: store.getState().stages.get('workbench_no')
       }
     },
     successChecker
@@ -121,4 +122,19 @@ export const doRevertCompositionStart = (dispatch) => {
   dispatch({
     type : types.STAGES__RESET_UNIT
   })
+}
+
+export const doGetWorkbenchNumber = (dispatch, successChecker, errorChecker) => {
+  fetchWrapper(
+    dispatch,
+    '/api/status/client_info',
+    types.STAGES__SET_WORKBENCH_NO,
+    {
+      method: 'GET',
+      headers: {
+        'Content-Type'               : 'application/json',
+        'Access-Control-Allow-Origin': '*',
+      }
+    }, successChecker
+  ).then(errorChecker)
 }
