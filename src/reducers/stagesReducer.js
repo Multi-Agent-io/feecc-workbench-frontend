@@ -54,7 +54,7 @@ export const stagesReducer = (state={}, action) => {
               .deleteIn(['steps', Object.entries(action.steps).length-1])
         case types.STAGES__SET_WORKBENCH_NO:
             return state
-              .set('workbench_number', 2)
+              .set('workbench_no', action.workbench_no)
         default:
             return state
     }
