@@ -9,4 +9,6 @@ app.get('/*', function (req, res){
   res.sendFile(path.join(__dirname, 'target', 'index.html'))
 })
 
+console.log(`Server started on port: ${port}`)
+
 app.listen(port)
