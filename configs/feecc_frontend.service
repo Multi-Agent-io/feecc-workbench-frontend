@@ -3,7 +3,7 @@ Description=Node.js server for Frontend of Feecc QA system
 After=network.target
 
 [Service]
-Type=forking
+Type=simple
 WorkingDirectory=FRONTEND_DIRECTORY
 Environment=NODE_PORT=3000
 ExecStart=/usr/bin/node /FRONTEND_DIRECTORY/nodeServer.js
