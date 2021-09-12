@@ -22,6 +22,10 @@ export default class Stopwatch extends React.Component {
     clearInterval(this.watch)
   }
   
+  isRunning = () => {
+    return this.state.running
+  }
+  
   sendTime = () => {
     this.props.setStepDuration && this.props.setStepDuration(this.state.currentTimeSec + this.state.currentTimeMin * 60 + this.state.currentTimeHrs * 3600)
   }

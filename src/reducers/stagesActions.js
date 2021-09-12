@@ -4,19 +4,22 @@ import config from '../../configs/config.json'
 import axios from "axios";
 
 export const doFetchComposition = (dispatch, successChecker, errorChecker) => {
-  fetchWrapper(
-    dispatch,
-    `/api/workbench/${store.getState().stages.get('workbench_no')}/status`,
-    types.STAGES__FETCH_COMPOSITION,
-    {
-      method : 'GET',
-      headers: {
-        'Content-Type'               : 'application/json',
-        'Access-Control-Allow-Origin': '*',
-      }
-    },
-    successChecker
-  ).then(errorChecker)
+  // To check if one record stopped and new started without /status request as it drops composition timer
+  if (!store.getState().stages.get('betweenEndAndStartFlag')) {
+    fetchWrapper(
+      dispatch,
+      `/api/workbench/${store.getState().stages.get('workbench_no')}/status`,
+      types.STAGES__FETCH_COMPOSITION,
+      {
+        method : 'GET',
+        headers: {
+          'Content-Type'               : 'application/json',
+          'Access-Control-Allow-Origin': '*',
+        }
+      },
+      successChecker
+    ).then(errorChecker)
+  }
 }
 
 export const doCreateUnit = (dispatch, unit_type, successChecker, errorChecker) => {
@@ -120,7 +123,7 @@ export const doSetSteps = (dispatch, steps) => {
 
 export const doRevertCompositionStart = (dispatch) => {
   dispatch({
-    type : types.STAGES__RESET_UNIT
+    type: types.STAGES__RESET_UNIT
   })
 }
 
@@ -130,11 +133,18 @@ export const doGetWorkbenchNumber = (dispatch, successChecker, errorChecker) => 
     '/api/status/client_info',
     types.STAGES__SET_WORKBENCH_NO,
     {
-      method: 'GET',
+      method : 'GET',
       headers: {
         'Content-Type'               : 'application/json',
         'Access-Control-Allow-Origin': '*',
       }
     }, successChecker
   ).then(errorChecker)
+}
+
+export const doSetBetweenFlag = (dispatch, state) => {
+  dispatch({
+    type: types.STAGES__SET_BETWEEN_FLAG,
+    state: state
+  })
 }

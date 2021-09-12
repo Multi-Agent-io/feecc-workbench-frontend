@@ -41,18 +41,22 @@ export default withTranslation()(connect(
   }
   
   state = {
-    createLoading     : false,
+    createLoading_1   : false,
+    createLoading_2   : false,
     logoutLoading     : false,
     chooseVariantModal: false
   }
   
   handleCreateUnit = (unitType) => {
-    if (unitType === config.unit_type_1)
+    if (unitType === config.unit_type_1) {
       this.props.setSteps(steps_unit_1)
-    if (unitType === config.unit_type_2)
+      this.setState({ createLoading_1: true })
+    }
+    if (unitType === config.unit_type_2) {
       this.props.setSteps(steps_unit_2)
+      this.setState({ createLoading_2: true })
+    }
     
-    this.setState({ createLoading: true })
     this.props.doCreateUnit(unitType)
   }
   
@@ -70,7 +74,7 @@ export default withTranslation()(connect(
   
   render() {
     const { t } = this.props
-    const { createLoading, logoutLoading, chooseVariantModal } = this.state
+    const { createLoading_1, createLoading_2, logoutLoading, chooseVariantModal } = this.state
     return (
       <div className={styles.wrapper}>
         {!chooseVariantModal ? (
@@ -81,7 +85,7 @@ export default withTranslation()(connect(
                   color="#20639B"
                   radius="15px"
                   onClick={() => this.setState({ chooseVariantModal: true })}
-                  className={styles.startComposition} loading={createLoading}>{t('StartComposition')}</Button>
+                  className={styles.startComposition} loading={createLoading_1}>{t('StartComposition')}</Button>
               </div>
               <div className={styles.buttons}>
                 <Button
@@ -101,7 +105,7 @@ export default withTranslation()(connect(
                 color="#20639B"
                 radius="15px"
                 onClick={() => this.handleCreateUnit(config.unit_type_1)}
-                className={styles.chooseOptions} loading={createLoading}>{config.unit_type_1}</Button>
+                className={styles.chooseOptions} loading={createLoading_1}>{config.unit_type_1}</Button>
             </div>
             <div className={styles.buttons}>
               <Button
@@ -109,7 +113,7 @@ export default withTranslation()(connect(
                 color="#20639B"
                 radius="15px"
                 onClick={() => this.handleCreateUnit(config.unit_type_2)}
-                className={styles.chooseOptions} loading={logoutLoading}>{config.unit_type_2}</Button>
+                className={styles.chooseOptions} loading={createLoading_2}>{config.unit_type_2}</Button>
             </div>
             <div className={styles.buttons}>
               <Button

@@ -16,7 +16,8 @@ export const stagesInitialState = fromJS({
     composition: {},
     unit: {},
     modalsNotifications: {},
-    workbench_no: 0
+    workbench_no: 0,
+    betweenEndAndStartFlag: false
 })
 
 export const stagesReducer = (state={}, action) => {
@@ -55,6 +56,9 @@ export const stagesReducer = (state={}, action) => {
         case types.STAGES__SET_WORKBENCH_NO:
             return state
               .set('workbench_no', action.workbench_no)
+        case types.STAGES__SET_BETWEEN_FLAG:
+            return state
+              .set('betweenEndAndStartFlag', action.state)
         default:
             return state
     }

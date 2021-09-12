@@ -8,7 +8,7 @@ import {
   doCompositionUpload,
   doFetchComposition,
   doRaiseNotification,
-  doRevertCompositionStart, doSetSteps,
+  doRevertCompositionStart, doSetBetweenFlag, doSetSteps,
   doStartStepRecord,
   doStopStepRecord
 } from "@reducers/stagesActions";
@@ -62,7 +62,8 @@ export default withStyles(stylesMaterial)(withTranslation()(connect(
     doFetchComposition    : (successChecker, errorChecker) => doFetchComposition(dispatch, successChecker, errorChecker),
     raiseNotification     : (notificationMessage) => doRaiseNotification(dispatch, notificationMessage),
     revertCompositionStart: () => doRevertCompositionStart(dispatch),
-    setSteps: (steps) => doSetSteps(dispatch, steps)
+    setSteps              : (steps) => doSetSteps(dispatch, steps),
+    setBetweenFlag        : (state) => doSetBetweenFlag(dispatch, state)
   })
 )(class Composition extends React.Component {
   
@@ -133,12 +134,15 @@ export default withStyles(stylesMaterial)(withTranslation()(connect(
               this.setState({ loading: false })
             }
           })
+        this.props.setBetweenFlag(true)
       }
     }
     if (!smartProtectionBlock) {
       setTimeout(() => {
-        if (finishFlag && this.state.activeStep === Object.entries(this.props.steps).length - 1)
+        if (finishFlag && this.state.activeStep === Object.entries(this.props.steps).length - 1) {
           this.setState({ loading: false, activeStep: this.state.activeStep + 1 })
+          this.props.setBetweenFlag(false)
+        }
       }, 100)
       
       setTimeout(() => {
@@ -157,7 +161,6 @@ export default withStyles(stylesMaterial)(withTranslation()(connect(
       {},
       (res) => {
         if (!this.successChecker(res)) {
-          this.setState({ loading: false })
           return false
         }
         // console.log('moving')
@@ -186,10 +189,9 @@ export default withStyles(stylesMaterial)(withTranslation()(connect(
       (res) => {
         if (!this.successChecker(res))
           return false
-        this.props.doFetchComposition(() => {
-          return true
-        }, null)
-        this.props.goToMenu()
+        this.props.setBetweenFlag(false)
+        this.props.doFetchComposition(() => { return true }, null)
+        setTimeout(()=>this.props.goToMenu(), 100)
         return true
       },
       (res) => {
