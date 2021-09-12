@@ -26,15 +26,15 @@
   justify-content: center;
 }
 
-.mvasLogo{
+.leftLogo{
   width: 130px;
   height: 150px;
 }
-.robonomicsLogo {
+.centerLogo {
   width: 150px;
   height: 150px;
 }
-.geoscanLogo {
+.rightLogo {
   width: 180px;
   height: 180px;
 }
