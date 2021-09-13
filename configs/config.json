@@ -1,9 +1,9 @@
 {
   "socket": "http://localhost:5000",
-  "unit_type_1": "анализатор роста колиного эфира",
-  "unit_type_2": "анализатор роста эфира вани",
+  "unit_type_1": "подсборка 1",
+  "unit_type_2": "подсборка 2",
   "interface_language": "ru",
   "use_dev_steps": false,
-  "smart_protection": false,
+  "smart_protection": true,
   "dev_show_reducers": false
 }
