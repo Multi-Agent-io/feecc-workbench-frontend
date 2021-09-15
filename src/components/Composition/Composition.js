@@ -89,7 +89,9 @@ export default withStyles(stylesMaterial)(withTranslation()(connect(
   state = {
     activeStep  : -1,
     stepDuration: 0,
-    loading     : false
+    loading_1   : false,
+    loafing_2   : false,
+    afterPause  : false
   }
   
   setStepDuration = (duration) => {
@@ -99,14 +101,14 @@ export default withStyles(stylesMaterial)(withTranslation()(connect(
   successChecker = (res) => {
     if (res.status === false) {
       this.props.raiseNotification(res.comment)
-      this.setState({ loading: false })
+      // this.setState({ loading: false })
       return false
     }
     return true
   }
   
   handleNextCompositionStep = (productionStageName, stepID) => {
-    this.setState({ loading: true })
+    this.setState({ loading_1: true })
     let smartProtectionBlock = false
     let finishFlag = this.state.activeStep === -1
     
@@ -115,7 +117,7 @@ export default withStyles(stylesMaterial)(withTranslation()(connect(
         if (this.state.stepDuration < 3) {
           smartProtectionBlock = true
           this.props.raiseNotification(this.props.t('NotEnoughDuration'))
-          setTimeout(() => this.setState({ loading: false }), 100)
+          setTimeout(() => this.setState({ loading_1: false }), 100)
         }
       }
       if (!smartProtectionBlock) {
@@ -131,7 +133,7 @@ export default withStyles(stylesMaterial)(withTranslation()(connect(
           }, (res) => {
             if (res !== undefined) {
               this.props.raiseNotification('Error while stopping record. Server connection error')
-              this.setState({ loading: false })
+              this.setState({ loading_1: false })
             }
           })
         this.props.setBetweenFlag(true)
@@ -153,7 +155,19 @@ export default withStyles(stylesMaterial)(withTranslation()(connect(
       }, 100)
     }
   }
-  
+
+  // handleStageRecordStop = (withProceed) => {
+  //   this.props.stopStepRecord(
+  //     {}, // Additional information
+  //     this.props.unit.unit_internal_id, // Unit id
+  //     (res) => { // success response checker
+  //       if (!this.successChecker(res))
+  //         return false
+  //
+  //     },
+  //   )
+  // }
+
   handleStageRecordStart = (productionStageName, stepID) => {
     this.props.startStepRecord(
       this.props.unit.unit_internal_id,
@@ -165,7 +179,7 @@ export default withStyles(stylesMaterial)(withTranslation()(connect(
         }
         // console.log('moving')
         this.setState({ 'activeStep': this.state.activeStep + 1 })
-        this.setState({ loading: false })
+        this.setState({ loading_1: false })
         setTimeout(() => {
           let el = document.getElementById(stepID)
           el.scrollIntoView({
@@ -178,12 +192,12 @@ export default withStyles(stylesMaterial)(withTranslation()(connect(
       }, (res) => {
         if (res !== undefined)
           this.props.raiseNotification('Error while sending data to server (return code !== 200)')
-        this.setState({ loading: false })
+        this.setState({ loading_1: false })
       })
   }
   
   handleCompositionUpload = () => {
-    this.setState({ loading: true })
+    this.setState({ loading_1: true })
     this.props.uploadComposition(
       this.props.unit.unit_internal_id,
       (res) => {
@@ -197,7 +211,7 @@ export default withStyles(stylesMaterial)(withTranslation()(connect(
       (res) => {
         if (res !== undefined)
           this.props.raiseNotification('Error while uploading passport. Server connection error')
-        this.setState({ loading: false })
+        this.setState({ loading_1: false })
       }
     )
   }
@@ -210,51 +224,50 @@ export default withStyles(stylesMaterial)(withTranslation()(connect(
     if (
       this.props.steps !== undefined
       && this.props.unit.unit_biography !== undefined
-      && this.props?.compositionOngoing
+      // && this.props?.compositionOngoing // It will be specified later for recovery or proceed mode
       && this.props.unit.unit_internal_id !== ''
       && this.props.unit.unit_internal_id !== undefined
     ) {
       const length_1 = Object.values(this.props.unit.unit_biography).length
       const title = Object.values(this.props.unit.unit_biography)[length_1 - 1].stage
-      let stepFound = false
-      Object.values(this.props.steps).map((item, index) => {
-        if (item.title === title) {
-          stepFound = true
-          if (index !== -1) {
-            this.setState({ activeStep: index })
-            setTimeout(() => {
-              let el = document.getElementById(`step_${index}`)
-              el.scrollIntoView({
-                block   : "center",
-                inline  : "center",
-                behavior: "smooth"
-              })
-            }, 200)
-          }
-        }
-      })
-      if (!stepFound){
-        this.props.setSteps(steps_unit_2)
-        setTimeout(()=>{
-          Object.values(this.props.steps).map((item, index) => {
-            if (item.title === title) {
-              if (index !== -1) {
-                this.setState({ activeStep: index })
-                setTimeout(() => {
-                  let el = document.getElementById(`step_${index}`)
-                  el.scrollIntoView({
-                    block   : "center",
-                    inline  : "center",
-                    behavior: "smooth"
-                  })
-                }, 200)
-              }
-            }
+      // Scroll to the element if it was found in this.props.steps
+      if (this.props?.compositionOngoing) {
+        // Check if step is in the first file. If not - function will return false and if will be started
+        // If in the first steps file step was not found - move to the next and repeat search
+        if (!this.searchAndMoveToStep(this.props.steps, title, true)){
+          this.props.setSteps(steps_unit_2, () => {
+            this.searchAndMoveToStep(this.props.steps, title, true)
           })
-        },200)
-        
+        }
+      } else {
+        // let stepFound = this.searchAndMoveToStep(this.props.steps, title, false)
+        if (this.searchAndMoveToStep(this.props.steps, title, false)){
+          this.setState({ afterPause: true, activeStep: -1 })
+        }
       }
     }
+  }
+
+  searchAndMoveToStep = (steps, title, doMove) => {
+    let stepFound = false
+    Object.values(steps).map((item, index) => {
+      if (item.title === title) {
+        stepFound = true
+        if (index !== -1) {
+          this.setState({activeStep: index})  // Select found step
+          if(doMove)
+            setTimeout(() => {
+            let el = document.getElementById(`step_${index}`)
+            el.scrollIntoView({
+              block: "center",
+              inline: "center",
+              behavior: "smooth"
+            })
+          }, 200) // Scroll to the selected step
+        }
+      }
+    })
+    return stepFound
   }
   
   componentDidUpdate(prevProps, prevState, snapshot) {
@@ -269,16 +282,17 @@ export default withStyles(stylesMaterial)(withTranslation()(connect(
   
   render() {
     const { classes, t, steps } = this.props
-    const { activeStep, loading } = this.state
+    const { activeStep, loading_1, loading_2, afterPause } = this.state
     return (
       <div className={styles.wrapper}>
-        {activeStep === -1 && (
+        {activeStep === -1 && !afterPause && (
           <div>
             <Button
               color="#20639B"
               radius="10px"
               staticWidth="240px"
-              disabled={loading}
+              disabled={loading_1}
+              loading={loading_1}
               onClick={() => {
                 this.handleNextCompositionStep(steps[0].title)
                 this.props.doFetchComposition(() => {
@@ -290,6 +304,8 @@ export default withStyles(stylesMaterial)(withTranslation()(connect(
               color="#ED553B"
               radius="10px"
               staticWidth="240px"
+              disabled={loading_2}
+              loading={loading_2}
               onClick={() => {
                 this.props.revertCompositionStart()
                 this.props.goToMenu()
@@ -297,7 +313,18 @@ export default withStyles(stylesMaterial)(withTranslation()(connect(
               className={classes.buttonCancel}>{t('CancelComposition')}</Button>
           </div>
         )}
-        
+        {activeStep === -1 && afterPause && (
+          <div>
+            <Button
+              color="#20639B"
+              radius="10px"
+              staticWidth="240px"
+              disabled={loading_1}
+              className={classes.buttonStart}
+            >Продолжить сборку</Button>
+          </div>
+        )}
+
         <Stepper className={clsx(classes.root, styles.button)} activeStep={activeStep} orientation="vertical">
           {Object.values(steps).map((item, index) =>
             (<Step id={`step_${index}`} key={item.context}>
@@ -311,8 +338,8 @@ export default withStyles(stylesMaterial)(withTranslation()(connect(
                       color="#20639B"
                       radius="10px"
                       staticWidth="120px"
-                      loading={loading}
-                      disabled={loading}
+                      loading={loading_1}
+                      disabled={loading_1}
                       onClick={() => {
                         this.handleNextCompositionStep(steps[index + 1]?.title, `step_${index + 1}`)
                       }}
@@ -334,8 +361,8 @@ export default withStyles(stylesMaterial)(withTranslation()(connect(
             color="#20639B"
             radius="10px"
             staticWidth="240px"
-            loading={loading}
-            disabled={loading}
+            loading={loading_1}
+            disabled={loading_1}
             onClick={this.handleCompositionUpload}
             className={classes.uploadButton}>{t('SavePassport')}</Button>
         )}
