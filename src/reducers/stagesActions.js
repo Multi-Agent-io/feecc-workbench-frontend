@@ -144,7 +144,23 @@ export const doGetWorkbenchNumber = (dispatch, successChecker, errorChecker) => 
 
 export const doSetBetweenFlag = (dispatch, state) => {
   dispatch({
-    type: types.STAGES__SET_BETWEEN_FLAG,
+    type : types.STAGES__SET_BETWEEN_FLAG,
     state: state
   })
+}
+
+export const doGetBarcode = (dispatch, successChecker, errorChecker) => {
+  axiosWrapper(
+    dispatch,
+    undefined,
+    {
+      method : 'GET',
+      url    : 'http://127.0.0.2:8080/api/hid_buffer',
+      headers: {
+        'Content-Type'               : 'application/json',
+        'Access-Control-Allow-Origin': '*',
+      }
+    },
+    successChecker
+  ).then(errorChecker)
 }
