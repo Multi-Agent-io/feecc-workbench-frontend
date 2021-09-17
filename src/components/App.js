@@ -17,7 +17,7 @@ export default withTranslation()(connect(
   }),
   (dispatch) => ({
     raiseNotification : (notificationMessage) => doRaiseNotification(dispatch, notificationMessage),
-    getWorkbenchNumber: (successChecker, errorChecker) => doGetWorkbenchNumber(dispatch, successChecker, errorChecker)
+    // getWorkbenchNumber: (successChecker, errorChecker) => doGetWorkbenchNumber(dispatch, successChecker, errorChecker)
   })
 )(class App extends Component {
   
@@ -35,19 +35,6 @@ export default withTranslation()(connect(
   
   constructor(props) {
     super(props)
-  }
-  
-  componentDidMount() {
-    this.props.getWorkbenchNumber(
-      (res) => {
-        if (!res.status) {
-          this.props.raiseNotification(res.comment)
-          return false
-        }
-        return true
-      },
-      null
-    )
   }
   
   route = path => this.routes.find(r => path.match(r[0]) !== null)?.[1]?.()
