@@ -16,3 +16,5 @@ CancelComposition,Отменить сборку,Cancel composition
 SavePassport,Сохранить паспорт,Save passport
 SpecifyCompositionType,Укажите вариант сборки,Specify composition type
 Back,Назад,Back
+GettingWorkbenchNo,Идёт определение номера рабочего места,Workbench number receiving in progress
+ProceedComposition,Продолжить сборку,Proceed composition
