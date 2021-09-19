@@ -13,6 +13,7 @@ export const stagesInitialState = fromJS({
         'position': 'Engineer',
         'authorized': false
     },
+    finishedCompositionsIDs: [],
     composition: {},
     unit: {},
     modalsNotifications: {},
@@ -48,7 +49,11 @@ export const stagesReducer = (state={}, action) => {
               .deleteIn(['modalsNotifications', parseInt(action.notificationID)])
         case types.STAGES__RESET_UNIT:
             return state
+              .update('finishedCompositionsIDs', arr => arr.push(state.getIn(['unit', 'unit_internal_id'])))
               .deleteIn(['unit'])
+        case types.STAGES__SET_UNIT_ID:
+            return state
+              .setIn(['unit', 'unit_internal_id'], action.unitID)
         case types.STAGES__SET_STEPS:
             return state
               .set('steps', fromJS(action.steps))
