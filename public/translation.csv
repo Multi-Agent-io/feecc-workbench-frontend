@@ -18,3 +18,4 @@ SpecifyCompositionType,Укажите вариант сборки,Specify compos
 Back,Назад,Back
 GettingWorkbenchNo,Идёт определение номера рабочего места,Workbench number receiving in progress
 ProceedComposition,Продолжить сборку,Proceed composition
+SetOnPause,Пауза,Pause

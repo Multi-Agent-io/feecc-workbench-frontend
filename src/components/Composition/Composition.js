@@ -313,7 +313,7 @@ export default withStyles(stylesMaterial)(withTranslation()(connect(
               className={classes.buttonCancel}>{t('CancelComposition')}</Button>
           </div>
         )}
-        {activeStep === -1 && afterPause && (
+        {activeStep === -1 && afterPause === true && (
           <div>
             <Button
               color="#20639B"
@@ -321,10 +321,11 @@ export default withStyles(stylesMaterial)(withTranslation()(connect(
               staticWidth="240px"
               disabled={loading_1}
               className={classes.buttonStart}
-            >Продолжить сборку</Button>
+              onClick={() => this.proceedComposition()}
+            >{t('ProceedComposition')}</Button>
           </div>
         )}
-
+        
         <Stepper className={clsx(classes.root, styles.button)} activeStep={activeStep} orientation="vertical">
           {Object.values(steps).map((item, index) =>
             (<Step id={`step_${index}`} key={item.context}>
@@ -340,13 +341,25 @@ export default withStyles(stylesMaterial)(withTranslation()(connect(
                       staticWidth="120px"
                       loading={loading_1}
                       disabled={loading_1}
+                      className={classes.button}
                       onClick={() => {
                         this.handleNextCompositionStep(steps[index + 1]?.title, `step_${index + 1}`)
                       }}
-                      className={classes.button}
                     >
                       {activeStep === Object.entries(steps).length - 1 ? t('Finish') : t('Next')}
                     </Button>
+                    {activeStep !== Object.entries(steps).length - 1 && (
+                      <Button
+                        variant="contained"
+                        color="#20639B"
+                        radius="10px"
+                        staticWidth="120px"
+                        loading={loading_2}
+                        disabled={loading_2}
+                        className={classes.button}
+                        onClick={() => this.setOnPause()}
+                      >{t('SetOnPause')}</Button>
+                    )}
                     <div className={styles.timerWrapper}>
                       <Stopwatch setStepDuration={this.setStepDuration} ref={this.stageStopwatch}/>
                       {this.timeToRegular(item.duration)}
@@ -363,7 +376,7 @@ export default withStyles(stylesMaterial)(withTranslation()(connect(
             staticWidth="240px"
             loading={loading_1}
             disabled={loading_1}
-            onClick={this.handleCompositionUpload}
+            onClick={()=> this.handleCompositionUpload()}
             className={classes.uploadButton}>{t('SavePassport')}</Button>
         )}
       </div>
