@@ -164,3 +164,32 @@ export const doGetBarcode = (dispatch, successChecker, errorChecker) => {
     successChecker
   ).then(errorChecker)
 }
+
+export const doGetUnitBiography = (dispatch, unitID, successChecker, errorChecker) => {
+  fetchWrapper(
+    dispatch,
+    `/api/unit/${unitID}/info`,
+    undefined,
+    {
+      method : "GET",
+      headers: {
+        'Content-Type'               : 'application/json',
+        'Access-Control-Allow-Origin': '*',
+      }
+    },
+    successChecker,
+  ).then(errorChecker)
+}
+
+export const doSetCompositionID = (dispatch, unitID) => {
+  dispatch({
+    type  : types.STAGES__SET_UNIT_ID,
+    unitID: unitID
+  })
+}
+
+export const doResetUnit = (dispatch) => {
+  dispatch({
+    type: types.STAGES__RESET_UNIT
+  })
+}
