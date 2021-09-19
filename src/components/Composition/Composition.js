@@ -135,7 +135,6 @@ export default withStyles(stylesMaterial)(withTranslation()(connect(
             if (!this.successChecker(res))
               return false
             finishFlag = true
-            // this.setState({ loading: false })
             return true
           }, (res) => {
             if (res !== undefined) {
@@ -149,7 +148,7 @@ export default withStyles(stylesMaterial)(withTranslation()(connect(
     if (!smartProtectionBlock) {
       setTimeout(() => {
         if (finishFlag && this.state.activeStep === Object.entries(this.props.steps).length - 1) {
-          this.setState({ loading: false, activeStep: this.state.activeStep + 1 })
+          this.setState({ loading_1: false, activeStep: this.state.activeStep + 1 })
           this.props.setBetweenFlag(false)
         }
       }, 100)
@@ -162,19 +161,7 @@ export default withStyles(stylesMaterial)(withTranslation()(connect(
       }, 100)
     }
   }
-
-  // handleStageRecordStop = (withProceed) => {
-  //   this.props.stopStepRecord(
-  //     {}, // Additional information
-  //     this.props.unit.unit_internal_id, // Unit id
-  //     (res) => { // success response checker
-  //       if (!this.successChecker(res))
-  //         return false
-  //
-  //     },
-  //   )
-  // }
-
+  
   handleStageRecordStart = (productionStageName, stepID) => {
     this.props.startStepRecord(
       this.props.unit.unit_internal_id,
@@ -184,7 +171,6 @@ export default withStyles(stylesMaterial)(withTranslation()(connect(
         if (!this.successChecker(res)) {
           return false
         }
-        // console.log('moving')
         this.setState({ 'activeStep': this.state.activeStep + 1 })
         this.setState({ loading_1: false })
         setTimeout(() => {
@@ -212,7 +198,7 @@ export default withStyles(stylesMaterial)(withTranslation()(connect(
           return false
         this.props.setBetweenFlag(false)
         this.props.doFetchComposition(() => { return true }, null)
-        setTimeout(()=>this.props.goToMenu(), 100)
+        setTimeout(() => this.props.goToMenu(), 100)
         return true
       },
       (res) => {
@@ -314,7 +300,7 @@ export default withStyles(stylesMaterial)(withTranslation()(connect(
               disabled={loading_2}
               loading={loading_2}
               onClick={() => {
-                this.props.revertCompositionStart()
+                this.props.dropUnit()
                 this.props.goToMenu()
               }}
               className={classes.buttonCancel}>{t('CancelComposition')}</Button>
