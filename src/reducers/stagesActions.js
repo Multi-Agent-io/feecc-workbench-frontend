@@ -149,7 +149,7 @@ export const doGetBarcode = (dispatch, successChecker, errorChecker) => {
     undefined,
     {
       method : 'GET',
-      url    : 'http://127.0.0.2:8080/api/hid_buffer',
+      url    : `${config.barcode_socket}/api/hid_buffer`,
       headers: {
         'Content-Type'               : 'application/json',
         'Access-Control-Allow-Origin': '*',

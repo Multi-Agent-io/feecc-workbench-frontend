@@ -1,5 +1,6 @@
 {
   "socket": "http://localhost:5000",
+  "barcode_socket": "http://127.0.0.2:8080",
   "unit_type_1": "подсборка 1",
   "unit_type_2": "подсборка 2",
   "interface_language": "ru",
