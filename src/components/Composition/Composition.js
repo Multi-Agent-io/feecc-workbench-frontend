@@ -216,10 +216,10 @@ export default withStyles(stylesMaterial)(withTranslation()(connect(
     }
     if (
       this.props.steps !== undefined
-      && this.props.unit.unit_biography !== undefined
-      // && this.props?.compositionOngoing // It will be specified later for recovery or proceed mode
-      && this.props.unit.unit_internal_id !== ''
-      && this.props.unit.unit_internal_id !== undefined
+      && this.props.unit?.unit_internal_id !== undefined
+      && this.props.unit?.unit_biography !== ''
+      && this.props.unit?.unit_biography !== undefined
+      && this.props.unit?.unit_internal_id !== ''
     ) {
       const length_1 = Object.values(this.props.unit.unit_biography).length
       const title = Object.values(this.props.unit.unit_biography)[length_1 - 1].stage
@@ -227,16 +227,14 @@ export default withStyles(stylesMaterial)(withTranslation()(connect(
       if (this.props?.compositionOngoing) {
         // Check if step is in the first file. If not - function will return false and if will be started
         // If in the first steps file step was not found - move to the next and repeat search
-        if (!this.searchAndMoveToStep(this.props.steps, title, true)){
-          this.props.setSteps(steps_unit_2, () => {
-            this.searchAndMoveToStep(this.props.steps, title, true)
-          })
-        }
-      } else {
-        // let stepFound = this.searchAndMoveToStep(this.props.steps, title, false)
-        if (this.searchAndMoveToStep(this.props.steps, title, false)){
-          this.setState({ afterPause: true, activeStep: -1 })
-        }
+        this.props.setSteps(steps_unit_1)
+        setTimeout(() => {
+          if (!this.searchAndMoveToStep(this.props.steps, title, true, false)) {
+            this.props.setSteps(steps_unit_2)
+            this.searchAndMoveToStep(this.props.steps, title, true, false)
+          }
+        }, 300)
+        
       }
     }
   }
