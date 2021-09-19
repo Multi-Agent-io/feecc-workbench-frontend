@@ -269,6 +269,15 @@ export default withStyles(stylesMaterial)(withTranslation()(connect(
     }
   }
   
+  proceedComposition = () => {
+    this.props.getUnitBiography(
+      this.props.unit.unit_internal_id,
+      (res) => {
+        let title = this.props.steps[Object.values(res.unit_biography).length].title
+        this.searchAndMoveToStep(this.props.steps, title, true, true)
+      }, null)
+  }
+  
   timeToRegular = (seconds) => {
     return new Date(seconds * 1000).toISOString().substr(11, 8)
   }
