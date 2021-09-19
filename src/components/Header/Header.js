@@ -65,13 +65,17 @@ export default withTranslation()(connect(
       }, 500)
       
     }
-    
-    if (this.props.composition.operation_ongoing === true && this.props.location.split('/')[1] !== 'composition') {
+    if ((this.props.composition.operation_ongoing === true || (this.props.unitBiography !== '' && this.props.unitBiography !== undefined))
+      && this.props.location.split('/')[1] !== 'composition') {
       this.props.redirectToComposition()
     }
     
-    // If unitID
-    if (this.props.unitID !== undefined && this.props.unitID !== prevProps.unitID) {
+    // If unitID is present and not similar to the previous (removing permanent repeating redirect to composition)
+    if (this.props.unitID !== undefined && this.props.location.split('/')[1] !== 'composition' && this.props.composition.employee?.name !== undefined) {
+      this.props.redirectToComposition()
+    }
+    
+    if (this.props.composition.unit_internal_id !== null && this.props.composition.unit_internal_id !== undefined && this.props.location.split('/')[1] !== 'composition') {
       this.props.redirectToComposition()
     }
   }
