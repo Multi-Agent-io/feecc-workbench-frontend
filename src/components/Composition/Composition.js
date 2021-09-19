@@ -97,8 +97,8 @@ export default withStyles(stylesMaterial)(withTranslation()(connect(
     activeStep  : -1,
     stepDuration: 0,
     loading_1   : false,
-    loafing_2   : false,
-    afterPause  : false
+    loading_2   : false,
+    afterPause  : false,
   }
   
   setStepDuration = (duration) => {
