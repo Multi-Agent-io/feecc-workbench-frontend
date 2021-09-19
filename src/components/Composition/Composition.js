@@ -237,6 +237,26 @@ export default withStyles(stylesMaterial)(withTranslation()(connect(
         
       }
     }
+    if (
+      this.props.compositionOngoing !== true
+      && this.props.unit?.unit_internal_id !== undefined
+      && (this.props.unit?.unit_biography === undefined || this.props.unit?.unit_biography === '')) {
+      this.props.getUnitBiography(
+        this.props.unit.unit_internal_id,
+        (res) => {
+          let title = res.unit_biography[Object.values(res.unit_biography).length - 1].stage
+          if (!this.searchAndMoveToStep(this.props.steps, title, false)) {
+            this.props.setSteps(steps_unit_2)
+            this.searchAndMoveToStep(this.props.steps, title, false)
+          }
+        }, null)
+    }
+    setTimeout(() => {
+      if (this.props.afterPause === "true") {
+        this.setState({ afterPause: true })
+      }
+    }, 1000)
+    
   }
   
   // Important notice - start request only sendable if doMove flag is in true position
