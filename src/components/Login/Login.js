@@ -47,6 +47,9 @@ export default withTranslation()(connect(
             }
             this.setState({ loading: false })
             clearInterval(this.state.timerID)
+            this.props.doFetchComposition((r) => {
+              return true
+            }, null)
             this.setState({timerID: setInterval(() => {
                 this.props.doFetchComposition((r) => { return true }, null)
               }, 1000)})
@@ -62,10 +65,6 @@ export default withTranslation()(connect(
   componentDidUpdate(prevProps, prevState, snapshot) {
     if (this.props.authorized === true)
       this.props.goToMenu()
-  }
-  
-  componentWillUnmount() {
-    clearInterval(this.state.timerID)
   }
   
   renderLoading = () => {
