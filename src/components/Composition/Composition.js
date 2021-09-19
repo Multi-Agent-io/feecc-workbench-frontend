@@ -209,6 +209,37 @@ export default withStyles(stylesMaterial)(withTranslation()(connect(
     )
   }
   
+  setOnPause = () => {
+    this.setState({ loading_2: true })
+    let smartProtectionBlock = false
+    if (config.smart_protection) {
+      if (this.state.stepDuration < 3) {
+        smartProtectionBlock = true
+        this.props.raiseNotification(this.props.t('NotEnoughDuration'))
+        setTimeout(() => this.setState({ loading_1: false }), 100)
+      }
+    }
+    if (!smartProtectionBlock) {
+      this.props.stopStepRecord(
+        {},
+        this.props.unit.unit_internal_id,
+        (res) => {
+          if (!this.successChecker(res))
+            return false
+          // finishFlag = true
+          this.setState({ loading_2: false, activeStep: -1 })
+          this.props.dropUnit()
+          return true
+        }, (res) => {
+          if (res !== undefined) {
+            this.props.raiseNotification('Error while stopping record. Server connection error')
+            this.setState({ loading_2: false })
+          }
+        })
+      this.props.setBetweenFlag(false)
+    }
+  }
+  
   componentDidMount() {
     // If no steps were specified but composition needs to be restored try first file and then next
     if (this.props.steps[0].title === 'title1') {
