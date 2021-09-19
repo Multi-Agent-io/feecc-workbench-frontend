@@ -240,23 +240,28 @@ export default withStyles(stylesMaterial)(withTranslation()(connect(
       }
     }
   }
-
-  searchAndMoveToStep = (steps, title, doMove) => {
+  
+  // Important notice - start request only sendable if doMove flag is in true position
+  searchAndMoveToStep = (steps, title, doMove, sendStartRequest = false) => {
     let stepFound = false
     Object.values(steps).map((item, index) => {
       if (item.title === title) {
         stepFound = true
         if (index !== -1) {
-          this.setState({activeStep: index})  // Select found step
-          if(doMove)
+          if (doMove) {
+            if (sendStartRequest) {
+              this.handleStageRecordStart(title, index)
+            }
+            this.setState({ activeStep: index })  // Select found step
             setTimeout(() => {
-            let el = document.getElementById(`step_${index}`)
-            el.scrollIntoView({
-              block: "center",
-              inline: "center",
-              behavior: "smooth"
-            })
-          }, 200) // Scroll to the selected step
+              let el = document.getElementById(`step_${index}`)
+              el.scrollIntoView({
+                block   : "center",
+                inline  : "center",
+                behavior: "smooth"
+              })
+            }, 200) // Scroll to the selected step
+          }
         }
       }
     })
