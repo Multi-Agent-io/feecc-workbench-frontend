@@ -23,8 +23,6 @@ export default withTranslation()(connect(
   
   static propTypes = {
     location: PropTypes.string.isRequired,
-    
-    setSteps: PropTypes.func.isRequired
   }
   
   routes = [

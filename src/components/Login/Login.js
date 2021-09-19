@@ -5,10 +5,9 @@ import styles from './Login.module.css'
 import robonomicsLogo from '../../static/imageCenter.png'
 import MVASLogo from '../../static/imageLeft.png'
 import endoStarsLogo from '../../static/imageRight.png'
-import { push, replace } from "connected-react-router";
+import { push } from "connected-react-router";
 import { doFetchComposition, doGetWorkbenchNumber, doRaiseNotification } from "@reducers/stagesActions";
 import PropTypes from "prop-types";
-import { ReactComponent as LoadingIcon } from '../../icons/Loading.svg'
 
 export default withTranslation()(connect(
   (store) => ({
@@ -28,7 +27,9 @@ export default withTranslation()(connect(
     workbenchNumber: PropTypes.number.isRequired,
     
     goToMenu          : PropTypes.func.isRequired,
-    doFetchComposition: PropTypes.func.isRequired
+    doFetchComposition: PropTypes.func.isRequired,
+    raiseNotification : PropTypes.func.isRequired,
+    getWorkbenchNumber: PropTypes.func.isRequired
   }
   
   state = {

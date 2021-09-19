@@ -6,13 +6,13 @@ import { Step, StepContent, StepLabel, Stepper, Typography, withStyles } from "@
 import clsx from 'clsx'
 import {
   doCompositionUpload,
-  doFetchComposition,
-  doRaiseNotification,
-  doRevertCompositionStart, doSetBetweenFlag, doSetSteps,
+  doFetchComposition, doGetUnitBiography,
+  doRaiseNotification, doResetUnit,
+  doSetBetweenFlag, doSetSteps,
   doStartStepRecord,
   doStopStepRecord
 } from "@reducers/stagesActions";
-import { replace } from "connected-react-router";
+import { push, replace } from "connected-react-router";
 import Stopwatch from "@components/Stopwatch/Stopwatch";
 import Button from "@/uikit/Button";
 import config from '../../../configs/config.json'
@@ -52,26 +52,29 @@ export default withStyles(stylesMaterial)(withTranslation()(connect(
     steps             : store.stages.get('steps').toJS(),
     unit              : store.stages.get('unit')?.toJS(),
     compositionOngoing: store.stages.getIn(['composition', 'operation_ongoing']),
-    compositionID     : store.stages.getIn(['composition', 'unit_internal_id'])
+    compositionID     : store.stages.getIn(['composition', 'unit_internal_id']),
+    afterPause        : new URLSearchParams(store.router.location.search).get('afterPause'),
   }),
   (dispatch) => ({
-    goToMenu              : () => dispatch(replace({ pathname: '/menu' })),
+    goToMenu              : () => dispatch(push('/menu')),
     startStepRecord       : (unitID, productionStageName, additionalInfo, successChecker, errorChecker) => doStartStepRecord(dispatch, unitID, productionStageName, additionalInfo, successChecker, errorChecker),
     stopStepRecord        : (additionalInfo, unitInternalID, successChecker, errorChecker) => doStopStepRecord(dispatch, unitInternalID, additionalInfo, successChecker, errorChecker),
     uploadComposition     : (unitID, successChecker, errorChecker) => doCompositionUpload(dispatch, unitID, successChecker, errorChecker),
     doFetchComposition    : (successChecker, errorChecker) => doFetchComposition(dispatch, successChecker, errorChecker),
     raiseNotification     : (notificationMessage) => doRaiseNotification(dispatch, notificationMessage),
-    revertCompositionStart: () => doRevertCompositionStart(dispatch),
     setSteps              : (steps) => doSetSteps(dispatch, steps),
-    setBetweenFlag        : (state) => doSetBetweenFlag(dispatch, state)
+    setBetweenFlag        : (state) => doSetBetweenFlag(dispatch, state),
+    getUnitBiography      : (unitID, successChecker, errorChecker) => doGetUnitBiography(dispatch, unitID, successChecker, errorChecker),
+    dropUnit              : () => doResetUnit(dispatch)
   })
 )(class Composition extends React.Component {
   
   static propTypes = {
-    
+    steps             : PropTypes.object,
     unit              : PropTypes.object,
     compositionOngoing: PropTypes.bool,
     compositionID     : PropTypes.string,
+    afterPause        : PropTypes.string,
     
     goToMenu          : PropTypes.func.isRequired,
     startStepRecord   : PropTypes.func.isRequired,
@@ -79,6 +82,10 @@ export default withStyles(stylesMaterial)(withTranslation()(connect(
     uploadComposition : PropTypes.func.isRequired,
     doFetchComposition: PropTypes.func.isRequired,
     raiseNotification : PropTypes.func.isRequired,
+    setSteps          : PropTypes.func.isRequired,
+    setBetweenFlag    : PropTypes.func.isRequired,
+    getUnitBiography  : PropTypes.func.isRequired,
+    dropUnit          : PropTypes.func.isRequired,
   }
   
   constructor(props) {
