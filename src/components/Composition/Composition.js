@@ -56,16 +56,16 @@ export default withStyles(stylesMaterial)(withTranslation()(connect(
     afterPause        : new URLSearchParams(store.router.location.search).get('afterPause'),
   }),
   (dispatch) => ({
-    goToMenu              : () => dispatch(push('/menu')),
-    startStepRecord       : (unitID, productionStageName, additionalInfo, successChecker, errorChecker) => doStartStepRecord(dispatch, unitID, productionStageName, additionalInfo, successChecker, errorChecker),
-    stopStepRecord        : (additionalInfo, unitInternalID, successChecker, errorChecker) => doStopStepRecord(dispatch, unitInternalID, additionalInfo, successChecker, errorChecker),
-    uploadComposition     : (unitID, successChecker, errorChecker) => doCompositionUpload(dispatch, unitID, successChecker, errorChecker),
-    doFetchComposition    : (successChecker, errorChecker) => doFetchComposition(dispatch, successChecker, errorChecker),
-    raiseNotification     : (notificationMessage) => doRaiseNotification(dispatch, notificationMessage),
-    setSteps              : (steps) => doSetSteps(dispatch, steps),
-    setBetweenFlag        : (state) => doSetBetweenFlag(dispatch, state),
-    getUnitBiography      : (unitID, successChecker, errorChecker) => doGetUnitBiography(dispatch, unitID, successChecker, errorChecker),
-    dropUnit              : () => doResetUnit(dispatch)
+    goToMenu          : () => dispatch(push('/menu')),
+    startStepRecord   : (unitID, productionStageName, additionalInfo, successChecker, errorChecker) => doStartStepRecord(dispatch, unitID, productionStageName, additionalInfo, successChecker, errorChecker),
+    stopStepRecord    : (additionalInfo, unitInternalID, successChecker, errorChecker) => doStopStepRecord(dispatch, unitInternalID, additionalInfo, successChecker, errorChecker),
+    uploadComposition : (unitID, successChecker, errorChecker) => doCompositionUpload(dispatch, unitID, successChecker, errorChecker),
+    doFetchComposition: (successChecker, errorChecker) => doFetchComposition(dispatch, successChecker, errorChecker),
+    raiseNotification : (notificationMessage) => doRaiseNotification(dispatch, notificationMessage),
+    setSteps          : (steps) => doSetSteps(dispatch, steps),
+    setBetweenFlag    : (state) => doSetBetweenFlag(dispatch, state),
+    getUnitBiography  : (unitID, successChecker, errorChecker) => doGetUnitBiography(dispatch, unitID, successChecker, errorChecker),
+    dropUnit          : () => doResetUnit(dispatch)
   })
 )(class Composition extends React.Component {
   
@@ -211,7 +211,7 @@ export default withStyles(stylesMaterial)(withTranslation()(connect(
   
   componentDidMount() {
     // If no steps were specified but composition needs to be restored try first file and then next
-    if(this.props.steps[0].title === 'title1') {
+    if (this.props.steps[0].title === 'title1') {
       this.props.setSteps(steps_unit_1)
     }
     if (
@@ -383,7 +383,7 @@ export default withStyles(stylesMaterial)(withTranslation()(connect(
             staticWidth="240px"
             loading={loading_1}
             disabled={loading_1}
-            onClick={()=> this.handleCompositionUpload()}
+            onClick={() => this.handleCompositionUpload()}
             className={classes.uploadButton}>{t('SavePassport')}</Button>
         )}
       </div>
