@@ -174,7 +174,7 @@ export default withStyles(stylesMaterial)(withTranslation()(connect(
           return false
         }
         this.setState({ 'activeStep': this.state.activeStep + 1 })
-        this.setState({ loading_1: false })
+        this.setState({ loading_1: false, loading_2: false })
         setTimeout(() => {
           let el = document.getElementById(stepID)
           el.scrollIntoView({
@@ -187,7 +187,7 @@ export default withStyles(stylesMaterial)(withTranslation()(connect(
       }, (res) => {
         if (res !== undefined)
           this.props.raiseNotification('Error while sending data to server (return code !== 200)')
-        this.setState({ loading_1: false })
+        this.setState({ loading_1: false, loading_2: false })
       })
   }
   
@@ -298,16 +298,42 @@ export default withStyles(stylesMaterial)(withTranslation()(connect(
           if (doMove) {
             if (sendStartRequest) {
               this.handleStageRecordStart(title, index)
+              this.props.startStepRecord(
+                this.props.unit.unit_internal_id,
+                title,
+                {},
+                (res) => {
+                  if (!this.successChecker(res))
+                    return false
+                  this.setState({ activeStep: index })  // Select found step
+                  this.setState({ loading_1: false, loading_2: false })
+                  setTimeout(() => {
+                    let el = document.getElementById(stepID)
+                    el.scrollIntoView({
+                      block   : "center",
+                      inline  : "center",
+                      behavior: "smooth"
+                    })
+                  }, 200)
+                  return true
+                },
+                (res) => {
+                  if (res !== undefined)
+                    this.props.raiseNotification('Error while sending data to server (return code !== 200)')
+                  this.setState({ loading_1: false, loading_2: false })
+                }
+              )
+            } else {
+              this.setState({ activeStep: index })  // Select found step
+              setTimeout(() => {
+                let el = document.getElementById(`step_${index}`)
+                el.scrollIntoView({
+                  block   : "center",
+                  inline  : "center",
+                  behavior: "smooth"
+                })
+              }, 200) // Scroll to the selected step
             }
-            this.setState({ activeStep: index })  // Select found step
-            setTimeout(() => {
-              let el = document.getElementById(`step_${index}`)
-              el.scrollIntoView({
-                block   : "center",
-                inline  : "center",
-                behavior: "smooth"
-              })
-            }, 200) // Scroll to the selected step
           }
         }
       }
