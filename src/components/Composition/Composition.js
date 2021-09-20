@@ -12,7 +12,7 @@ import {
   doStartStepRecord,
   doStopStepRecord
 } from "@reducers/stagesActions";
-import { push, replace } from "connected-react-router";
+import { push } from "connected-react-router";
 import Stopwatch from "@components/Stopwatch/Stopwatch";
 import Button from "@/uikit/Button";
 import config from '../../../configs/config.json'
@@ -65,7 +65,7 @@ export default withStyles(stylesMaterial)(withTranslation()(connect(
     setSteps          : (steps) => doSetSteps(dispatch, steps),
     setBetweenFlag    : (state) => doSetBetweenFlag(dispatch, state),
     getUnitBiography  : (unitID, successChecker, errorChecker) => doGetUnitBiography(dispatch, unitID, successChecker, errorChecker),
-    dropUnit          : () => doResetUnit(dispatch)
+    dropUnit          : () => doResetUnit(dispatch),
   })
 )(class Composition extends React.Component {
   
@@ -374,11 +374,21 @@ export default withStyles(stylesMaterial)(withTranslation()(connect(
             <Button
               color="#20639B"
               radius="10px"
-              staticWidth="240px"
+              staticWidth="300px"
               disabled={loading_1}
+              loading={loading_1}
               className={classes.buttonStart}
               onClick={() => this.proceedComposition()}
             >{t('ProceedComposition')}</Button>
+            <Button
+              color="#ED553B"
+              radius="10px"
+              staticWidth="240px"
+              disabled={loading_2}
+              loading={loading_2}
+              className={classes.buttonStart}
+              onClick={() => this.props.dropUnit()}
+            >{t('CancelComposition')}</Button>
           </div>
         )}
         

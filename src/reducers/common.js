@@ -12,7 +12,7 @@ export const types = {
   STAGES__SET_STEPS          : 'STAGES__SET_STEPS',
   STAGES__SET_WORKBENCH_NO   : 'STAGES__SET_WORKBENCH_NO',
   STAGES__SET_BETWEEN_FLAG   : 'STAGES__SET_BETWEEN_FLAG',
-  STAGES__SET_UNIT_ID        : 'STAGES__SET_UNIT_ID'
+  STAGES__SET_UNIT_ID        : 'STAGES__SET_UNIT_ID',
 }
 
 export const reportError = (error) => {
