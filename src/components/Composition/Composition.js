@@ -199,6 +199,7 @@ export default withStyles(stylesMaterial)(withTranslation()(connect(
         if (!this.successChecker(res))
           return false
         this.props.setBetweenFlag(false)
+        this.props.addCurrUnitToIgnore()
         this.props.doFetchComposition(() => { return true }, null)
         setTimeout(() => this.props.goToMenu(), 100)
         return true
