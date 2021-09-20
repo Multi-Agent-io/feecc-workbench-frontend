@@ -1,11 +1,11 @@
 {
   "socket": "http://localhost:5000",
-  "barcode_socket": "http://127.0.0.2:8080",
+  "barcode_socket": "http://172.0.0.1:8080",
   "unit_type_1": "Подсборка 1",
   "unit_type_2": "Подсборка 2",
   "interface_language": "ru",
   "use_dev_steps": false,
   "smart_protection": true,
   "dev_show_reducers": false
-  "pause_sensitivity": 10
+  "pause_sensitivity": 30
 }
