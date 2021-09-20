@@ -190,6 +190,13 @@ export const doResetUnit = (dispatch) => {
 
 export const doAddUnitToIgnore = (dispatch) => {
   dispatch({
-    type: types.STAGES__ADD_UNIT_TO_IGNORE
+    type: types.STAGES__ADD_UNIT_TO_IGNORE,
+  })
+}
+
+export const doAddTimestampToIgnore = (dispatch, timestamp) => {
+  dispatch({
+    type: types.STAGES__ADD_TIMESTAMP_TO_IGNORE,
+    timestamp: timestamp
   })
 }

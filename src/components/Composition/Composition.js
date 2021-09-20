@@ -5,6 +5,7 @@ import styles from './Composition.module.css'
 import { Step, StepContent, StepLabel, Stepper, Typography, withStyles } from "@material-ui/core";
 import clsx from 'clsx'
 import {
+  doAddTimestampToIgnore,
   doAddUnitToIgnore,
   doCompositionUpload,
   doFetchComposition, doGetUnitBiography,
@@ -55,19 +56,21 @@ export default withStyles(stylesMaterial)(withTranslation()(connect(
     compositionOngoing: store.stages.getIn(['composition', 'operation_ongoing']),
     compositionID     : store.stages.getIn(['composition', 'unit_internal_id']),
     afterPause        : new URLSearchParams(store.router.location.search).get('afterPause'),
+    pauseTimestamp    : new URLSearchParams(store.router.location.search)?.get('timestamp'),
   }),
   (dispatch) => ({
-    goToMenu           : () => dispatch(push('/menu')),
-    startStepRecord    : (unitID, productionStageName, additionalInfo, successChecker, errorChecker) => doStartStepRecord(dispatch, unitID, productionStageName, additionalInfo, successChecker, errorChecker),
-    stopStepRecord     : (additionalInfo, unitInternalID, successChecker, errorChecker) => doStopStepRecord(dispatch, unitInternalID, additionalInfo, successChecker, errorChecker),
-    uploadComposition  : (unitID, successChecker, errorChecker) => doCompositionUpload(dispatch, unitID, successChecker, errorChecker),
-    doFetchComposition : (successChecker, errorChecker) => doFetchComposition(dispatch, successChecker, errorChecker),
-    raiseNotification  : (notificationMessage) => doRaiseNotification(dispatch, notificationMessage),
-    setSteps           : (steps) => doSetSteps(dispatch, steps),
-    setBetweenFlag     : (state) => doSetBetweenFlag(dispatch, state),
-    getUnitBiography   : (unitID, successChecker, errorChecker) => doGetUnitBiography(dispatch, unitID, successChecker, errorChecker),
-    dropUnit           : () => doResetUnit(dispatch),
-    addCurrUnitToIgnore: () => doAddUnitToIgnore(dispatch)
+    goToMenu            : () => dispatch(push('/menu')),
+    startStepRecord     : (unitID, productionStageName, additionalInfo, successChecker, errorChecker) => doStartStepRecord(dispatch, unitID, productionStageName, additionalInfo, successChecker, errorChecker),
+    stopStepRecord      : (additionalInfo, unitInternalID, successChecker, errorChecker) => doStopStepRecord(dispatch, unitInternalID, additionalInfo, successChecker, errorChecker),
+    uploadComposition   : (unitID, successChecker, errorChecker) => doCompositionUpload(dispatch, unitID, successChecker, errorChecker),
+    doFetchComposition  : (successChecker, errorChecker) => doFetchComposition(dispatch, successChecker, errorChecker),
+    raiseNotification   : (notificationMessage) => doRaiseNotification(dispatch, notificationMessage),
+    setSteps            : (steps) => doSetSteps(dispatch, steps),
+    setBetweenFlag      : (state) => doSetBetweenFlag(dispatch, state),
+    getUnitBiography    : (unitID, successChecker, errorChecker) => doGetUnitBiography(dispatch, unitID, successChecker, errorChecker),
+    dropUnit            : () => doResetUnit(dispatch),
+    addCurrUnitToIgnore : () => doAddUnitToIgnore(dispatch),
+    addTimestampToIgnore: (timestamp) => doAddTimestampToIgnore(dispatch, timestamp)
   })
 )(class Composition extends React.Component {
   
@@ -344,11 +347,10 @@ export default withStyles(stylesMaterial)(withTranslation()(connect(
     if (this.stageStopwatch !== undefined) {
       this.stageStopwatch?.current?.start()
     }
-    // setTimeout(() => {
-      if (this.props.afterPause === "true" && this.state.afterPause !== true) {
-        this.setState({ afterPause: true })
-      }
-    // }, 500)
+    
+    if (this.props.afterPause === "true" && this.state.afterPause !== true) {
+      this.setState({ afterPause: true })
+    }
   }
   
   proceedComposition = () => {
@@ -418,8 +420,12 @@ export default withStyles(stylesMaterial)(withTranslation()(connect(
                 loading={loading_2}
                 className={classes.buttonStart}
                 onClick={() => {
-                  this.props.addCurrUnitToIgnore()
-                  this.props.dropUnit()
+                  if (this.props.pauseTimestamp){
+                    this.props.dropUnit()
+                    this.props.addTimestampToIgnore(this.props.pauseTimestamp)
+                  } else {
+                    this.props.raiseNotification(t('PauseTimestampIsNotSet'))
+                  }
                 }}
               >{t('CancelComposition')}</Button>
             </div>
