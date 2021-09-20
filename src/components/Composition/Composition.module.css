@@ -18,3 +18,9 @@
 .startButton {
     margin-left: 100px;
 }
+
+.textWrapper {
+    margin-top: 20px;
+    margin-left: 20px;
+    margin-bottom: 10px;
+}

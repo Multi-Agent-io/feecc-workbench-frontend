@@ -13,6 +13,7 @@ export const types = {
   STAGES__SET_WORKBENCH_NO   : 'STAGES__SET_WORKBENCH_NO',
   STAGES__SET_BETWEEN_FLAG   : 'STAGES__SET_BETWEEN_FLAG',
   STAGES__SET_UNIT_ID        : 'STAGES__SET_UNIT_ID',
+  STAGES__ADD_UNIT_TO_IGNORE : 'STAGES__ADD_UNIT_TO_IGNORE'
 }
 
 export const reportError = (error) => {

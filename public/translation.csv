@@ -19,3 +19,4 @@ Back,Назад,Back
 GettingWorkbenchNo,Идёт определение номера рабочего места,Workbench number receiving in progress
 ProceedComposition,Продолжить сборку,Proceed composition
 SetOnPause,Пауза,Pause
+DropWarning,У вас есть незавершённая сборка. Вы можете продолжить сборку или отказаться от продолжения. В последнем случае номер сборки будет добавлен в список исключений и будет игнорироваться до перезагрузки страницы.,Test

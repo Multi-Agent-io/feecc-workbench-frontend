@@ -49,8 +49,10 @@ export const stagesReducer = (state={}, action) => {
               .deleteIn(['modalsNotifications', parseInt(action.notificationID)])
         case types.STAGES__RESET_UNIT:
             return state
-              .update('finishedCompositionsIDs', arr => arr.push(state.getIn(['unit', 'unit_internal_id'])))
               .deleteIn(['unit'])
+        case types.STAGES__ADD_UNIT_TO_IGNORE:
+            return state
+              .update('finishedCompositionsIDs', arr => arr.push(state.getIn(['unit', 'unit_internal_id'])))
         case types.STAGES__SET_UNIT_ID:
             return state
               .setIn(['unit', 'unit_internal_id'], action.unitID)

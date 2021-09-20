@@ -187,3 +187,9 @@ export const doResetUnit = (dispatch) => {
     type: types.STAGES__RESET_UNIT
   })
 }
+
+export const doAddUnitToIgnore = (dispatch) => {
+  dispatch({
+    type: types.STAGES__ADD_UNIT_TO_IGNORE
+  })
+}

@@ -5,6 +5,7 @@ import styles from './Composition.module.css'
 import { Step, StepContent, StepLabel, Stepper, Typography, withStyles } from "@material-ui/core";
 import clsx from 'clsx'
 import {
+  doAddUnitToIgnore,
   doCompositionUpload,
   doFetchComposition, doGetUnitBiography,
   doRaiseNotification, doResetUnit,
@@ -56,16 +57,17 @@ export default withStyles(stylesMaterial)(withTranslation()(connect(
     afterPause        : new URLSearchParams(store.router.location.search).get('afterPause'),
   }),
   (dispatch) => ({
-    goToMenu          : () => dispatch(push('/menu')),
-    startStepRecord   : (unitID, productionStageName, additionalInfo, successChecker, errorChecker) => doStartStepRecord(dispatch, unitID, productionStageName, additionalInfo, successChecker, errorChecker),
-    stopStepRecord    : (additionalInfo, unitInternalID, successChecker, errorChecker) => doStopStepRecord(dispatch, unitInternalID, additionalInfo, successChecker, errorChecker),
-    uploadComposition : (unitID, successChecker, errorChecker) => doCompositionUpload(dispatch, unitID, successChecker, errorChecker),
-    doFetchComposition: (successChecker, errorChecker) => doFetchComposition(dispatch, successChecker, errorChecker),
-    raiseNotification : (notificationMessage) => doRaiseNotification(dispatch, notificationMessage),
-    setSteps          : (steps) => doSetSteps(dispatch, steps),
-    setBetweenFlag    : (state) => doSetBetweenFlag(dispatch, state),
-    getUnitBiography  : (unitID, successChecker, errorChecker) => doGetUnitBiography(dispatch, unitID, successChecker, errorChecker),
-    dropUnit          : () => doResetUnit(dispatch),
+    goToMenu           : () => dispatch(push('/menu')),
+    startStepRecord    : (unitID, productionStageName, additionalInfo, successChecker, errorChecker) => doStartStepRecord(dispatch, unitID, productionStageName, additionalInfo, successChecker, errorChecker),
+    stopStepRecord     : (additionalInfo, unitInternalID, successChecker, errorChecker) => doStopStepRecord(dispatch, unitInternalID, additionalInfo, successChecker, errorChecker),
+    uploadComposition  : (unitID, successChecker, errorChecker) => doCompositionUpload(dispatch, unitID, successChecker, errorChecker),
+    doFetchComposition : (successChecker, errorChecker) => doFetchComposition(dispatch, successChecker, errorChecker),
+    raiseNotification  : (notificationMessage) => doRaiseNotification(dispatch, notificationMessage),
+    setSteps           : (steps) => doSetSteps(dispatch, steps),
+    setBetweenFlag     : (state) => doSetBetweenFlag(dispatch, state),
+    getUnitBiography   : (unitID, successChecker, errorChecker) => doGetUnitBiography(dispatch, unitID, successChecker, errorChecker),
+    dropUnit           : () => doResetUnit(dispatch),
+    addCurrUnitToIgnore: () => doAddUnitToIgnore(dispatch)
   })
 )(class Composition extends React.Component {
   
@@ -282,11 +284,6 @@ export default withStyles(stylesMaterial)(withTranslation()(connect(
           }
         }, null)
     }
-    setTimeout(() => {
-      if (this.props.afterPause === "true") {
-        this.setState({ afterPause: true })
-      }
-    }, 1000)
     
   }
   
@@ -321,6 +318,11 @@ export default withStyles(stylesMaterial)(withTranslation()(connect(
     if (this.stageStopwatch !== undefined) {
       this.stageStopwatch?.current?.start()
     }
+    // setTimeout(() => {
+      if (this.props.afterPause === "true" && this.state.afterPause !== true) {
+        this.setState({ afterPause: true })
+      }
+    // }, 500)
   }
   
   proceedComposition = () => {
@@ -371,24 +373,30 @@ export default withStyles(stylesMaterial)(withTranslation()(connect(
         )}
         {activeStep === -1 && afterPause === true && (
           <div>
-            <Button
-              color="#20639B"
-              radius="10px"
-              staticWidth="300px"
-              disabled={loading_1}
-              loading={loading_1}
-              className={classes.buttonStart}
-              onClick={() => this.proceedComposition()}
-            >{t('ProceedComposition')}</Button>
-            <Button
-              color="#ED553B"
-              radius="10px"
-              staticWidth="240px"
-              disabled={loading_2}
-              loading={loading_2}
-              className={classes.buttonStart}
-              onClick={() => this.props.dropUnit()}
-            >{t('CancelComposition')}</Button>
+            <div className={styles.textWrapper}>{t('DropWarning')}</div>
+            <div>
+              <Button
+                color="#20639B"
+                radius="10px"
+                staticWidth="300px"
+                disabled={loading_1}
+                loading={loading_1}
+                className={classes.buttonStart}
+                onClick={() => this.proceedComposition()}
+              >{t('ProceedComposition')}</Button>
+              <Button
+                color="#ED553B"
+                radius="10px"
+                staticWidth="240px"
+                disabled={loading_2}
+                loading={loading_2}
+                className={classes.buttonStart}
+                onClick={() => {
+                  this.props.addCurrUnitToIgnore()
+                  this.props.dropUnit()
+                }}
+              >{t('CancelComposition')}</Button>
+            </div>
           </div>
         )}
         
