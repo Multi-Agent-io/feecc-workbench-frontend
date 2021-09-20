@@ -27,7 +27,6 @@ export default withTranslation()(connect(
     setQuery             : (query, url) => setQueryValues(dispatch, query, url),
     setCompositionID     : (unitID) => doSetCompositionID(dispatch, unitID),
     getUnitBiography     : (unitID, successChecker, errorChecker) => doGetUnitBiography(dispatch, unitID, successChecker, errorChecker),
-    
   })
 )(class Header extends React.Component {
   
@@ -36,6 +35,7 @@ export default withTranslation()(connect(
     location            : PropTypes.string,
     unitID              : PropTypes.string,
     finishedCompositions: PropTypes.arrayOf(PropTypes.string),
+    usedTimestamps      : PropTypes.arrayOf(PropTypes.string),
     
     redirectToLogin      : PropTypes.func.isRequired,
     goToMenu             : PropTypes.func.isRequired,
