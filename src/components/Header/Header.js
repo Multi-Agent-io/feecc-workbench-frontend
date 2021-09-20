@@ -9,6 +9,7 @@ import Stopwatch from "@components/Stopwatch/Stopwatch";
 import PropTypes from "prop-types";
 import { doGetBarcode, doGetUnitBiography, doSetCompositionID } from "@reducers/stagesActions";
 import { setQueryValues } from "@reducers/routerActions";
+import config from '../../../configs/config.json'
 
 export default withTranslation()(connect(
   (store) => ({
@@ -65,10 +66,13 @@ export default withTranslation()(connect(
               if (this.isNumeric(res.buffer) && res.buffer.length === 13) {
                 if (!this.props.finishedCompositions.includes(res.buffer) && this.props.unitID !== res.buffer) {
                   if (this.props.unitID !== undefined || this.props.unitID !== '') {
-                    this.props.setCompositionID(res.buffer)
-                    setTimeout(()=>{
-                      this.props.setQuery({ afterPause: true }, this.props.location)
-                    }, 1000)
+                    if((Date.now() / 1000).toFixed(0) - res.added_on <= config.pause_sensitivity) {
+                      this.props.setCompositionID(res.buffer)
+                      setTimeout(() => {
+                        this.props.setQuery({ afterPause: true }, this.props.location)
+                      }, 1000)
+                    }
+                    
                     
                   }
                 }

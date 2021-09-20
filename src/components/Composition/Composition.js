@@ -297,7 +297,6 @@ export default withStyles(stylesMaterial)(withTranslation()(connect(
         if (index !== -1) {
           if (doMove) {
             if (sendStartRequest) {
-              this.handleStageRecordStart(title, index)
               this.props.startStepRecord(
                 this.props.unit.unit_internal_id,
                 title,
@@ -308,7 +307,7 @@ export default withStyles(stylesMaterial)(withTranslation()(connect(
                   this.setState({ activeStep: index })  // Select found step
                   this.setState({ loading_1: false, loading_2: false })
                   setTimeout(() => {
-                    let el = document.getElementById(stepID)
+                    let el = document.getElementById(`step_${index}`)
                     el.scrollIntoView({
                       block   : "center",
                       inline  : "center",
