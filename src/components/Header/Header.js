@@ -66,7 +66,10 @@ export default withTranslation()(connect(
                 if (!this.props.finishedCompositions.includes(res.buffer) && this.props.unitID !== res.buffer) {
                   if (this.props.unitID !== undefined || this.props.unitID !== '') {
                     this.props.setCompositionID(res.buffer)
-                    this.props.setQuery({ afterPause: true }, this.props.location)
+                    setTimeout(()=>{
+                      this.props.setQuery({ afterPause: true }, this.props.location)
+                    }, 1000)
+                    
                   }
                 }
               } else {
