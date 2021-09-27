@@ -105,7 +105,7 @@ export default withTranslation()(connect(
                 color="#20639B"
                 radius="15px"
                 onClick={() => this.handleCreateUnit(config.unit_type_1)}
-                className={styles.chooseOptions} loading={createLoading_1}>{config.unit_type_1}</Button>
+                className={styles.chooseOptions} loading={createLoading_1}>{t('UnitType1')}</Button>
             </div>
             <div className={styles.buttons}>
               <Button
@@ -113,7 +113,7 @@ export default withTranslation()(connect(
                 color="#20639B"
                 radius="15px"
                 onClick={() => this.handleCreateUnit(config.unit_type_2)}
-                className={styles.chooseOptions} loading={createLoading_2}>{config.unit_type_2}</Button>
+                className={styles.chooseOptions} loading={createLoading_2}>{t('UnitType2')}</Button>
             </div>
             <div className={styles.buttons}>
               <Button
