@@ -352,6 +352,20 @@ export default withStyles(stylesMaterial)(withTranslation()(connect(
     
     if (this.props.afterPause === "true" && this.state.afterPause !== true) {
       this.setState({ afterPause: true })
+      this.props.getUnitBiography(
+        this.props.unit.unit_internal_id,
+        (res) => {
+          let length = Object.values(res.unit_biography).length
+          let stepsLength = Object.values(this.props.steps).length
+          if (length === stepsLength){
+            if (this.props.pauseTimestamp){
+              this.props.dropUnit()
+              this.props.addTimestampToIgnore(this.props.pauseTimestamp)
+            } else {
+              this.props.raiseNotification(this.props.t('PauseTimestampIsNotSet'))
+            }
+          }
+        }, null)
     }
   }
   
