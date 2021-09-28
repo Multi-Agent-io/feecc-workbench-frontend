@@ -19,7 +19,7 @@ Back,Назад,Back
 GettingWorkbenchNo,Идёт определение номера рабочего места,Workbench number receiving in progress
 ProceedComposition,Продолжить сборку,Proceed composition
 SetOnPause,Пауза,Pause
-DropWarning,У вас есть незавершённая сборка. Вы можете продолжить сборку или отказаться от продолжения вам будет доступна возможность начать другую сборку. Продолжить эту сборку вы сможете повторно просканировав нужный штрих-код.,"You have an unfinished build. You can continue the build or refuse to continue, you will have the opportunity to start another build. You can continue this assembly by re-scanning the desired barcode."
+DropWarning,У вас есть незавершённая сборка. Вы можете продолжить сборку или отказаться от продолжения. При отказе от продолжения вам будет доступна возможность начать другую сборку. Продолжить эту сборку вы сможете повторно просканировав нужный штрих-код.,"You have an unfinished build. You can continue building or refuse to continue. If you refuse to continue, you will have the option to start another build. You can continue this assembly by re-scanning the desired barcode."
 PauseTimestampIsNotSet,Временная метка для данного продолжения не получена. Попробуйте перезагрузить страницу.,Timestamp for this procedure is not set. Try to refresh your page
 UnitType1,Подсборка 1,Type 1
 UnitType2,Подсборка 2,Type 2
