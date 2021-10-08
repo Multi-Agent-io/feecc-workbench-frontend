@@ -6,6 +6,6 @@
   "interface_language": "ru",
   "use_dev_steps": false,
   "smart_protection": true,
-  "dev_show_reducers": false
+  "dev_show_reducers": false,
   "pause_sensitivity": 30
 }
