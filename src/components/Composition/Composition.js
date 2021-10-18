@@ -142,6 +142,13 @@ export default withStyles(stylesMaterial)(withTranslation()(connect(
             if (!this.successChecker(res))
               return false
             finishFlag = true
+            // If this is not the last stage - start record for the next
+            if (this.state.activeStep < Object.entries(this.props.steps).length - 1) {
+              this.handleStageRecordStart(productionStageName, stepID)
+            } else if (this.state.activeStep === Object.entries(this.props.steps).length - 1) {
+              this.setState({ loading_1: false, activeStep: this.state.activeStep + 1 })
+            }
+            if (this.state.activeStep === Object)
             return true
           }, (res) => {
             if (res !== undefined) {
@@ -152,23 +159,8 @@ export default withStyles(stylesMaterial)(withTranslation()(connect(
         this.props.setBetweenFlag(true)
       }
     }
-    if (!smartProtectionBlock) {
-      setTimeout(() => {
-        if (finishFlag && this.state.activeStep === Object.entries(this.props.steps).length - 1) {
-          this.setState({ loading_1: false, activeStep: this.state.activeStep + 1 })
-          this.props.setBetweenFlag(false)
-        }
-      }, 100)
-      
-      setTimeout(() => {
-        if (finishFlag && this.state.activeStep < Object.entries(this.props.steps).length - 1) {
-          this.handleStageRecordStart(productionStageName, stepID)
-        } else if (finishFlag !== true)
-          this.setState({ 'activeStep': this.state.activeStep + 1 })
-      }, 100)
-    }
   }
-  
+
   handleStageRecordStart = (productionStageName, stepID) => {
     this.props.startStepRecord(
       this.props.unit.unit_internal_id,
@@ -396,7 +388,7 @@ export default withStyles(stylesMaterial)(withTranslation()(connect(
               disabled={loading_1}
               loading={loading_1}
               onClick={() => {
-                this.handleNextCompositionStep(steps[0].title)
+                this.handleStageRecordStart(steps[0].title)
                 this.props.doFetchComposition(() => {
                   return true
                 }, null)
