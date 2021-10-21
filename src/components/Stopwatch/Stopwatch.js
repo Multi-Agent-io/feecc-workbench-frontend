@@ -5,10 +5,10 @@ export default class Stopwatch extends React.Component {
   static propTypes = {
     setStepDuration: PropTypes.func
   }
-  
+
   constructor(props) {
     super(props);
-    
+
     this.state = {
       running: false,
       currentTimeMs: 0,
@@ -17,31 +17,31 @@ export default class Stopwatch extends React.Component {
       currentTimeHrs: 0
     };
   }
-  
+
   componentWillUnmount() {
     clearInterval(this.watch)
   }
-  
+
   isRunning = () => {
     return this.state.running
   }
-  
+
   sendTime = () => {
     this.props.setStepDuration && this.props.setStepDuration(this.state.currentTimeSec + this.state.currentTimeMin * 60 + this.state.currentTimeHrs * 3600)
   }
-  
+
   start = () => {
     if (!this.state.running) {
       this.setState({ running: true });
       this.watch = setInterval(() => this.pace(), 100);
     }
   };
-  
+
   stop = () => {
     this.setState({ running: false });
     clearInterval(this.watch);
   };
-  
+
   pace = () => {
     this.setState({ currentTimeMs: this.state.currentTimeMs + 100 });
     if (this.state.currentTimeMs >= 1000) {
@@ -55,7 +55,7 @@ export default class Stopwatch extends React.Component {
     }
     this.sendTime()
   };
-  
+
   reset = () => {
     this.setState({
       currentTimeMs: 0,
@@ -64,7 +64,7 @@ export default class Stopwatch extends React.Component {
       currentTimeHrs: 0
     });
   };
-  
+
   render() {
     return (
       <div className={'stopwatch'}>

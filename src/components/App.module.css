@@ -1,0 +1,14 @@
+h1 {
+    color: #27aedb;
+    text-align: center;
+}
+
+.NotificationsWrapper {
+    display: flex;
+    justify-content: center;
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100vw;
+    /*padding: 0 10vw;*/
+}

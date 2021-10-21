@@ -13,131 +13,132 @@ import config from '../../../configs/config.json'
 
 export default withTranslation()(connect(
   (store) => ({
-    composition         : store.stages.get('composition').toJS(),
-    location            : store.router.location.pathname,
-    unitID              : store.stages.getIn(['unit', 'unit_internal_id']),
+    composition: store.stages.get('composition').toJS(),
+    location: store.router.location.pathname,
+    unitID: store.stages.getIn(['unit', 'unit_internal_id']),
     finishedCompositions: store.stages.get('finishedCompositionsIDs')?.toJS(),
-    usedTimestamps     : store.stages.get('usedTimestamps')?.toJS()
+    usedTimestamps: store.stages.get('usedTimestamps')?.toJS(),
+    state: store.stages.getIn(['composition', 'state'])
   }),
   (dispatch) => ({
-    redirectToLogin      : () => dispatch(push('/')),
-    goToMenu             : () => dispatch(push({ pathname: '/menu' })),
+    redirectToLogin: () => dispatch(push('/')),
+    goToMenu: () => dispatch(push({pathname: '/menu'})),
     redirectToComposition: () => dispatch(push('/composition')),
-    getBarcode           : (successChecker, errorChecker) => doGetBarcode(dispatch, successChecker, errorChecker),
-    setQuery             : (query, url) => setQueryValues(dispatch, query, url),
-    setCompositionID     : (unitID) => doSetCompositionID(dispatch, unitID),
-    getUnitBiography     : (unitID, successChecker, errorChecker) => doGetUnitBiography(dispatch, unitID, successChecker, errorChecker),
+    redirectToGatherComponents: () => dispatch(push('/gatherComponents')),
+    // getBarcode: (successChecker, errorChecker) => doGetBarcode(dispatch, successChecker, errorChecker),
+    setQuery: (query, url) => setQueryValues(dispatch, query, url),
+    setCompositionID: (unitID) => doSetCompositionID(dispatch, unitID),
+    getUnitBiography: (unitID, successChecker, errorChecker) => doGetUnitBiography(dispatch, unitID, successChecker, errorChecker),
   })
 )(class Header extends React.Component {
-  
+
   static propTypes = {
-    composition         : PropTypes.object,
-    location            : PropTypes.string,
-    unitID              : PropTypes.string,
+    composition: PropTypes.object,
+    location: PropTypes.string,
+    unitID: PropTypes.string,
     finishedCompositions: PropTypes.arrayOf(PropTypes.string),
-    usedTimestamps      : PropTypes.arrayOf(PropTypes.string),
-    
-    redirectToLogin      : PropTypes.func.isRequired,
-    goToMenu             : PropTypes.func.isRequired,
+    usedTimestamps: PropTypes.arrayOf(PropTypes.string),
+
+    redirectToLogin: PropTypes.func.isRequired,
+    goToMenu: PropTypes.func.isRequired,
     redirectToComposition: PropTypes.func.isRequired,
-    getBarcode           : PropTypes.func.isRequired,
-    setQuery             : PropTypes.func.isRequired,
-    setCompositionID     : PropTypes.func.isRequired,
-    getUnitBiography     : PropTypes.func.isRequired,
+    getBarcode: PropTypes.func.isRequired,
+    setQuery: PropTypes.func.isRequired,
+    setCompositionID: PropTypes.func.isRequired,
+    getUnitBiography: PropTypes.func.isRequired,
   }
-  
+
   state = {
     timerID: null
   }
-  
-  constructor(props) {
+
+  constructor (props) {
     super(props)
     this.stopwatchRef = React.createRef()
   }
-  
-  componentDidMount() {
+
+  componentDidMount () {
+
     if (!this.props.composition.employee_logged_in) {
       this.props.redirectToLogin()
     }
-    this.setState({
-      timerID: setInterval(() => {
-        this.props.getBarcode(
-          (res) => {
-            if (res && res.buffer !== undefined) {
-              if (this.isNumeric(res.buffer) && res.buffer.length === 13) { // Check if code is valid composition code
-                if (!this.props.finishedCompositions.includes(res.buffer) && this.props.unitID !== res.buffer) { // Check if composition is not marked as finished
-                  if (this.props.unitID !== undefined || this.props.unitID !== '') { // Check if unitID is not set
-                    if (!this.props.usedTimestamps.includes((res.added_on).toString())){ // Check if timestamp was already used
-                      if ((Date.now() / 1000).toFixed(0) - res.added_on <= config.pause_sensitivity) { // Check if recovery is still valid
-                        this.props.setCompositionID(res.buffer)
-                        setTimeout(() => {
-                          this.props.setQuery({ afterPause: true, timestamp: res.added_on }, this.props.location)
-                        }, 1000)
-                      }
-                    }
-                    
-                  }
-                }
-              } else {
-                this.props.setQuery({ afterPause: undefined }, this.props.location)
-              }
-            }
-            return true
-          },
-          undefined)
-      }, 1000)
-    })
+    // this.setState({
+    //   timerID: setInterval(() => {
+    //     this.props.getBarcode(
+    //       (res) => {
+    //         if (res && res.buffer !== undefined) {
+    //           if (this.isNumeric(res.buffer) && res.buffer.length === 13) { // Check if code is valid composition code
+    //             if (!this.props.finishedCompositions.includes(res.buffer) && this.props.unitID !== res.buffer) { // Check if composition is not marked as finished
+    //               if (this.props.unitID !== undefined || this.props.unitID !== '') { // Check if unitID is not set
+    //                 if (!this.props.usedTimestamps.includes((res.added_on).toString())){ // Check if timestamp was already used
+    //                   if ((Date.now() / 1000).toFixed(0) - res.added_on <= config.pause_sensitivity) { // Check if recovery is still valid
+    //                     this.props.setCompositionID(res.buffer)
+    //                     setTimeout(() => {
+    //                       this.props.setQuery({ afterPause: true, timestamp: res.added_on }, this.props.location)
+    //                     }, 1000)
+    //                   }
+    //                 }
+    //
+    //               }
+    //             }
+    //           } else {
+    //             this.props.setQuery({ afterPause: undefined }, this.props.location)
+    //           }
+    //         }
+    //         return true
+    //       },
+    //       undefined)
+    //   }, 1000)
+    // })
   }
-  
+
   isNumeric = (str) => {
     if (typeof str != "string") return false // we only process strings!
     return !isNaN(str) && // use type coercion to parse the _entirety_ of the string (`parseFloat` alone does not do this)...
       !isNaN(parseFloat(str)) // ...and ensure strings of whitespace fail
   }
-  
-  componentDidUpdate(prevProps, prevState, snapshot) {
-    // If employee_logged_in status changed ->
-    if (this.props.composition.employee_logged_in !== prevProps.composition.employee_logged_in)
-      // If 'employee_logged_in' status is false
-      if (!this.props.composition.employee_logged_in) {
-        // Do user logout
+
+  componentDidUpdate (prevProps, prevState, snapshot) {
+    let page = this.props.location.split('/')[1]
+    if (this.props.composition.employee_logged_in) {
+      switch (this.props.state) {
+        case 'AuthorizedIdling':
+          if (page !== 'menu')
+            this.props.goToMenu()
+          break
+        case 'AwaitLogin':
+          if (page !== '')
+            this.props.redirectToLogin()
+          break
+        case 'GatherComponents':
+          if (page !== 'gatherComponents')
+            this.props.redirectToGatherComponents()
+          break
+        case 'UnitAssignedIdling':
+          if (page !== 'composition')
+            this.props.redirectToComposition()
+          break
+        case 'ProductionStageOngoing':
+          if (this.stopwatchRef !== undefined) {
+            this.stopwatchRef?.current?.start()
+          }
+
+          if (page !== 'composition')
+            this.props.redirectToComposition()
+          break
+        default:
+          console.log(`default case -> ${this.props.state}`)
+      }
+
+    } else {
+      if (page !== '') {
         this.props.redirectToLogin()
       }
-    // If backend returned operation_ongoing === true -> start main stopwatch
-    if (this.props?.composition.operation_ongoing) {
-      this.stopwatchRef?.current?.start()
-    } else {
-      // If no operation is ongoing - redirect to menu.
-      if (this.props.location.split('/')[1] !== 'menu'
-        && (this.props.unitID === '' || this.props.unitID === undefined)
-        && (this.props.composition.unit_internal_id === '' || this.props.composition.unit_internal_id === undefined || this.props.composition.unit_internal_id === null)
-        && this.props.composition.employee_logged_in) {
-        this.props.goToMenu()
-      }
-      setTimeout(() => {
-        if (this.props?.composition.operation_ongoing) {
-          this.stopwatchRef?.current?.stop()
-        }
-      }, 500)
-      
-    }
-    if ((this.props.composition.operation_ongoing === true || (this.props.unitBiography !== '' && this.props.unitBiography !== undefined))
-      && this.props.location.split('/')[1] !== 'composition') {
-      this.props.redirectToComposition()
-    }
-    
-    // If unitID is present and not similar to the previous (removing permanent repeating redirect to composition)
-    if (this.props.unitID !== undefined && this.props.location.split('/')[1] !== 'composition' && this.props.composition.employee?.name !== undefined) {
-      this.props.redirectToComposition()
-    }
-    
-    if (this.props.composition.unit_internal_id !== null && this.props.composition.unit_internal_id !== undefined && this.props.location.split('/')[1] !== 'composition') {
-      this.props.redirectToComposition()
     }
   }
-  
+
   renderHeader = () => {
-    const { t, composition, unitID } = this.props
+    const {t, composition, unitID} = this.props
     return (
       <div className={styles.wrapper}>
         <div className={styles.icons}>
@@ -151,6 +152,9 @@ export default withTranslation()(connect(
               <div className={styles.userPosition}>{t('Position')} {composition?.employee?.position}</div>
             </div>
             {unitID && (<div>{t('CompositionNumber')} {unitID}</div>)}
+          </div>
+          <div>
+            {this.props.state}
           </div>
           <div className={styles.mainTimer}>
             <div className={styles.timerHeader}>
@@ -175,8 +179,8 @@ export default withTranslation()(connect(
       </div>
     )
   }
-  
-  render() {
+
+  render () {
     return (
       <>
         {this.props.location.split('/')[1] !== '' && this.renderHeader()}

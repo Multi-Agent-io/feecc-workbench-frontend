@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import './App.css';
+import styles from './App.module.css';
 import { connect } from "react-redux";
 import PropTypes from 'prop-types'
 import { withTranslation } from "react-i18next";
@@ -9,41 +9,44 @@ import Menu from "@components/Menu/Menu"
 import Composition from "@components/Composition/Composition"
 import Notifications from "@components/Notifications/Notifications"
 import { doGetWorkbenchNumber, doRaiseNotification } from "@reducers/stagesActions";
+import GatherComponents from "@components/GatherComponents/GatherComponents";
 
 
 export default withTranslation()(connect(
   (store) => ({
-    location       : store.router.location.pathname,
+    location: store.router.location.pathname,
   }),
   (dispatch) => ({
-    raiseNotification : (notificationMessage) => doRaiseNotification(dispatch, notificationMessage),
-    // getWorkbenchNumber: (successChecker, errorChecker) => doGetWorkbenchNumber(dispatch, successChecker, errorChecker)
+    raiseNotification: (notificationMessage) => doRaiseNotification(dispatch, notificationMessage),
   })
 )(class App extends Component {
-  
+
   static propTypes = {
     location: PropTypes.string.isRequired,
   }
-  
+
   routes = [
     ['^/$', () => <Login/>],
     ['^/menu', () => <Menu/>],
     ['^/composition', () => <Composition/>],
+    ['^/gatherComponents', () => <GatherComponents/>]
   ]
-  
-  constructor(props) {
+
+  constructor (props) {
     super(props)
   }
-  
+
   route = path => this.routes.find(r => path.match(r[0]) !== null)?.[1]?.()
-  
-  render() {
-    const { t } = this.props
+
+  render () {
+    const {t} = this.props
     return (
       <div>
         <Header/>
         {this.route(this.props.location)}
-        <Notifications/>
+        <div className={styles.NotificationsWrapper}>
+          <Notifications/>
+        </div>
       </div>
     );
   }

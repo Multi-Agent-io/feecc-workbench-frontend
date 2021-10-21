@@ -8,73 +8,61 @@ import endoStarsLogo from '../../static/imageRight.png'
 import { push } from "connected-react-router";
 import { doFetchComposition, doGetWorkbenchNumber, doRaiseNotification } from "@reducers/stagesActions";
 import PropTypes from "prop-types";
+import config from '../../../configs/config.json'
 
 export default withTranslation()(connect(
   (store) => ({
-    authorized: store.stages.getIn(['composition', 'employee_logged_in']),
-    workbenchNumber: store.stages.get('workbench_no')
+    authorized     : store.stages.getIn(['composition', 'employee_logged_in']),
+    workbenchNumber: store.stages.get('workbench_no'),
+    location       : store.router.location.pathname,
   }),
   (dispatch) => ({
     goToMenu          : () => dispatch(push('/menu')),
+    goToGatheringComponents: () => dispatch(push('/gatherComponents')),
     raiseNotification : (notificationMessage) => doRaiseNotification(dispatch, notificationMessage),
     doFetchComposition: (successChecker, errorChecker) => doFetchComposition(dispatch, successChecker, errorChecker),
     getWorkbenchNumber: (successChecker, errorChecker) => doGetWorkbenchNumber(dispatch, successChecker, errorChecker)
   })
 )(class Login extends React.Component {
-  
+
   static propTypes = {
-    authorized: PropTypes.bool,
+    authorized     : PropTypes.bool,
     workbenchNumber: PropTypes.number.isRequired,
-    
+    location       : PropTypes.string.isRequired,
+
     goToMenu          : PropTypes.func.isRequired,
     doFetchComposition: PropTypes.func.isRequired,
     raiseNotification : PropTypes.func.isRequired,
     getWorkbenchNumber: PropTypes.func.isRequired
   }
-  
+
   state = {
-    loading: true,
     timerID: null
   }
-  
+
   componentDidMount() {
     this.setState({
+      // Composition information pulling with pulling_period
       timerID: setInterval(() => {
-        this.props.getWorkbenchNumber(
-          (res) => {
-            if (!res.status){
-              this.props.raiseNotification(res.comment)
-              return false
-            }
-            this.setState({ loading: false })
-            clearInterval(this.state.timerID)
-            this.props.doFetchComposition((r) => {
-              return true
-            }, null)
-            this.setState({timerID: setInterval(() => {
-                this.props.doFetchComposition((r) => { return true }, null)
-              }, 1000)})
-            return true
-          },
-          null)
-      }, 1000)
+        this.props.doFetchComposition((res) => {
+          // TODO add server response validation
+          // console.log(res.state)
+          if(res.state === 'GatherComponents' && this.props.location.split('/')[1] !== 'gatherComponents')
+            this.props.goToGatheringComponents()
+          return true
+        }, null)
+      }, config.pulling_period)
     })
-    if (this.props.authorized === true)
-      this.props.goToMenu()
   }
-  
+
   componentDidUpdate(prevProps, prevState, snapshot) {
+    // Check if user is authorized. Go to main menu if yes.
     if (this.props.authorized === true)
       this.props.goToMenu()
   }
-  
-  renderLoading = () => {
-    return (<div className={styles.loading}/>)
-  }
-  
+
   render() {
     const { t } = this.props
-    const { loading } = this.state
     return (
       <div className={styles.wrapper}>
         <div className={styles.header}>{t('QualityMonitoringSystem')}</div>
@@ -85,8 +73,7 @@ export default withTranslation()(connect(
           <div className={styles.icon}><img className={styles.rightLogo} src={endoStarsLogo} alt="geoscan-logo(img3)"/>
           </div>
         </div>
-        <div className={styles.message}>{!loading ? t('AuthorizeToProceed') : t('GettingWorkbenchNo')}</div>
-        {loading && this.renderLoading()}
+        <div className={styles.message}>{t('AuthorizeToProceed')}</div>
       </div>
     )
   }
