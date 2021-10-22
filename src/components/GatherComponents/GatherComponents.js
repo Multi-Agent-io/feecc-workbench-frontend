@@ -5,6 +5,7 @@ import styles from './GatherComponents.module.css'
 import { withTheme } from "@mui/styles";
 import { LoadingButton } from "@mui/lab";
 import { doRemoveUnit } from "@reducers/stagesActions";
+import { CircularProgress, Paper } from "@mui/material";
 
 export default withTheme(withTranslation()(connect(
   (store) => ({
@@ -19,15 +20,6 @@ export default withTheme(withTranslation()(connect(
     loading: false
   }
 
-  componentDidMount () {
-    setTimeout(() => {
-      console.log(this.props?.unitComponents)
-      // Object.values(this.props?.unitComponents)?.map(item => console.log(item))
-      console.log(Object.keys(this.props.unitComponents))
-      console.log(Object.values(this.props.unitComponents))
-    }, 2000)
-  }
-
   render () {
     const {t, unitComponents} = this.props
     const {loading}           = this.state
@@ -35,12 +27,23 @@ export default withTheme(withTranslation()(connect(
       <div className={styles.wrapper}>
         <div className={styles.cancelButton}>
           <LoadingButton
+            loadingIndicator={<CircularProgress color='inherit' size={28}/>}
             variant='outlined'
             color='secondary'
             disabled={loading}
             loading={loading}
             onClick={() => {
-              this.props.dropUnit()
+              this.setState({loading: true})
+              this.props.dropUnit(
+                (res) => {
+                  if(res.status_code === 200) {
+                    setTimeout(() => this.setState({loading: false}), 400)
+                    return true
+                  } else {
+                    return false
+                  }
+                }, null
+              )
             }}
           >{t('CancelComposition')}</LoadingButton>
         </div>
@@ -48,10 +51,11 @@ export default withTheme(withTranslation()(connect(
         <div className={styles.componentsWrapper}>
           {unitComponents && Object.keys(unitComponents).map((item, index) => {
             return (
-              <div
-                className={styles.component + ' ' + (Object.values(unitComponents)[index] === null ? styles.missingComponent : styles.addedComponent)}
-                key={item}
-              >{item}</div>
+              <Paper key={item} elevation={Object.values(unitComponents)[index] === null ? 10 : 5} sx={{padding: '20px', borderRadius: '20px'}}>
+                <div
+                  className={styles.component + ' ' + (Object.values(unitComponents)[index] === null ? styles.missingComponent : styles.addedComponent)}
+                >{item}</div>
+              </Paper>
             )
           })}
         </div>

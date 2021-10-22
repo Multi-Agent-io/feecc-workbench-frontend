@@ -87,33 +87,26 @@ export default withTheme(withTranslation()(connect(
                   if (r.status_code === 200) {
                     if (schema?.required_components_schema_ids === null) {
                       this.props.doRedirectToComposition()
-                    } else {
-                      console.log('complex redirect')
                     }
                     let arr    = this.state.loading
                     arr[index] = false
                     this.setState({loading: arr})
-
                     return true
                   } else {
                     let arr    = this.state.loading
                     arr[index] = false
                     this.setState({loading: arr})
-
                     return false
                   }
                 }, null)
               return true
             }, null)
-
           return true
         } else {
           this.props.raiseNotification('Ошибка при получении схем сборки. Попробуйте перезагрузить страницу.')
-
           let arr    = this.state.loading
           arr[index] = false
           this.setState({loading: arr})
-
           return false
         }
       }, null)
@@ -121,17 +114,15 @@ export default withTheme(withTranslation()(connect(
 
   handleUserLogout = () => {
     this.setState({logoutLoading: true})
-    // setTimeout(() => {
     this.props.doLogout(
-      (r) => {
+      () => {
         this.setState({logoutLoading: false})
         return true
-      }, (r) => {
+      }, () => {
         this.setState({logoutLoading: false})
+        return false
       }
     )
-    // }, 1000)
-
   }
 
   render () {
@@ -148,14 +139,7 @@ export default withTheme(withTranslation()(connect(
                   color="primary"
                   variant="contained"
                   onClick={() => this.setState({chooseVariantModal: true})}
-                  // className={styles.startComposition}
                 >{t('StartComposition')}</LoadingButton>
-                {/*<Button*/}
-                {/*  // button*/}
-                {/*  color="#20639B"*/}
-                {/*  radius="15px"*/}
-                {/*  onClick={() => this.setState({chooseVariantModal: true})}*/}
-                {/*  className={styles.startComposition} loading={createLoading_1}>{t('StartComposition')}</Button>*/}
               </div>
               <div className={styles.buttons}>
                 <LoadingButton
@@ -165,38 +149,60 @@ export default withTheme(withTranslation()(connect(
                   variant="outlined"
                   onClick={this.handleUserLogout}
                 >{t('FinishSession')}</LoadingButton>
-                {/*<Button*/}
-                {/*  // button*/}
-                {/*  color="#ED553B"*/}
-                {/*  radius="15px"*/}
-                {/*  onClick={this.handleUserLogout}*/}
-                {/*  className={styles.startComposition} loading={logoutLoading}>{t('FinishSession')}</Button>*/}
               </div>
             </div>
           ) :
           <div>
             <div className={styles.header}>{t('SpecifyCompositionType')}</div>
-            <div className={styles.buttonsWrapper}>
-              {schemas?.map((item, index) => {
-                return (
-                  <div key={item.schema_id} className={styles.buttons}>
-                    <LoadingButton
-                      loadingIndicator={<CircularProgress color='inherit' size={28}/>}
-                      loading={loading[index]}
-                      color='primary'
-                      variant='contained'
-                      onClick={() => this.handleCreateUnit(item, index)}
-                    >{item.schema_name}</LoadingButton>
-                    {/*<Button*/}
-                    {/*  // button*/}
-                    {/*  color="#20639B"*/}
-                    {/*  radius="15px"*/}
-                    {/*  onClick={() => this.handleCreateUnit(item, index)}*/}
-                    {/*  className={styles.chooseOptions} loading={loading[index]}>{item.schema_name}</Button>*/}
-                  </div>
-                )
-              })
-              }
+            <div className={styles.variantsWrapper}>
+              <div className={styles.flexWrapperColumn}>
+                <div className={styles.buttons}>
+                  <LoadingButton
+                    sx={{pointerEvents: 'none'}}
+                    loadingIndicator={<CircularProgress color='inherit' size={28}/>}
+                    color='secondary'
+                  >{t('Simple')}</LoadingButton>
+                </div>
+                {schemas?.map((item, index) => {
+                  if(!item.is_composite) {
+                    return (
+                      <div key={item.schema_id} className={styles.buttons}>
+                        <LoadingButton
+                          loadingIndicator={<CircularProgress color='inherit' size={28}/>}
+                          loading={loading[index]}
+                          color='primary'
+                          variant='contained'
+                          onClick={() => this.handleCreateUnit(item, index)}
+                        >{item.schema_name}</LoadingButton>
+                      </div>
+                    )
+                  }
+                })}
+              </div>
+              <div className={styles.flexWrapperColumn}>
+                <div className={styles.buttons}>
+                  <LoadingButton
+                    sx={{pointerEvents: 'none'}}
+                    loadingIndicator={<CircularProgress color='inherit' size={28}/>}
+                    color='secondary'
+                  >{t('Complex')}</LoadingButton>
+                </div>
+                {schemas?.map((item, index) => {
+                  if(item.is_composite) {
+                    return (
+                      <div key={item.schema_id} className={styles.buttons}>
+                        <LoadingButton
+                          loadingIndicator={<CircularProgress color='inherit' size={28}/>}
+                          loading={loading[index]}
+                          color='primary'
+                          variant='contained'
+                          onClick={() => this.handleCreateUnit(item, index)}
+                        >{item.schema_name}</LoadingButton>
+                      </div>
+                    )
+                  }
+                })}
+              </div>
             </div>
             <div className={styles.buttonsWrapper}>
               <div className={styles.buttons}>
@@ -207,12 +213,6 @@ export default withTheme(withTranslation()(connect(
                   variant='outlined'
                   onClick={() => this.setState({chooseVariantModal: false})}
                 >{t('Back')}</LoadingButton>
-                {/*<Button*/}
-                {/*  // button*/}
-                {/*  color="#ED553B"*/}
-                {/*  radius="15px"*/}
-                {/*  onClick={() => this.setState({chooseVariantModal: false})}*/}
-                {/*  className={styles.startComposition} loading={logoutLoading}>{t('Back')}</Button>*/}
               </div>
             </div>
           </div>

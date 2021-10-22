@@ -15,7 +15,7 @@ export default withTranslation()(connect(
   (store) => ({
     composition: store.stages.get('composition').toJS(),
     location: store.router.location.pathname,
-    unitID: store.stages.getIn(['unit', 'unit_internal_id']),
+    unitID: store.stages.getIn(['composition', 'unit_internal_id']),
     finishedCompositions: store.stages.get('finishedCompositionsIDs')?.toJS(),
     usedTimestamps: store.stages.get('usedTimestamps')?.toJS(),
     state: store.stages.getIn(['composition', 'state'])
@@ -58,44 +58,9 @@ export default withTranslation()(connect(
   }
 
   componentDidMount () {
-
     if (!this.props.composition.employee_logged_in) {
       this.props.redirectToLogin()
     }
-    // this.setState({
-    //   timerID: setInterval(() => {
-    //     this.props.getBarcode(
-    //       (res) => {
-    //         if (res && res.buffer !== undefined) {
-    //           if (this.isNumeric(res.buffer) && res.buffer.length === 13) { // Check if code is valid composition code
-    //             if (!this.props.finishedCompositions.includes(res.buffer) && this.props.unitID !== res.buffer) { // Check if composition is not marked as finished
-    //               if (this.props.unitID !== undefined || this.props.unitID !== '') { // Check if unitID is not set
-    //                 if (!this.props.usedTimestamps.includes((res.added_on).toString())){ // Check if timestamp was already used
-    //                   if ((Date.now() / 1000).toFixed(0) - res.added_on <= config.pause_sensitivity) { // Check if recovery is still valid
-    //                     this.props.setCompositionID(res.buffer)
-    //                     setTimeout(() => {
-    //                       this.props.setQuery({ afterPause: true, timestamp: res.added_on }, this.props.location)
-    //                     }, 1000)
-    //                   }
-    //                 }
-    //
-    //               }
-    //             }
-    //           } else {
-    //             this.props.setQuery({ afterPause: undefined }, this.props.location)
-    //           }
-    //         }
-    //         return true
-    //       },
-    //       undefined)
-    //   }, 1000)
-    // })
-  }
-
-  isNumeric = (str) => {
-    if (typeof str != "string") return false // we only process strings!
-    return !isNaN(str) && // use type coercion to parse the _entirety_ of the string (`parseFloat` alone does not do this)...
-      !isNaN(parseFloat(str)) // ...and ensure strings of whitespace fail
   }
 
   componentDidUpdate (prevProps, prevState, snapshot) {
@@ -153,9 +118,6 @@ export default withTranslation()(connect(
             </div>
             {unitID && (<div>{t('CompositionNumber')} {unitID}</div>)}
           </div>
-          <div>
-            {this.props.state}
-          </div>
           <div className={styles.mainTimer}>
             <div className={styles.timerHeader}>
               {composition.operation_ongoing ?
@@ -184,7 +146,6 @@ export default withTranslation()(connect(
     return (
       <>
         {this.props.location.split('/')[1] !== '' && this.renderHeader()}
-        {/*<div>header</div>*/}
       </>
     )
   }

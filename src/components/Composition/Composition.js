@@ -2,12 +2,7 @@ import { withTranslation } from "react-i18next";
 import { connect } from "react-redux";
 import React from 'react'
 import styles from './Composition.module.css'
-// import { Step, StepContent, StepLabel, Stepper, Typography} from "@mui/material";
-import clsx from 'clsx'
 import {
-  // doAddTimestampToIgnore,
-  // doAddUnitToIgnore,
-  // doFetchComposition,
   doCompositionUpload, doGetSchema, doGetUnitBiography, doGetUnitInformation,
   doRaiseNotification, doRemoveUnit,
   doSetBetweenFlag, doSetSteps,
@@ -16,9 +11,8 @@ import {
 } from "@reducers/stagesActions";
 import { push } from "connected-react-router";
 import Stopwatch from "@components/Stopwatch/Stopwatch";
-// import Button from "@/uikit/Button";
 import PropTypes from "prop-types";
-import { Button, Step, StepContent, StepLabel, Stepper, Typography } from "@mui/material";
+import { CircularProgress, Step, StepContent, StepLabel, Stepper, Typography } from "@mui/material";
 
 import { withTheme } from '@mui/styles'
 import { LoadingButton } from "@mui/lab";
@@ -65,15 +59,11 @@ export default withTheme(withTranslation()(connect(
     startStepRecord: (productionStageName, additionalInfo, successChecker, errorChecker) => doStartStepRecord(dispatch, productionStageName, additionalInfo, successChecker, errorChecker),
     stopStepRecord: (additionalInfo, successChecker, errorChecker) => doStopStepRecord(dispatch, additionalInfo, successChecker, errorChecker),
     uploadComposition: (successChecker, errorChecker) => doCompositionUpload(dispatch, successChecker, errorChecker),
-    // doFetchComposition: (successChecker, errorChecker) => doFetchComposition(dispatch, successChecker, errorChecker),
     raiseNotification: (notificationMessage) => doRaiseNotification(dispatch, notificationMessage),
     setSteps: (steps) => doSetSteps(dispatch, steps),
     setBetweenFlag: (state) => doSetBetweenFlag(dispatch, state),
     getUnitBiography: (unitID, successChecker, errorChecker) => doGetUnitBiography(dispatch, unitID, successChecker, errorChecker),
     dropUnit: (successChecker, errorChecker) => doRemoveUnit(dispatch, successChecker, errorChecker),
-
-    // addCurrUnitToIgnore: () => doAddUnitToIgnore(dispatch),
-    // addTimestampToIgnore: (timestamp) => doAddTimestampToIgnore(dispatch, timestamp),
 
     doGetSchema: (schemaId, successChecker, errorChecker) => doGetSchema(dispatch, schemaId, successChecker, errorChecker),
     doGetUnitDetails: (unitID, successChecker, errorChecker) => doGetUnitInformation(dispatch, unitID, successChecker, errorChecker)
@@ -206,9 +196,13 @@ export default withTheme(withTranslation()(connect(
   }
 
   // Stop record for the current step
-  handleStageRecordStop () {
+  handleStageRecordStop (loadBlock = 1) {
     return new Promise((resolve, reject) => {
-      this.setState({loading_1: true})
+      if(loadBlock === 1)
+        this.setState({loading_1: true})
+      else if (loadBlock === 2)
+        this.setState({loading_2: true})
+
       this.props.stopStepRecord(
         {},
         (res) => {
@@ -258,11 +252,12 @@ export default withTheme(withTranslation()(connect(
 
   // Set this composition on pause and go to unit create selection
   setOnPause () {
-    this.handleStageRecordStop()
+    this.handleStageRecordStop(2)
       .then(() => this.props.dropUnit(
         (res) => {
           if (res.status_code === 200) {
-            resolve('OK')
+            this.setState({loading_2: false})
+            // resolve('OK')
             return true
           } else {
             this.props.raiseNotification('Не удалось убрать сборку со стола. Попробуйте позже. Если ошибка повторится, то свяжитесь с системным администратором для устранения проблемы.')
@@ -272,10 +267,14 @@ export default withTheme(withTranslation()(connect(
   }
 
   cancelComposition () {
+    this.setState({loading_2: true})
     return new Promise((resolve) => {
       this.props.dropUnit(
         (res) => {
           if (res.status_code === 200) {
+            setTimeout(() => {
+              this.setState({loading_2: false})
+            },400)
             resolve('OK')
             return true
           } else {
@@ -307,6 +306,7 @@ export default withTheme(withTranslation()(connect(
           <div className={styles.buttonsWrapper}>
             <div className={styles.button}>
               <LoadingButton
+                loadingIndicator={<CircularProgress color='inherit' size={28}/>}
                 variant='contained'
                 color='primary'
                 disabled={loading_1}
@@ -325,6 +325,7 @@ export default withTheme(withTranslation()(connect(
             </div>
             <div className={styles.button}>
               <LoadingButton
+                loadingIndicator={<CircularProgress color='inherit' size={28}/>}
                 variant='outlined'
                 color='secondary'
                 disabled={loading_2}
@@ -340,6 +341,7 @@ export default withTheme(withTranslation()(connect(
             <div className={styles.buttonsWrapper}>
               <div className={styles.button}>
                 <LoadingButton
+                  loadingIndicator={<CircularProgress color='inherit' size={28}/>}
                   variant='contained'
                   color='primary'
                   disabled={loading_1}
@@ -349,13 +351,12 @@ export default withTheme(withTranslation()(connect(
               </div>
               <div className={styles.button}>
                 <LoadingButton
+                  loadingIndicator={<CircularProgress color='inherit' size={28}/>}
                   variant='outlined'
                   color='secondary'
                   disabled={loading_2}
                   loading={loading_2}
-                  onClick={() => {
-                    this.props.dropUnit()
-                  }}
+                  onClick={() => this.cancelComposition().then(() => setTimeout(() => this.props.goToMenu(), 400))}
                 >{t('CancelComposition')}</LoadingButton>
               </div>
             </div>
@@ -373,6 +374,7 @@ export default withTheme(withTranslation()(connect(
                     <div className={styles.button}>
 
                       <LoadingButton
+                        loadingIndicator={<CircularProgress color='inherit' size={28}/>}
                         variant='contained'
                         color='primary'
                         loading={loading_1}
@@ -399,6 +401,7 @@ export default withTheme(withTranslation()(connect(
                       <div className={styles.button}>
 
                         <LoadingButton
+                          loadingIndicator={<CircularProgress color='inherit' size={28}/>}
                           variant='outlined'
                           color='secondary'
                           loading={loading_2}
@@ -407,10 +410,13 @@ export default withTheme(withTranslation()(connect(
                         >{t('SetOnPause')}</LoadingButton>
                       </div>
                     )}
-                    <div className={styles.timerWrapper}>
-                      <Stopwatch setStepDuration={this.setStepDuration} ref={this.stageStopwatch}/>
-                      {this.timeToRegular(item.duration_seconds)}
-                    </div>
+
+                      <div className={styles.timerWrapper}>
+                        <Stopwatch setStepDuration={this.setStepDuration} ref={this.stageStopwatch}/>
+                        {item.duration_seconds !== 0 && this.timeToRegular(item.duration_seconds)}
+                      </div>
+
+
                   </div>
                 </div>
               </StepContent>
@@ -420,6 +426,7 @@ export default withTheme(withTranslation()(connect(
           // <div className={styles.button}>
           <div className={styles.button}>
             <LoadingButton
+              loadingIndicator={<CircularProgress color='inherit' size={28}/>}
               className={styles.button}
               id="savePassportButton"
               variant='contained'

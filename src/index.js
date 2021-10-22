@@ -14,9 +14,6 @@ const theme = createTheme({
     primary: {
       main: '#17183B',
     },
-    // primaryLight: {
-    //   main: '#525983'
-    // },
     secondary: {
       main: '#FF6B35'
     }
@@ -29,8 +26,8 @@ const theme = createTheme({
           borderRadius: '15px',
           minHeight: '60px',
           fontSize: '16pt',
-          minWidth: '250px',
-          maxWidth: '500px'
+          minWidth: '300px',
+          maxWidth: '300px'
         }
       }
     },
