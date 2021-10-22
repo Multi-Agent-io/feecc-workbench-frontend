@@ -8,5 +8,6 @@
   "smart_protection": true,
   "dev_show_reducers": true,
   "pause_sensitivity": 30,
-  "pulling_period": 1000
+  "pulling_period": 1000,
+  "use_devtools": false
 }
