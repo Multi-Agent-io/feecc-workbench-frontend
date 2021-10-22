@@ -8,7 +8,7 @@ import Login from "@components/Login/Login"
 import Menu from "@components/Menu/Menu"
 import Composition from "@components/Composition/Composition"
 import Notifications from "@components/Notifications/Notifications"
-import { doGetWorkbenchNumber, doRaiseNotification } from "@reducers/stagesActions";
+import { doRaiseNotification } from "@reducers/stagesActions";
 import GatherComponents from "@components/GatherComponents/GatherComponents";
 
 

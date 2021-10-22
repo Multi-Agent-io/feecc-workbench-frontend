@@ -4,7 +4,8 @@ import React from 'react'
 import styles from './Notifications.module.css'
 import { ReactComponent as Close } from '../../icons/close_popup.svg'
 import { doRemoveNotification } from "@reducers/stagesActions";
-import { Paper, withStyles } from "@material-ui/core";
+import { Paper } from "@mui/material"
+import { withStyles } from "@mui/styles"
 
 const stylesMaterial = {
   root: {

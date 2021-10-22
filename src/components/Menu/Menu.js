@@ -10,12 +10,15 @@ import {
   doRaiseNotification,
   doSetSteps
 } from "@reducers/stagesActions";
-import Button from "@/uikit/Button";
+// import Button from "@/uikit/Button";
 import PropTypes from "prop-types"
-import config from '../../../configs/config.json'
 import { push } from "connected-react-router";
+import { Button, CircularProgress } from "@mui/material";
+import { LoadingButton } from '@mui/lab'
+// import Button from '@mui/material'
+import { withTheme } from '@mui/styles'
 
-export default withTranslation()(connect(
+export default withTheme(withTranslation()(connect(
   (store) => ({
     unitID: store.stages.getIn(['unit', 'unit_internal_id']),
     schemas: store.stages.get('productionSchemas').toJS(),
@@ -118,6 +121,7 @@ export default withTranslation()(connect(
 
   handleUserLogout = () => {
     this.setState({logoutLoading: true})
+    // setTimeout(() => {
     this.props.doLogout(
       (r) => {
         this.setState({logoutLoading: false})
@@ -126,6 +130,8 @@ export default withTranslation()(connect(
         this.setState({logoutLoading: false})
       }
     )
+    // }, 1000)
+
   }
 
   render () {
@@ -134,51 +140,84 @@ export default withTranslation()(connect(
     return (
       <div className={styles.wrapper}>
         {!chooseVariantModal ? (
-            <div>
+            <div className={styles.buttonsWrapper}>
               <div className={styles.buttons}>
-                <Button
-                  button
-                  color="#20639B"
-                  radius="15px"
+                <LoadingButton
+                  loadingIndicator={<CircularProgress color='inherit' size={28}/>}
+                  loading={createLoading_1 === true}
+                  color="primary"
+                  variant="contained"
                   onClick={() => this.setState({chooseVariantModal: true})}
-                  className={styles.startComposition} loading={createLoading_1}>{t('StartComposition')}</Button>
+                  // className={styles.startComposition}
+                >{t('StartComposition')}</LoadingButton>
+                {/*<Button*/}
+                {/*  // button*/}
+                {/*  color="#20639B"*/}
+                {/*  radius="15px"*/}
+                {/*  onClick={() => this.setState({chooseVariantModal: true})}*/}
+                {/*  className={styles.startComposition} loading={createLoading_1}>{t('StartComposition')}</Button>*/}
               </div>
               <div className={styles.buttons}>
-                <Button
-                  button
-                  color="#ED553B"
-                  radius="15px"
+                <LoadingButton
+                  loadingIndicator={<CircularProgress color='inherit' size={28}/>}
+                  loading={logoutLoading}
+                  color="secondary"
+                  variant="outlined"
                   onClick={this.handleUserLogout}
-                  className={styles.startComposition} loading={logoutLoading}>{t('FinishSession')}</Button>
+                >{t('FinishSession')}</LoadingButton>
+                {/*<Button*/}
+                {/*  // button*/}
+                {/*  color="#ED553B"*/}
+                {/*  radius="15px"*/}
+                {/*  onClick={this.handleUserLogout}*/}
+                {/*  className={styles.startComposition} loading={logoutLoading}>{t('FinishSession')}</Button>*/}
               </div>
             </div>
           ) :
           <div>
             <div className={styles.header}>{t('SpecifyCompositionType')}</div>
-            {schemas?.map((item, index) => {
-              return (
-                <div key={item.schema_id} className={styles.buttons}>
-                  <Button
-                    button
-                    color="#20639B"
-                    radius="15px"
-                    onClick={() => this.handleCreateUnit(item, index)}
-                    className={styles.chooseOptions} loading={loading[index]}>{item.schema_name}</Button>
-                </div>
-              )
-            })
-            }
-            <div className={styles.buttons}>
-              <Button
-                button
-                color="#ED553B"
-                radius="15px"
-                onClick={() => this.setState({chooseVariantModal: false})}
-                className={styles.startComposition} loading={logoutLoading}>{t('Back')}</Button>
+            <div className={styles.buttonsWrapper}>
+              {schemas?.map((item, index) => {
+                return (
+                  <div key={item.schema_id} className={styles.buttons}>
+                    <LoadingButton
+                      loadingIndicator={<CircularProgress color='inherit' size={28}/>}
+                      loading={loading[index]}
+                      color='primary'
+                      variant='contained'
+                      onClick={() => this.handleCreateUnit(item, index)}
+                    >{item.schema_name}</LoadingButton>
+                    {/*<Button*/}
+                    {/*  // button*/}
+                    {/*  color="#20639B"*/}
+                    {/*  radius="15px"*/}
+                    {/*  onClick={() => this.handleCreateUnit(item, index)}*/}
+                    {/*  className={styles.chooseOptions} loading={loading[index]}>{item.schema_name}</Button>*/}
+                  </div>
+                )
+              })
+              }
+            </div>
+            <div className={styles.buttonsWrapper}>
+              <div className={styles.buttons}>
+                <LoadingButton
+                  loadingIndicator={<CircularProgress color='inherit' size={28}/>}
+                  loading={logoutLoading}
+                  color='secondary'
+                  variant='outlined'
+                  onClick={() => this.setState({chooseVariantModal: false})}
+                >{t('Back')}</LoadingButton>
+                {/*<Button*/}
+                {/*  // button*/}
+                {/*  color="#ED553B"*/}
+                {/*  radius="15px"*/}
+                {/*  onClick={() => this.setState({chooseVariantModal: false})}*/}
+                {/*  className={styles.startComposition} loading={logoutLoading}>{t('Back')}</Button>*/}
+              </div>
             </div>
           </div>
         }
       </div>
     )
   }
-}))
+})))

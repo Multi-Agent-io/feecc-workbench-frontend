@@ -2,7 +2,7 @@ import { withTranslation } from "react-i18next";
 import { connect } from "react-redux";
 import React from 'react'
 import styles from './Composition.module.css'
-import { Step, StepContent, StepLabel, Stepper, Typography, withStyles } from "@material-ui/core";
+// import { Step, StepContent, StepLabel, Stepper, Typography} from "@mui/material";
 import clsx from 'clsx'
 import {
   // doAddTimestampToIgnore,
@@ -16,38 +16,41 @@ import {
 } from "@reducers/stagesActions";
 import { push } from "connected-react-router";
 import Stopwatch from "@components/Stopwatch/Stopwatch";
-import Button from "@/uikit/Button";
-// import config from '../../../configs/config.json'
+// import Button from "@/uikit/Button";
 import PropTypes from "prop-types";
+import { Button, Step, StepContent, StepLabel, Stepper, Typography } from "@mui/material";
 
-const stylesMaterial = {
-  root: {
-    width: '60vw',
-  },
-  actionsContainer: {
-    marginTop: "20px",
-    marginBottom: "20px",
-  },
-  button: {
-    // color       : "#20639B",
-    marginRight: "20px"
-  },
-  buttonStart: {
-    // color       : "#20639B",
-    marginTop: "20px",
-    marginLeft: "20px"
-  },
-  buttonCancel: {
-    marginLeft: "20px",
-    // color     : "#ED553B"
-  },
-  uploadButton: {
-    // color       : "#20639B",
-    marginBottom: "40px"
-  }
-}
+import { withTheme } from '@mui/styles'
+import { LoadingButton } from "@mui/lab";
 
-export default withStyles(stylesMaterial)(withTranslation()(connect(
+// const stylesMaterial = {
+//   root: {
+//     width: '60vw',
+//   },
+//   actionsContainer: {
+//     marginTop: "20px",
+//     marginBottom: "20px",
+//   },
+//   button: {
+//     // color       : "#20639B",
+//     marginRight: "20px"
+//   },
+//   buttonStart: {
+//     // color       : "#20639B",
+//     marginTop: "20px",
+//     marginLeft: "20px"
+//   },
+//   buttonCancel: {
+//     marginLeft: "20px",
+//     // color     : "#ED553B"
+//   },
+//   uploadButton: {
+//     // color       : "#20639B",
+//     marginBottom: "40px"
+//   }
+// }
+
+export default withTheme(withTranslation()(connect(
   (store) => ({
     steps: store.stages.get('steps')?.toJS(),
     unit: store.stages.get('unit')?.toJS(),
@@ -290,170 +293,119 @@ export default withStyles(stylesMaterial)(withTranslation()(connect(
       })
   }
 
-  // Important notice - start request only sendable if doMove flag is in true position
-
-  // searchAndMoveToStep = (steps, title, doMove, sendStartRequest = false) => {
-  //   let stepFound = false
-  //   Object.values(steps).map((item, index) => {
-  //     if (item.title === title) {
-  //       stepFound = true
-  //       if (index !== -1) {
-  //         if (doMove) {
-  //           if (sendStartRequest) {
-  //             this.props.startStepRecord(
-  //               this.props.unit.unit_internal_id,
-  //               title,
-  //               {},
-  //               (res) => {
-  //                 if (!this.successChecker(res))
-  //                   return false
-  //                 this.setState({activeStep: index})  // Select found step
-  //                 this.setState({loading_1: false, loading_2: false})
-  //                 setTimeout(() => {
-  //                   let el = document.getElementById(`step_${index}`)
-  //                   el.scrollIntoView({
-  //                     block: "center",
-  //                     inline: "center",
-  //                     behavior: "smooth"
-  //                   })
-  //                 }, 200)
-  //                 return true
-  //               },
-  //               (res) => {
-  //                 if (res !== undefined)
-  //                   this.props.raiseNotification('Error while sending data to server (return code !== 200)')
-  //                 this.setState({loading_1: false, loading_2: false})
-  //               }
-  //             )
-  //           } else {
-  //             this.setState({activeStep: index})  // Select found step
-  //             setTimeout(() => {
-  //               let el = document.getElementById(`step_${index}`)
-  //               el.scrollIntoView({
-  //                 block: "center",
-  //                 inline: "center",
-  //                 behavior: "smooth"
-  //               })
-  //             }, 200) // Scroll to the selected step
-  //           }
-  //         }
-  //       }
-  //     }
-  //   })
-  //   return stepFound
-  // }
-
 
   timeToRegular = (seconds) => {
     return new Date(seconds * 1000).toISOString().substr(11, 8)
   }
 
   render () {
-    const {classes, t}                       = this.props
+    const {t}                                = this.props
     const {activeStep, loading_1, loading_2} = this.state
     return (
       <div className={styles.wrapper}>
         {activeStep === -1 && this.state.afterPauseStep === -1 && (
-          <div>
-            <Button
-              color="#20639B"
-              radius="10px"
-              staticWidth="240px"
-              disabled={loading_1}
-              loading={loading_1}
-              onClick={() => {
-                this.handleStageRecordStart(this.props.steps[0]?.name)
-                  .then(() => {
-                    this.setState({activeStep: this.state.activeStep + 1})
-                    document.getElementById('step_0').scrollIntoView({
-                      behavior: "smooth",
-                      block: "center"
+          <div className={styles.buttonsWrapper}>
+            <div className={styles.button}>
+              <LoadingButton
+                variant='contained'
+                color='primary'
+                disabled={loading_1}
+                loading={loading_1}
+                onClick={() => {
+                  this.handleStageRecordStart(this.props.steps[0]?.name)
+                    .then(() => {
+                      this.setState({activeStep: this.state.activeStep + 1})
+                      document.getElementById('step_0').scrollIntoView({
+                        behavior: "smooth",
+                        block: "center"
+                      })
                     })
-                  })
-              }}
-              className={classes.buttonStart}>{t('StartComposition')}</Button>
-            <Button
-              color="#ED553B"
-              radius="10px"
-              staticWidth="240px"
-              disabled={loading_2}
-              loading={loading_2}
-              onClick={() => this.cancelComposition().then(() => setTimeout(() => this.props.goToMenu(), 400))}
-              className={classes.buttonCancel}>{t('CancelComposition')}</Button>
+                }}
+              >{t('StartComposition')}</LoadingButton>
+            </div>
+            <div className={styles.button}>
+              <LoadingButton
+                variant='outlined'
+                color='secondary'
+                disabled={loading_2}
+                loading={loading_2}
+                onClick={() => this.cancelComposition().then(() => setTimeout(() => this.props.goToMenu(), 400))}
+              >{t('CancelComposition')}</LoadingButton>
+            </div>
           </div>
         )}
         {activeStep === -1 && this.state.afterPauseStep !== -1 && (
           <div>
             <div className={styles.textWrapper}>{t('DropWarning')}</div>
-            <div>
-              <Button
-                color="#20639B"
-                radius="10px"
-                staticWidth="300px"
-                disabled={loading_1}
-                loading={loading_1}
-                className={classes.buttonStart}
-                onClick={() => this.proceedComposition()}
-              >{t('ProceedComposition')}</Button>
-              <Button
-                color="#ED553B"
-                radius="10px"
-                staticWidth="240px"
-                disabled={loading_2}
-                loading={loading_2}
-                className={classes.buttonStart}
-                onClick={() => {
-                  this.props.dropUnit()
-                }}
-              >{t('CancelComposition')}</Button>
+            <div className={styles.buttonsWrapper}>
+              <div className={styles.button}>
+                <LoadingButton
+                  variant='contained'
+                  color='primary'
+                  disabled={loading_1}
+                  loading={loading_1}
+                  onClick={() => this.proceedComposition()}
+                >{t('ProceedComposition')}</LoadingButton>
+              </div>
+              <div className={styles.button}>
+                <LoadingButton
+                  variant='outlined'
+                  color='secondary'
+                  disabled={loading_2}
+                  loading={loading_2}
+                  onClick={() => {
+                    this.props.dropUnit()
+                  }}
+                >{t('CancelComposition')}</LoadingButton>
+              </div>
             </div>
           </div>
         )}
 
-        <Stepper className={clsx(classes.root, styles.button)} activeStep={activeStep} orientation="vertical">
+        <Stepper className={styles.stepper} activeStep={activeStep} orientation="vertical">
           {this.props.steps?.map((item, index) =>
             (<Step id={`step_${index}`} key={item.description}>
               <StepLabel>{item.name}</StepLabel>
               <StepContent>
                 <Typography>{item.description}</Typography>
-                <div className={classes.actionsContainer}>
+                <div>
                   <div className={styles.controls}>
-                    <Button
-                      variant="contained"
-                      color="#20639B"
-                      radius="10px"
-                      staticWidth="120px"
-                      loading={loading_1}
-                      disabled={loading_1}
-                      className={classes.button}
-                      onClick={() => {
-                        if (activeStep === this.props.steps?.length - 1) {
-                          this.handleStageRecordStop()
-                            .then(() => {
-                              this.setState({activeStep: activeStep + 1, loading_1: false})
-                              document.getElementById('savePassportButton').scrollIntoView({
-                                behavior: "smooth",
-                                block: "center"
+                    <div className={styles.button}>
+
+                      <LoadingButton
+                        variant='contained'
+                        color='primary'
+                        loading={loading_1}
+                        disabled={loading_1}
+                        onClick={() => {
+                          if (activeStep === this.props.steps?.length - 1) {
+                            this.handleStageRecordStop()
+                              .then(() => {
+                                this.setState({activeStep: activeStep + 1, loading_1: false})
+                                document.getElementById('savePassportButton').scrollIntoView({
+                                  behavior: "smooth",
+                                  block: "center"
+                                })
                               })
-                            })
-                        } else {
-                          this.handleNextCompositionStep(this.props.steps[index + 1]?.name, `step_${index + 1}`)
-                        }
-                      }}
-                    >
-                      {activeStep === this.props.steps?.length - 1 ? t('Finish') : t('Next')}
-                    </Button>
+                          } else {
+                            this.handleNextCompositionStep(this.props.steps[index + 1]?.name, `step_${index + 1}`)
+                          }
+                        }}
+                      >
+                        {activeStep === this.props.steps?.length - 1 ? t('Finish') : t('Next')}
+                      </LoadingButton>
+                    </div>
                     {activeStep !== this.props.steps?.length - 1 && (
-                      <Button
-                        variant="contained"
-                        color="#20639B"
-                        radius="10px"
-                        staticWidth="120px"
-                        loading={loading_2}
-                        disabled={loading_2}
-                        className={classes.button}
-                        onClick={() => this.setOnPause()}
-                      >{t('SetOnPause')}</Button>
+                      <div className={styles.button}>
+
+                        <LoadingButton
+                          variant='outlined'
+                          color='secondary'
+                          loading={loading_2}
+                          disabled={loading_2}
+                          onClick={() => this.setOnPause()}
+                        >{t('SetOnPause')}</LoadingButton>
+                      </div>
                     )}
                     <div className={styles.timerWrapper}>
                       <Stopwatch setStepDuration={this.setStepDuration} ref={this.stageStopwatch}/>
@@ -465,22 +417,26 @@ export default withStyles(stylesMaterial)(withTranslation()(connect(
             </Step>))}
         </Stepper>
         {activeStep === this.props.steps?.length && (
-          <Button
-            id="savePassportButton"
-            color="#20639B"
-            radius="10px"
-            staticWidth="240px"
-            loading={loading_1}
-            disabled={loading_1}
-            onClick={() => this.handleCompositionUpload().then(() => {
-              this.props.dropUnit(() => {
-                return true
-              }, null)
-              setTimeout(() => {
-                this.props.goToMenu()
-              }, 300)
-            })}
-            className={classes.uploadButton}>{t('SavePassport')}</Button>
+          // <div className={styles.button}>
+          <div className={styles.button}>
+            <LoadingButton
+              className={styles.button}
+              id="savePassportButton"
+              variant='contained'
+              color='primary'
+              loading={loading_1}
+              disabled={loading_1}
+              onClick={() => this.handleCompositionUpload().then(() => {
+                this.props.dropUnit(() => {
+                  return true
+                }, null)
+                setTimeout(() => {
+                  this.props.goToMenu()
+                }, 300)
+              })}
+            >{t('SavePassport')}</LoadingButton>
+          </div>
+
         )}
       </div>
     )

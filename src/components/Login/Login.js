@@ -21,7 +21,7 @@ export default withTranslation()(connect(
     goToGatheringComponents: () => dispatch(push('/gatherComponents')),
     raiseNotification : (notificationMessage) => doRaiseNotification(dispatch, notificationMessage),
     doFetchComposition: (successChecker, errorChecker) => doFetchComposition(dispatch, successChecker, errorChecker),
-    getWorkbenchNumber: (successChecker, errorChecker) => doGetWorkbenchNumber(dispatch, successChecker, errorChecker)
+    // getWorkbenchNumber: (successChecker, errorChecker) => doGetWorkbenchNumber(dispatch, successChecker, errorChecker)
   })
 )(class Login extends React.Component {
 
@@ -33,7 +33,7 @@ export default withTranslation()(connect(
     goToMenu          : PropTypes.func.isRequired,
     doFetchComposition: PropTypes.func.isRequired,
     raiseNotification : PropTypes.func.isRequired,
-    getWorkbenchNumber: PropTypes.func.isRequired
+    // getWorkbenchNumber: PropTypes.func.isRequired
   }
 
   state = {
