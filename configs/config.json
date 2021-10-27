@@ -10,4 +10,5 @@
   "pause_sensitivity": 30,
   "pulling_period": 1000,
   "use_devtools": false
+  "show_test_schemas": true
 }

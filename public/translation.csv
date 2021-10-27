@@ -23,6 +23,8 @@ DropWarning,У вас есть незавершённая сборка. Вы м�
 PauseTimestampIsNotSet,Временная метка для данного продолжения не получена. Попробуйте перезагрузить страницу.,Timestamp for this procedure is not set. Try to refresh your page
 UnitType1,Подсборка 1,Type 1
 UnitType2,Подсборка 2,Type 2
-RequiredComponents,Необходимо просканировать следующие сборки,You have to scan the following units
+RequiredComponents,Для продолжения необходимо просканировать следующие сборки,You have to scan the following units to proceed
 Simple,Простые,Simple
 Complex,Составные,Composite
+SelectOneOfTheFollowingCompositions,Вы можете выбрать собрать подсборку или финальныю сборку,You have to select one of the following steps
+FinishingSteps,Финальная сборка,Final assembly

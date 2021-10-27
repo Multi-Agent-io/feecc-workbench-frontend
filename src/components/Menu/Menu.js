@@ -10,13 +10,12 @@ import {
   doRaiseNotification,
   doSetSteps
 } from "@reducers/stagesActions";
-// import Button from "@/uikit/Button";
 import PropTypes from "prop-types"
 import { push } from "connected-react-router";
-import { Button, CircularProgress } from "@mui/material";
+import { CircularProgress } from "@mui/material";
 import { LoadingButton } from '@mui/lab'
-// import Button from '@mui/material'
 import { withTheme } from '@mui/styles'
+import config from '../../../configs/config.json'
 
 export default withTheme(withTranslation()(connect(
   (store) => ({
@@ -49,8 +48,9 @@ export default withTheme(withTranslation()(connect(
     createLoading_1: false,
     createLoading_2: false,
     logoutLoading: false,
-    chooseVariantModal: false,
-    loading: []
+    chooseVariantModal: 0,
+    loading: [],
+    selectedScheme: {}
   }
 
   componentDidMount () {
@@ -69,7 +69,6 @@ export default withTheme(withTranslation()(connect(
   }
 
   handleCreateUnit = (item, index) => {
-    this.props.setSteps(item.pages)
     let arr    = this.state.loading
     arr[index] = true
     this.setState({loading: arr})
@@ -78,6 +77,23 @@ export default withTheme(withTranslation()(connect(
       (res) => {
         if (res.status_code === 200) {
           let schema = res.production_schema
+          // Check if the whole scheme is empty
+          if (schema === null) {
+            this.props.raiseNotification('Ошибка. Данная схема отсутствует. Связитесь с администратором для решения данной проблемы.')
+            let arr    = this.state.loading
+            arr[index] = false
+            this.setState({loading: arr})
+            return false
+          }
+          // Check if this scheme has no stages at all
+          if (schema.production_stages === null) {
+            this.props.raiseNotification('Ошибка. Данная схема не содежит ни одного этапа. Связитесь с администратором для решения данной проблемы.')
+            let arr    = this.state.loading
+            arr[index] = false
+            this.setState({loading: arr})
+            return false
+          }
+          this.props.setSteps(schema.production_stages)
           this.props.createUnit(
             item.schema_id,
             (r) => {
@@ -130,93 +146,122 @@ export default withTheme(withTranslation()(connect(
     const {createLoading_1, loading, logoutLoading, chooseVariantModal} = this.state
     return (
       <div className={styles.wrapper}>
-        {!chooseVariantModal ? (
-            <div className={styles.buttonsWrapper}>
-              <div className={styles.buttons}>
-                <LoadingButton
-                  loadingIndicator={<CircularProgress color='inherit' size={28}/>}
-                  loading={createLoading_1 === true}
-                  color="primary"
-                  variant="contained"
-                  onClick={() => this.setState({chooseVariantModal: true})}
-                >{t('StartComposition')}</LoadingButton>
-              </div>
-              <div className={styles.buttons}>
-                <LoadingButton
-                  loadingIndicator={<CircularProgress color='inherit' size={28}/>}
-                  loading={logoutLoading}
-                  color="secondary"
-                  variant="outlined"
-                  onClick={this.handleUserLogout}
-                >{t('FinishSession')}</LoadingButton>
-              </div>
+        {chooseVariantModal === 0 && (
+          <div className={styles.buttonsWrapper}>
+            <div className={styles.buttons}>
+              <LoadingButton
+                loadingIndicator={<CircularProgress color='inherit' size={28}/>}
+                loading={createLoading_1 === true}
+                color="primary"
+                variant="contained"
+                onClick={() => {
+                  this.setState({createLoading_1: true},
+                    () => setTimeout(() => {
+                      this.setState({chooseVariantModal: 1},
+                        () => this.setState({createLoading_1: false}))
+                    }, 200))
+                }}
+              >{t('StartComposition')}</LoadingButton>
             </div>
-          ) :
-          <div>
-            <div className={styles.header}>{t('SpecifyCompositionType')}</div>
-            <div className={styles.variantsWrapper}>
-              <div className={styles.flexWrapperColumn}>
-                <div className={styles.buttons}>
-                  <LoadingButton
-                    sx={{pointerEvents: 'none'}}
-                    loadingIndicator={<CircularProgress color='inherit' size={28}/>}
-                    color='secondary'
-                  >{t('Simple')}</LoadingButton>
-                </div>
-                {schemas?.map((item, index) => {
-                  if(!item.is_composite) {
-                    return (
-                      <div key={item.schema_id} className={styles.buttons}>
-                        <LoadingButton
-                          loadingIndicator={<CircularProgress color='inherit' size={28}/>}
-                          loading={loading[index]}
-                          color='primary'
-                          variant='contained'
-                          onClick={() => this.handleCreateUnit(item, index)}
-                        >{item.schema_name}</LoadingButton>
-                      </div>
-                    )
-                  }
-                })}
-              </div>
-              <div className={styles.flexWrapperColumn}>
-                <div className={styles.buttons}>
-                  <LoadingButton
-                    sx={{pointerEvents: 'none'}}
-                    loadingIndicator={<CircularProgress color='inherit' size={28}/>}
-                    color='secondary'
-                  >{t('Complex')}</LoadingButton>
-                </div>
-                {schemas?.map((item, index) => {
-                  if(item.is_composite) {
-                    return (
-                      <div key={item.schema_id} className={styles.buttons}>
-                        <LoadingButton
-                          loadingIndicator={<CircularProgress color='inherit' size={28}/>}
-                          loading={loading[index]}
-                          color='primary'
-                          variant='contained'
-                          onClick={() => this.handleCreateUnit(item, index)}
-                        >{item.schema_name}</LoadingButton>
-                      </div>
-                    )
-                  }
-                })}
-              </div>
-            </div>
-            <div className={styles.buttonsWrapper}>
-              <div className={styles.buttons}>
-                <LoadingButton
-                  loadingIndicator={<CircularProgress color='inherit' size={28}/>}
-                  loading={logoutLoading}
-                  color='secondary'
-                  variant='outlined'
-                  onClick={() => this.setState({chooseVariantModal: false})}
-                >{t('Back')}</LoadingButton>
-              </div>
+            <div className={styles.buttons}>
+              <LoadingButton
+                loadingIndicator={<CircularProgress color='inherit' size={28}/>}
+                loading={logoutLoading}
+                color="secondary"
+                variant="outlined"
+                onClick={this.handleUserLogout}
+              >{t('FinishSession')}</LoadingButton>
             </div>
           </div>
-        }
+        )}
+        {chooseVariantModal === 1 && (<div>
+          <div className={styles.header}>{t('SpecifyCompositionType')}</div>
+          <div className={styles.variantsWrapper}>
+            {schemas?.map((item, index) => {
+              let show_flag = !item.schema_id.startsWith('test_')
+              if (config.show_test_schemas && !show_flag)
+                show_flag = true
+              if (show_flag)
+                return (
+                  <div key={item.schema_id} className={styles.buttons}>
+                    <LoadingButton
+                      loadingIndicator={<CircularProgress color='inherit' size={28}/>}
+                      loading={loading[index]}
+                      color='primary'
+                      variant='contained'
+                      onClick={() => {
+                        if (item.included_schemas !== null) {
+                          this.setState({
+                            selectedScheme: item,
+                            chooseVariantModal: 2
+                          }, () => console.log(this.state.selectedScheme))
+                          // console.log('move to included schemas selecting')
+                        } else {
+                          this.handleCreateUnit(item, index)
+                        }
+                      }}
+                    >{item.schema_name}</LoadingButton>
+                  </div>
+                )
+            })}
+          </div>
+          <div className={styles.buttonsWrapper}>
+            <div className={styles.buttons}>
+              <LoadingButton
+                loadingIndicator={<CircularProgress color='inherit' size={28}/>}
+                loading={logoutLoading}
+                color='secondary'
+                variant='outlined'
+                onClick={() => this.setState({chooseVariantModal: 0})}
+              >{t('Back')}</LoadingButton>
+            </div>
+          </div>
+        </div>)}
+        {chooseVariantModal === 2 && (<div>
+          <div className={styles.header}>{this.state.selectedScheme.schema_name}</div>
+          <div className={styles.subheader}>{t('SelectOneOfTheFollowingCompositions')}</div>
+          <div className={styles.schemeDetailsWrapper}>
+            <div className={styles.buttons}>
+              <LoadingButton
+                loadingIndicator={<CircularProgress color='inherit' size={28}/>}
+                loading={logoutLoading}
+                color='secondary'
+                variant='outlined'
+                onClick={() => this.setState({chooseVariantModal: 1})}
+              >{t('Back')}</LoadingButton>
+            </div>
+            <div>
+              {this.state.selectedScheme.included_schemas.map((item, index) => {
+                return (
+                  <div key={item.schema_id} className={styles.buttons}>
+                    <LoadingButton
+                      loadingIndicator={<CircularProgress color='inherit' size={28}/>}
+                      loading={loading[index]}
+                      color='primary'
+                      variant='contained'
+                      onClick={() => {
+                        this.handleCreateUnit(item, index)
+                      }}
+                    >{item.schema_name}</LoadingButton>
+                  </div>
+                )
+              })}
+            </div>
+            <div className={styles.buttons}>
+              <LoadingButton
+                loadingIndicator={<CircularProgress color='inherit' size={28}/>}
+                loading={loading[this.state.selectedScheme.included_schemas.length + 1]}
+                color='primary'
+                variant='outlined'
+                onClick={() => this.handleCreateUnit(
+                  this.state.selectedScheme,
+                  this.state.selectedScheme.included_schemas.length + 1)
+                }
+              >{t('FinishingSteps')}</LoadingButton>
+            </div>
+          </div>
+        </div>)}
+
       </div>
     )
   }
