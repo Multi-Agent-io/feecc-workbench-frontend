@@ -12,3 +12,10 @@ app.get('/*', function (req, res){
 console.log(`Server started on port: ${port}`)
 
 app.listen(port)
+
+var process = require('process')
+
+process.on('SIGINT', () => {
+  console.info("Shutting down NodeJS server")
+  process.exit(0)
+})

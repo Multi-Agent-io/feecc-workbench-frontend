@@ -1,0 +1,9 @@
+version: "3.8"
+
+services:
+  nodeserver:
+    build: ./
+    command: node nodeServer.js
+    ports: 
+      - 5000:5000
+      
