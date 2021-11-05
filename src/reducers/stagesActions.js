@@ -150,7 +150,7 @@ export const doSetSteps = (dispatch, steps) => {
     steps: steps
   })
 }
-
+// Reworked
 export const doGetUnitInformation = (dispatch, unitID, successChecker, errorChecker) => {
   axiosWrapper(
     dispatch,

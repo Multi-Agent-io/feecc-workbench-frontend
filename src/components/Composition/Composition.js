@@ -180,6 +180,7 @@ export default withTheme(withTranslation()(connect(
         (res) => {
           if (res.status_code === 200) {
             this.setState({loading_1: false})
+            this.props.setBetweenFlag(false)
             resolve('OK')
             // this.stageStopwatch?.current?.reset()
             // this.stageStopwatch?.current?.start()
@@ -202,7 +203,7 @@ export default withTheme(withTranslation()(connect(
         this.setState({loading_1: true})
       else if (loadBlock === 2)
         this.setState({loading_2: true})
-
+      this.props.setBetweenFlag(true)
       this.props.stopStepRecord(
         {},
         (res) => {
@@ -257,6 +258,7 @@ export default withTheme(withTranslation()(connect(
         (res) => {
           if (res.status_code === 200) {
             this.setState({loading_2: false})
+            this.props.setBetweenFlag(false)
             // resolve('OK')
             return true
           } else {
@@ -383,6 +385,7 @@ export default withTheme(withTranslation()(connect(
                           if (activeStep === this.props.steps?.length - 1) {
                             this.handleStageRecordStop()
                               .then(() => {
+                                this.props.setBetweenFlag(false)
                                 this.setState({activeStep: activeStep + 1, loading_1: false})
                                 document.getElementById('savePassportButton').scrollIntoView({
                                   behavior: "smooth",
