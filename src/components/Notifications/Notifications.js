@@ -4,7 +4,8 @@ import React from 'react'
 import styles from './Notifications.module.css'
 import { ReactComponent as Close } from '../../icons/close_popup.svg'
 import { doRemoveNotification } from "@reducers/stagesActions";
-import { Paper, withStyles } from "@material-ui/core";
+import { Paper } from "@mui/material"
+import { withStyles } from "@mui/styles"
 
 const stylesMaterial = {
   root: {
@@ -12,14 +13,9 @@ const stylesMaterial = {
     flexWrap: 'wrap',
     borderRadius: '15px',
     marginTop: '20px',
-    border: '2px solid red',
+    // border: '2px solid red',
     '& > *' : {
-      margin: '10px',
-      width : '500px',
-      // height: '160px'
-      // margin: theme.spacing(1),
-      // width: theme.spacing(16),
-      // height: theme.spacing(16),
+      margin: '20px',
     },
   },
 }
@@ -32,7 +28,7 @@ export default withStyles(stylesMaterial)(withTranslation()(connect(
     closeNotification: (notificationID) => doRemoveNotification(dispatch, notificationID)
   })
 )(class Notifications extends React.Component {
-  
+
   renderNotificationCard = (id, message) => {
     const { classes } = this.props
     // console.log(this.props.notifications)
@@ -47,7 +43,7 @@ export default withStyles(stylesMaterial)(withTranslation()(connect(
       </Paper>
     )
   }
-  
+
   render() {
     const { notifications } = this.props
     return (

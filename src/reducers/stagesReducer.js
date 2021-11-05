@@ -4,15 +4,11 @@ import { types } from './common'
 import config from '../../configs/config.json'
 
 export const stagesInitialState = fromJS({
-    steps: {
-      '0': {'title': 'title1', 'context': 'context1', 'duration': 300 },
-      '1': {'title': 'title2', 'context': 'context2', 'duration': 250 }
-    },
-    user: {
-        'name':' Vasya Pupkin',
-        'position': 'Engineer',
-        'authorized': false
-    },
+    steps: [
+     {'name': 'title1', 'descriprtion': 'context1', 'duration_seconds': 300 },
+     {'name': 'title2', 'description': 'context2', 'duration_seconds': 250 }
+    ],
+    productionSchemas: [{'schema_id':'test_id_123', 'schema_name': 'simple schema name'}],
     finishedCompositionsIDs: [],
     usedTimestamps: [],
     composition: {},
@@ -62,14 +58,16 @@ export const stagesReducer = (state={}, action) => {
               .setIn(['unit', 'unit_internal_id'], action.unitID)
         case types.STAGES__SET_STEPS:
             return state
-              .set('steps', fromJS(action.steps))
-              .deleteIn(['steps', Object.entries(action.steps).length-1])
+              .set('steps', fromJS(action.production_schema?.production_stages))
         case types.STAGES__SET_WORKBENCH_NO:
             return state
               .set('workbench_no', action.workbench_no)
         case types.STAGES__SET_BETWEEN_FLAG:
             return state
               .set('betweenEndAndStartFlag', action.state)
+        case types.STAGES__SET_PRODUCTION_SCHEMAS:
+            return state
+              .set('productionSchemas', fromJS(action.available_schemas))
         default:
             return state
     }

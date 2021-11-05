@@ -14,12 +14,14 @@ export const types = {
   STAGES__SET_BETWEEN_FLAG       : 'STAGES__SET_BETWEEN_FLAG',
   STAGES__SET_UNIT_ID            : 'STAGES__SET_UNIT_ID',
   STAGES__ADD_UNIT_TO_IGNORE     : 'STAGES__ADD_UNIT_TO_IGNORE',
-  STAGES__ADD_TIMESTAMP_TO_IGNORE: 'STAGES__ADD_TIMESTAMP_TO_IGNORE'
+  STAGES__ADD_TIMESTAMP_TO_IGNORE: 'STAGES__ADD_TIMESTAMP_TO_IGNORE',
+  STAGES__SET_PRODUCTION_SCHEMAS : 'STAGES__SET_PRODUCTION_SCHEMAS',
+  // STAGES__GET_UNIT_INFORMATION   : 'STAGES__GET_UNIT_INFORMATION'
 }
 
 export const reportError = (error) => {
   let msg = error && error.message || error
-  
+
   try {
     return { type: types.STAGES__REPORT_ERROR, error: JSON.parse.msg }
   } catch (e) {
@@ -57,13 +59,13 @@ export const fetchWrapper = (dispatch, url, event, opts, successChecker) => {
 
 export const axiosWrapper = (dispatch, event, opts, successChecker) => {
   return axios(opts)
-    .then(res => {
-      if (res.status >= 400)
-        throw new Error(JSON.stringify(res))
-      else {
-        return res
-      }
-    })
+    // .then(res => {
+    //   if (res.status >= 400)
+    //     throw new Error(JSON.stringify(res))
+    //   else {
+    //     return res
+    //   }
+    // })
     .then(res => {
       if (!successChecker || successChecker(res.data)) {
         if (event !== undefined) {
