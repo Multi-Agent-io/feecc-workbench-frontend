@@ -7,9 +7,9 @@ import MVASLogo from '../../static/imageLeft.png'
 import { push } from "connected-react-router";
 import Stopwatch from "@components/Stopwatch/Stopwatch";
 import PropTypes from "prop-types";
-import { doGetBarcode, doGetUnitBiography, doSetCompositionID } from "@reducers/stagesActions";
+import { doSetCompositionID } from "@reducers/stagesActions";
 import { setQueryValues } from "@reducers/routerActions";
-import config from '../../../configs/config.json'
+// import config from '../../../configs/config.json'
 
 export default withTranslation()(connect(
   (store) => ({
@@ -25,10 +25,8 @@ export default withTranslation()(connect(
     goToMenu: () => dispatch(push({pathname: '/menu'})),
     redirectToComposition: () => dispatch(push('/composition')),
     redirectToGatherComponents: () => dispatch(push('/gatherComponents')),
-    // getBarcode: (successChecker, errorChecker) => doGetBarcode(dispatch, successChecker, errorChecker),
     setQuery: (query, url) => setQueryValues(dispatch, query, url),
     setCompositionID: (unitID) => doSetCompositionID(dispatch, unitID),
-    getUnitBiography: (unitID, successChecker, errorChecker) => doGetUnitBiography(dispatch, unitID, successChecker, errorChecker),
   })
 )(class Header extends React.Component {
 
@@ -45,7 +43,6 @@ export default withTranslation()(connect(
     getBarcode: PropTypes.func.isRequired,
     setQuery: PropTypes.func.isRequired,
     setCompositionID: PropTypes.func.isRequired,
-    getUnitBiography: PropTypes.func.isRequired,
   }
 
   state = {

@@ -170,38 +170,6 @@ export const doSetBetweenFlag = (dispatch, state) => {
     state: state
   })
 }
-// Reworked
-// export const doGetBarcode = (dispatch, successChecker, errorChecker) => {
-//   axiosWrapper(
-//     dispatch,
-//     undefined,
-//     {
-//       method : 'post',
-//       url    : `${config.socket}/workbench/hid_event`,
-//       headers: {
-//         'Content-Type'               : 'application/json',
-//         'Access-Control-Allow-Origin': '*',
-//       }
-//     },
-//     successChecker
-//   ).then(errorChecker)
-// }
-
-export const doGetUnitBiography = (dispatch, unitID, successChecker, errorChecker) => {
-  fetchWrapper(
-    dispatch,
-    `/api/unit/${unitID}/info`,
-    undefined,
-    {
-      method : "GET",
-      headers: {
-        'Content-Type'               : 'application/json',
-        'Access-Control-Allow-Origin': '*',
-      }
-    },
-    successChecker,
-  ).then(errorChecker)
-}
 
 export const doSetCompositionID = (dispatch, unitID) => {
   dispatch({
@@ -220,17 +188,4 @@ export const doRemoveUnit = (dispatch, successChecker, errorChecker) => {
     },
     successChecker
   ).then(errorChecker)
-}
-
-export const doAddUnitToIgnore = (dispatch) => {
-  dispatch({
-    type: types.STAGES__ADD_UNIT_TO_IGNORE,
-  })
-}
-
-export const doAddTimestampToIgnore = (dispatch, timestamp) => {
-  dispatch({
-    type: types.STAGES__ADD_TIMESTAMP_TO_IGNORE,
-    timestamp: timestamp
-  })
 }

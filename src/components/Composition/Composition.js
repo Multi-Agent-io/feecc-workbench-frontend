@@ -3,7 +3,7 @@ import { connect } from "react-redux";
 import React from 'react'
 import styles from './Composition.module.css'
 import {
-  doCompositionUpload, doGetSchema, doGetUnitBiography, doGetUnitInformation,
+  doCompositionUpload, doGetSchema, doGetUnitInformation,
   doRaiseNotification, doRemoveUnit,
   doSetBetweenFlag, doSetSteps,
   doStartStepRecord,
@@ -17,32 +17,6 @@ import { CircularProgress, Step, StepContent, StepLabel, Stepper, Typography } f
 import { withTheme } from '@mui/styles'
 import { LoadingButton } from "@mui/lab";
 
-// const stylesMaterial = {
-//   root: {
-//     width: '60vw',
-//   },
-//   actionsContainer: {
-//     marginTop: "20px",
-//     marginBottom: "20px",
-//   },
-//   button: {
-//     // color       : "#20639B",
-//     marginRight: "20px"
-//   },
-//   buttonStart: {
-//     // color       : "#20639B",
-//     marginTop: "20px",
-//     marginLeft: "20px"
-//   },
-//   buttonCancel: {
-//     marginLeft: "20px",
-//     // color     : "#ED553B"
-//   },
-//   uploadButton: {
-//     // color       : "#20639B",
-//     marginBottom: "40px"
-//   }
-// }
 
 export default withTheme(withTranslation()(connect(
   (store) => ({
@@ -62,7 +36,6 @@ export default withTheme(withTranslation()(connect(
     raiseNotification: (notificationMessage) => doRaiseNotification(dispatch, notificationMessage),
     setSteps: (steps) => doSetSteps(dispatch, steps),
     setBetweenFlag: (state) => doSetBetweenFlag(dispatch, state),
-    getUnitBiography: (unitID, successChecker, errorChecker) => doGetUnitBiography(dispatch, unitID, successChecker, errorChecker),
     dropUnit: (successChecker, errorChecker) => doRemoveUnit(dispatch, successChecker, errorChecker),
 
     doGetSchema: (schemaId, successChecker, errorChecker) => doGetSchema(dispatch, schemaId, successChecker, errorChecker),
@@ -77,18 +50,19 @@ export default withTheme(withTranslation()(connect(
     compositionID: PropTypes.string,
     afterPause: PropTypes.string,
     pauseTimestamp: PropTypes.string,
+    state: PropTypes.string,
 
     goToMenu: PropTypes.func.isRequired,
     startStepRecord: PropTypes.func.isRequired,
     stopStepRecord: PropTypes.func.isRequired,
     uploadComposition: PropTypes.func.isRequired,
-    // doFetchComposition: PropTypes.func.isRequired,
     raiseNotification: PropTypes.func.isRequired,
     setSteps: PropTypes.func.isRequired,
     setBetweenFlag: PropTypes.func.isRequired,
-    getUnitBiography: PropTypes.func.isRequired,
     dropUnit: PropTypes.func.isRequired,
     addTimestampToIgnore: PropTypes.func.isRequired,
+    doGetSchema: PropTypes.func.isRequired,
+    doGetUnitDetails: PropTypes.func.isRequired
   }
 
   constructor (props) {
@@ -182,8 +156,6 @@ export default withTheme(withTranslation()(connect(
             this.setState({loading_1: false})
             this.props.setBetweenFlag(false)
             resolve('OK')
-            // this.stageStopwatch?.current?.reset()
-            // this.stageStopwatch?.current?.start()
             return true
           } else {
             this.props.raiseNotification('Не удалось начать запись этапа. Попробуйте повторить позже. При многократном повторении данной ошибки обратитесь к системному администратору.')
