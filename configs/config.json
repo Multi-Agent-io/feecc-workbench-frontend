@@ -1,14 +1,8 @@
 {
   "socket": "http://localhost:5000",
-  "barcode_socket": "http://172.0.0.1:8080",
-  "unit_type_1": "Подсборка 1",
-  "unit_type_2": "Подсборка 2",
   "interface_language": "ru",
-  "use_dev_steps": false,
-  "smart_protection": true,
   "dev_show_reducers": true,
-  "pause_sensitivity": 30,
   "pulling_period": 1000,
-  "use_devtools": false
+  "use_devtools": false,
   "show_test_schemas": true
 }
