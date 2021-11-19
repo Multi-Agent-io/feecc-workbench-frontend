@@ -1,6 +1,16 @@
-h1 {
-    color: #27aedb;
-    text-align: center;
+.appWrapper {
+    padding-bottom: 50px;
+}
+
+.header {
+    position: fixed;
+    background-color: white;
+    z-index: 10;
+    box-shadow: 0 5px 20px #888888;
+}
+
+.pageWrapper {
+    padding-top: 100px;
 }
 
 .NotificationsWrapper {
@@ -9,6 +19,6 @@ h1 {
     position: fixed;
     left: 0;
     top: 0;
+    z-index: 100;
     width: 100vw;
-    /*padding: 0 10vw;*/
 }

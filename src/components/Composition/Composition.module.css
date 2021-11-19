@@ -27,6 +27,7 @@
     flex-direction: column;
 }
 .wrapper {
+    padding-top: 30px;
     margin: 0 20vw;
 }
 .startButton {

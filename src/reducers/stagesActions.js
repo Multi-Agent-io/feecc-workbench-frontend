@@ -102,7 +102,7 @@ export const doStartStepRecord = (dispatch, productionStageName, additionalInfo,
   ).then(errorChecker)
 }
 // Reworked
-export const doStopStepRecord = (dispatch, additionalInfo, successChecker, errorChecker) => {
+export const doStopStepRecord = (dispatch, additionalInfo, prematureEnding, successChecker, errorChecker) => {
   axiosWrapper(
     dispatch,
     undefined,
@@ -111,7 +111,8 @@ export const doStopStepRecord = (dispatch, additionalInfo, successChecker, error
       url   : `${config.socket}/workbench/end-operation`,
       data  : {
         workbench_no   : store.getState().stages.get('workbench_no'),
-        additional_info: additionalInfo
+        additional_info: additionalInfo,
+        premature_ending: prematureEnding
       }
     },
     successChecker

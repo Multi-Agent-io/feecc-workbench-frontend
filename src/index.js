@@ -20,12 +20,36 @@ const theme = createTheme({
   },
   components: {
     MuiButton: {
+      variants: [
+        {
+          props: {size: 'small'},
+          style: {
+            minWidth: '100px',
+            maxWidth: '100px'
+          }
+        },
+        {
+          props: {size: 'medium'},
+          style: {
+            minWidth: '200px',
+            maxWidth: '200px'
+          }
+        },
+        {
+          props: {size: 'large'},
+          style: {
+            minWidth: '300px',
+            maxWidth: '300px'
+          }
+
+        }
+      ],
       styleOverrides: {
         root: {
           width: '100%',
           borderRadius: '15px',
           minHeight: '60px',
-          fontSize: '16pt',
+          fontSize: '14pt',
           minWidth: '300px',
           maxWidth: '300px'
         }

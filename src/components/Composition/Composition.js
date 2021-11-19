@@ -31,7 +31,7 @@ export default withTheme(withTranslation()(connect(
   (dispatch) => ({
     goToMenu: () => dispatch(push('/menu')),
     startStepRecord: (productionStageName, additionalInfo, successChecker, errorChecker) => doStartStepRecord(dispatch, productionStageName, additionalInfo, successChecker, errorChecker),
-    stopStepRecord: (additionalInfo, successChecker, errorChecker) => doStopStepRecord(dispatch, additionalInfo, successChecker, errorChecker),
+    stopStepRecord: (additionalInfo, prematureEnding, successChecker, errorChecker) => doStopStepRecord(dispatch, additionalInfo, prematureEnding, successChecker, errorChecker),
     uploadComposition: (successChecker, errorChecker) => doCompositionUpload(dispatch, successChecker, errorChecker),
     raiseNotification: (notificationMessage) => doRaiseNotification(dispatch, notificationMessage),
     setSteps: (steps) => doSetSteps(dispatch, steps),
@@ -67,15 +67,15 @@ export default withTheme(withTranslation()(connect(
 
   constructor (props) {
     super(props);
-    this.stageStopwatch = React.createRef()
+    this.stopwatches = []
   }
 
   state = {
     activeStep: -1,
     afterPauseStep: -1,
     stepDuration: 0,
-    loading_1: false,
-    loading_2: false,
+    loading: [],
+    onPause: false,
     afterPause: false,
   }
 
@@ -102,6 +102,7 @@ export default withTheme(withTranslation()(connect(
                         setTimeout(() => {
                           if (index !== -1) {
                             this.setState({activeStep: index})
+                            setTimeout(() => this.stopwatches[index].start(), 100)
                           } else {
                             this.props.raiseNotification('Ошибка определения этапа сборки. Попробуйте перазагрузить страницу.')
                           }
@@ -137,25 +138,25 @@ export default withTheme(withTranslation()(connect(
     }, 400)
   }
 
-  componentDidUpdate (prevProps, prevState, snapshot) {
-    if (this.props.state === 'ProductionStageOngoing') {
-      if (this.stageStopwatch !== undefined) {
-        this.stageStopwatch?.current?.start()
-      }
-    }
-  }
-
   // Start record for the current step
-  handleStageRecordStart (stageName) {
+  handleStageRecordStart (stageName, loadingNumber = 1) {
     return new Promise((resolve, reject) => {
       this.props.startStepRecord(
         stageName,
         {},
         (res) => {
           if (res.status_code === 200) {
-            this.setState({loading_1: false})
+            let arr            = this.state.loading
+            arr[loadingNumber] = false
+            this.setState({loading: arr})
             this.props.setBetweenFlag(false)
             resolve('OK')
+            setTimeout(() => {
+              this.stopwatches[this.state.activeStep]?.start()
+              // console.log(`activeStep: ${this.state.activeStep}`)
+              // console.log(`step`)
+              // console.log(this.stopwatches)
+            }, 300)
             return true
           } else {
             this.props.raiseNotification('Не удалось начать запись этапа. Попробуйте повторить позже. При многократном повторении данной ошибки обратитесь к системному администратору.')
@@ -169,15 +170,15 @@ export default withTheme(withTranslation()(connect(
   }
 
   // Stop record for the current step
-  handleStageRecordStop (loadBlock = 1) {
+  handleStageRecordStop (loadBlock = 1, isPause = false) {
     return new Promise((resolve, reject) => {
-      if(loadBlock === 1)
-        this.setState({loading_1: true})
-      else if (loadBlock === 2)
-        this.setState({loading_2: true})
+      let arr        = this.state.loading
+      arr[loadBlock] = true
+      this.setState({loading: arr})
       this.props.setBetweenFlag(true)
       this.props.stopStepRecord(
         {},
+        isPause,
         (res) => {
           if (res.status_code === 200) {
             resolve('OK')
@@ -208,7 +209,9 @@ export default withTheme(withTranslation()(connect(
 
   // Upload finished composition
   handleCompositionUpload () {
-    this.setState({loading_1: true})
+    let arr = this.state.loading
+    arr[2]  = true
+    this.setState({loading: arr})
     return new Promise((resolve) => {
       this.props.uploadComposition(
         (res) => {
@@ -225,13 +228,14 @@ export default withTheme(withTranslation()(connect(
 
   // Set this composition on pause and go to unit create selection
   setOnPause () {
-    this.handleStageRecordStop(2)
+    this.handleStageRecordStop(3)
       .then(() => this.props.dropUnit(
         (res) => {
           if (res.status_code === 200) {
-            this.setState({loading_2: false})
+            let arr = this.state.loading
+            arr[3]  = false
+            this.setState({loading: arr})
             this.props.setBetweenFlag(false)
-            // resolve('OK')
             return true
           } else {
             this.props.raiseNotification('Не удалось убрать сборку со стола. Попробуйте позже. Если ошибка повторится, то свяжитесь с системным администратором для устранения проблемы.')
@@ -240,15 +244,34 @@ export default withTheme(withTranslation()(connect(
         }, null))
   }
 
+  setOnSmallPause () {
+    this.handleStageRecordStop(2, true)
+      .then(() => {
+        let arr = this.state.loading
+        arr[2]  = false
+        this.setState({onPause: true, loading: arr})
+      })
+  }
+
+  unpause () {
+    // console.log(this.props.steps[this.state.activeStep].name)
+    this.handleStageRecordStart(this.props.steps[this.state.activeStep].name, 2)
+      .then(() => this.setState({onPause: false}))
+  }
+
   cancelComposition () {
-    this.setState({loading_2: true})
+    let arr = this.state.loading
+    arr[2]  = true
+    this.setState({loading: arr})
     return new Promise((resolve) => {
       this.props.dropUnit(
         (res) => {
           if (res.status_code === 200) {
             setTimeout(() => {
-              this.setState({loading_2: false})
-            },400)
+              arr[2] = true
+              this.setState({loading: arr})
+              // this.setState({loading_2: false})
+            }, 400)
             resolve('OK')
             return true
           } else {
@@ -266,25 +289,25 @@ export default withTheme(withTranslation()(connect(
       })
   }
 
-
   timeToRegular = (seconds) => {
     return new Date(seconds * 1000).toISOString().substr(11, 8)
   }
 
   render () {
-    const {t}                                = this.props
-    const {activeStep, loading_1, loading_2} = this.state
+    const {t}                            = this.props
+    const {activeStep, loading, onPause} = this.state
     return (
       <div className={styles.wrapper}>
         {activeStep === -1 && this.state.afterPauseStep === -1 && (
           <div className={styles.buttonsWrapper}>
             <div className={styles.button}>
               <LoadingButton
+                size="medium"
                 loadingIndicator={<CircularProgress color='inherit' size={28}/>}
                 variant='contained'
                 color='primary'
-                disabled={loading_1}
-                loading={loading_1}
+                disabled={loading[1]}
+                loading={loading[1]}
                 onClick={() => {
                   this.handleStageRecordStart(this.props.steps[0]?.name)
                     .then(() => {
@@ -299,11 +322,12 @@ export default withTheme(withTranslation()(connect(
             </div>
             <div className={styles.button}>
               <LoadingButton
+                size="medium"
                 loadingIndicator={<CircularProgress color='inherit' size={28}/>}
                 variant='outlined'
                 color='secondary'
-                disabled={loading_2}
-                loading={loading_2}
+                disabled={loading[2]}
+                loading={loading[2]}
                 onClick={() => this.cancelComposition().then(() => setTimeout(() => this.props.goToMenu(), 400))}
               >{t('CancelComposition')}</LoadingButton>
             </div>
@@ -315,28 +339,29 @@ export default withTheme(withTranslation()(connect(
             <div className={styles.buttonsWrapper}>
               <div className={styles.button}>
                 <LoadingButton
+                  size="medium"
                   loadingIndicator={<CircularProgress color='inherit' size={28}/>}
                   variant='contained'
                   color='primary'
-                  disabled={loading_1}
-                  loading={loading_1}
+                  disabled={loading[1]}
+                  loading={loading[1]}
                   onClick={() => this.proceedComposition()}
                 >{t('ProceedComposition')}</LoadingButton>
               </div>
               <div className={styles.button}>
                 <LoadingButton
+                  size="medium"
                   loadingIndicator={<CircularProgress color='inherit' size={28}/>}
                   variant='outlined'
                   color='secondary'
-                  disabled={loading_2}
-                  loading={loading_2}
+                  disabled={loading[2]}
+                  loading={loading[2]}
                   onClick={() => this.cancelComposition().then(() => setTimeout(() => this.props.goToMenu(), 400))}
                 >{t('CancelComposition')}</LoadingButton>
               </div>
             </div>
           </div>
         )}
-
         <Stepper className={styles.stepper} activeStep={activeStep} orientation="vertical">
           {this.props.steps?.map((item, index) =>
             (<Step id={`step_${index}`} key={item.description}>
@@ -346,13 +371,13 @@ export default withTheme(withTranslation()(connect(
                 <div>
                   <div className={styles.controls}>
                     <div className={styles.button}>
-
                       <LoadingButton
+                        size="medium"
                         loadingIndicator={<CircularProgress color='inherit' size={28}/>}
                         variant='contained'
                         color='primary'
-                        loading={loading_1}
-                        disabled={loading_1}
+                        loading={loading[1]}
+                        disabled={loading[1]}
                         onClick={() => {
                           if (activeStep === this.props.steps?.length - 1) {
                             this.handleStageRecordStop()
@@ -371,43 +396,63 @@ export default withTheme(withTranslation()(connect(
                       >
                         {activeStep === this.props.steps?.length - 1 ? t('Finish') : t('Next')}
                       </LoadingButton>
+
+                    </div>
+                    <div className={styles.button}>
+                      <LoadingButton
+                        size="medium"
+                        loadingIndicator={<CircularProgress color='inherit' size={28}/>}
+                        variant='outlined'
+                        color='primary'
+                        loading={loading[2]}
+                        disabled={loading[2]}
+                        onClick={() => {
+                          if (!onPause) {
+                            this.setOnSmallPause()
+                            this.stopwatches[index].stop()
+                          } else {
+                            this.unpause()
+                            this.stopwatches[index].start()
+                          }
+                        }}
+                      >{onPause ? 'Снять с паузы' : t('SetOnPause')}</LoadingButton>
                     </div>
                     {activeStep !== this.props.steps?.length - 1 && (
-                      <div className={styles.button}>
+                      <div>
 
-                        <LoadingButton
-                          loadingIndicator={<CircularProgress color='inherit' size={28}/>}
-                          variant='outlined'
-                          color='secondary'
-                          loading={loading_2}
-                          disabled={loading_2}
-                          onClick={() => this.setOnPause()}
-                        >{t('SetOnPause')}</LoadingButton>
+                        <div className={styles.button}>
+                          <LoadingButton
+                            size="large"
+                            loadingIndicator={<CircularProgress color='inherit' size={28}/>}
+                            variant='outlined'
+                            color='secondary'
+                            loading={loading[3]}
+                            disabled={loading[3]}
+                            onClick={() => this.setOnPause()}
+                          >{t('FinishStep')}</LoadingButton>
+                        </div>
                       </div>
                     )}
-
-                      <div className={styles.timerWrapper}>
-                        <Stopwatch setStepDuration={this.setStepDuration} ref={this.stageStopwatch}/>
-                        {item.duration_seconds !== 0 && this.timeToRegular(item.duration_seconds)}
-                      </div>
-
-
+                    <div className={styles.timerWrapper}>
+                      <Stopwatch setStepDuration={this.setStepDuration} ref={item => this.stopwatches[index] = item}/>
+                      {item.duration_seconds !== 0 && this.timeToRegular(item.duration_seconds)}
+                    </div>
                   </div>
                 </div>
               </StepContent>
             </Step>))}
         </Stepper>
         {activeStep === this.props.steps?.length && (
-          // <div className={styles.button}>
           <div className={styles.button}>
             <LoadingButton
+              size="medium"
               loadingIndicator={<CircularProgress color='inherit' size={28}/>}
               className={styles.button}
               id="savePassportButton"
               variant='contained'
               color='primary'
-              loading={loading_1}
-              disabled={loading_1}
+              loading={loading[2]}
+              disabled={loading[2]}
               onClick={() => this.handleCompositionUpload().then(() => {
                 this.props.dropUnit(() => {
                   return true
@@ -418,7 +463,6 @@ export default withTheme(withTranslation()(connect(
               })}
             >{t('SavePassport')}</LoadingButton>
           </div>
-
         )}
       </div>
     )
