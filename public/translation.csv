@@ -29,3 +29,4 @@ Complex,Составные,Composite
 SelectOneOfTheFollowingCompositions,Вы можете выбрать собрать подсборку или финальныю сборку,You have to select one of the following steps
 FinishingSteps,Финальная сборка,Final assembly
 FinishStep,Остановить здесь,Stop here
+CompositionWillProceedFrom,Сборка продолжится с шага,Composition will be proceed from the step

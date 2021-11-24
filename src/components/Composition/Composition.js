@@ -335,7 +335,7 @@ export default withTheme(withTranslation()(connect(
         )}
         {activeStep === -1 && this.state.afterPauseStep !== -1 && (
           <div>
-            <div className={styles.textWrapper}>{t('DropWarning')}</div>
+            <div className={styles.textWrapper}>{t('DropWarning')}{t('CompositionWillProceedFrom')}<div className={styles.boldText}> "{this.props.steps[this.state.afterPauseStep]?.name}".</div></div>
             <div className={styles.buttonsWrapper}>
               <div className={styles.button}>
                 <LoadingButton
@@ -365,7 +365,7 @@ export default withTheme(withTranslation()(connect(
         <Stepper className={styles.stepper} activeStep={activeStep} orientation="vertical">
           {this.props.steps?.map((item, index) =>
             (<Step id={`step_${index}`} key={item.description}>
-              <StepLabel>{item.name}</StepLabel>
+              <StepLabel><div className={(index === this.state.afterPauseStep && activeStep === -1) ? styles.nextStep : ''}>{item.name}</div></StepLabel>
               <StepContent>
                 <Typography>{item.description}</Typography>
                 <div>
