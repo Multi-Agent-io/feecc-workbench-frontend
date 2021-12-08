@@ -26,4 +26,4 @@ jobs:
 #        run: docker tag feecc-workbench-frontend:dev registry.digitalocean.com/${{ secrets.DOREGISTRY}}/feecc-workbench-frontend
 
       - name: Push container in Container Registry Digital Ocean
-        run: docker push registry.digitalocean.com/${{ secrets.DOREGISTRY}}/feecc-workbench-frontend:latest
+        run: docker push ${{ secrets.DOREGISTRY}}/feecc-workbench-frontend:latest
