@@ -1,0 +1,26 @@
+name: Deploy in dev-k8s
+on:
+  push:
+    branches: [ dev ]
+  pull_request:
+    branches: [ dev ]
+    
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+  
+      - name: Install doctl
+        uses: digitalocean/action-doctl@v2
+        with:
+          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+
+      - name: Login in Container Registry Digital Ocean
+        run: doctl registry login
+    
+      - name: Tag container for Container Registry Digital Ocean
+        run: docker tag dev registry.digitalocean.com/${{ secrets.DOREGISTRY}}/feecc-workbench-frontend
+
+      - name: Push container in Container Registry Digital Ocean
+        run: docker push registry.digitalocean.com/${{ secrets.DOREGISTRY}}/feecc-workbench-frontend
