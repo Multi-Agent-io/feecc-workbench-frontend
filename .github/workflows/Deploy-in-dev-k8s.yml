@@ -6,7 +6,7 @@ on:
     branches: [ master, dev ]
     
 jobs:
-  Build-and-push-Docker-Container:
+  Build-and-push-DockerCont:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -27,3 +27,27 @@ jobs:
 
       - name: Push container in Container Registry Digital Ocean
         run: docker push ${{ secrets.DOREGISTRY}}/feecc-workbench-frontend:latest
+
+  Push-DockerCont:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Install doctl
+        uses: digitalocean/action-doctl@v2.1.0
+        with:
+          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+
+      - name: Install kubectl
+        run: sudo apt-get update
+        run: sudo apt-get install -y apt-transport-https ca-certificates curl
+        run: sudo curl -fsSLo /usr/share/keyrings/kubernetes-archive-keyring.gpg https://packages.cloud.google.com/apt/doc/apt-key.gpg
+        run: echo "deb [signed-by=/usr/share/keyrings/kubernetes-archive-keyring.gpg] https://apt.kubernetes.io/ kubernetes-xenial main" | sudo tee /etc/apt/sources.list.d/kubernetes.list
+        run: sudo apt-get update
+        run: sudo apt-get install -y kubectl
+
+      - name: Init Kubectl
+        run: doctl kubernetes cluster kubeconfig save ${{ secrets.DOINITK8S}} 
+      
+      - name: Get Nodes
+        run: kubectl get nodes
