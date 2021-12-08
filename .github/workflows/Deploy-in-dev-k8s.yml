@@ -6,7 +6,7 @@ on:
     branches: [ master, dev ]
     
 jobs:
-  Build and push Docker Container:
+  Build-and-push-Docker-Container:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
