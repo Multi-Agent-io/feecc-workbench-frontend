@@ -29,6 +29,7 @@ jobs:
         run: docker push ${{ secrets.DOREGISTRY}}/feecc-workbench-frontend:latest
 
   Push-DockerCont:
+    needs: [Build-and-push-DockerCont]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -44,5 +45,3 @@ jobs:
       - name: Init Kubectl
         run: doctl kubernetes cluster kubeconfig save ${{ secrets.DOINITK8S}} 
       
-      - name: Get Nodes
-        run: kubectl get nodes
