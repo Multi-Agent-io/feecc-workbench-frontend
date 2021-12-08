@@ -10,11 +10,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: Check Access
-        run: echo "${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}, ${{ secrets.DOREGISTRY}} "
 
       - name: Install doctl
-        uses: digitalocean/action-doctl@v2
+        uses: digitalocean/action-doctl@v2.1.0
         with:
           token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
 
@@ -22,7 +20,7 @@ jobs:
         run: doctl registry login
     
       - name: Tag container for Container Registry Digital Ocean
-        run: docker tag dev registry.digitalocean.com/${{ secrets.DOREGISTRY}}/feecc-workbench-frontend
+        run: docker tag feecc-workbench-frontend:dev registry.digitalocean.com/${{ secrets.DOREGISTRY}}/feecc-workbench-frontend
 
       - name: Push container in Container Registry Digital Ocean
         run: docker push registry.digitalocean.com/${{ secrets.DOREGISTRY}}/feecc-workbench-frontend
