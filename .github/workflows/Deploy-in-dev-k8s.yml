@@ -1,9 +1,9 @@
 name: Deploy in dev-k8s
 on:
   push:
-    branches: [ master dev ]
+    branches: [ master, dev ]
   pull_request:
-    branches: [ master dev ]
+    branches: [ master, dev ]
     
 jobs:
   build:
