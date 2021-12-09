@@ -1,17 +1,17 @@
-# name: Feecc-workbench-frontend
-# on:
-#   push:
-#     branches: [ master, dev ]
-#   pull_request:
-#     branches: [ master, dev ]
+name: Feecc-workbench-frontend
+on:
+  push:
+    branches: [ master, dev ]
+  pull_request:
+    branches: [ master, dev ]
     
-# jobs:
-#   build:
-#     runs-on: ubuntu-latest
-#     steps:
-#       - uses: actions/checkout@v2
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
 
-#       - name: Install all packages and run build
-#         run: |
-#           sudo npm install
-#           sudo npm run build
+      - name: Install all packages and run build
+        run: |
+          sudo npm install
+          sudo npm run build
