@@ -20,7 +20,7 @@ jobs:
         run: doctl registry login
 
       - name: Build Docker Container
-        run: docker build ./ -t feecc-workbench-frontend:dev
+        run: docker build ./ -t ${{ secrets.DOREGISTRY}}/feecc-workbench-frontend:dev
       
       - name: Tag container for Container Registry Digital Ocean
         run: docker tag feecc-workbench-frontend:dev ${{ secrets.DOREGISTRY}}/feecc-workbench-frontend
