@@ -23,7 +23,7 @@ jobs:
         run: docker build ./ -t ${{ secrets.DOREGISTRY}}/feecc-workbench-frontend:dev
       
       - name: Tag container for Container Registry Digital Ocean
-        run: docker tag feecc-workbench-frontend:dev ${{ secrets.DOREGISTRY}}/feecc-workbench-frontend
+        run: docker tag ${{ secrets.DOREGISTRY}}/feecc-workbench-frontend:dev ${{ secrets.DOREGISTRY}}/feecc-workbench-frontend
 
       - name: Push container in Container Registry Digital Ocean
         run: docker push ${{ secrets.DOREGISTRY}}/feecc-workbench-frontend:dev
