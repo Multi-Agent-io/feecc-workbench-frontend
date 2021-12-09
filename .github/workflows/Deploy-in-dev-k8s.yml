@@ -1,9 +1,9 @@
 name: Deploy in dev-k8s
 on:
   push:
-    branches: [ master, dev ]
+    branches: [ dev ]
   pull_request:
-    branches: [ master, dev ]
+    branches: [ dev ]
     
 jobs:
   Build-and-push-DockerCont:
@@ -20,13 +20,13 @@ jobs:
         run: doctl registry login
 
       - name: Build Docker Container
-        run: docker build ./ -t feecc-workbench-frontend:latest
+        run: docker build ./ -t feecc-workbench-frontend:dev
       
       - name: Tag container for Container Registry Digital Ocean
-        run: docker tag feecc-workbench-frontend:latest ${{ secrets.DOREGISTRY}}/feecc-workbench-frontend
+        run: docker tag feecc-workbench-frontend:dev ${{ secrets.DOREGISTRY}}/feecc-workbench-frontend
 
       - name: Push container in Container Registry Digital Ocean
-        run: docker push ${{ secrets.DOREGISTRY}}/feecc-workbench-frontend:latest
+        run: docker push ${{ secrets.DOREGISTRY}}/feecc-workbench-frontend:dev
 
   Push-DockerCont:
     needs: [Build-and-push-DockerCont]
