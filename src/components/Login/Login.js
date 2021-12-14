@@ -3,7 +3,7 @@ import { connect } from "react-redux";
 import React from 'react'
 import styles from './Login.module.css'
 import robonomicsLogo from '../../static/imageCenter.png'
-import MVASLogo from '../../static/imageLeft.png'
+import multiAgentLogo from '../../static/imageLeft_black.png'
 import endoStarsLogo from '../../static/imageRight.png'
 import { push } from "connected-react-router";
 import { doFetchComposition, doGetWorkbenchNumber, doRaiseNotification } from "@reducers/stagesActions";
@@ -68,7 +68,7 @@ export default withTranslation()(connect(
         <div className={styles.wrapper}>
           <div className={styles.header}>{t('QualityMonitoringSystem')}</div>
           <div className={styles.icons}>
-            <div className={styles.icon}><img className={styles.leftLogo} src={MVASLogo} alt="MVAS-logo(img1)"/></div>
+            <div className={styles.icon}><img className={styles.leftLogo} src={multiAgentLogo} alt="MVAS-logo(img1)"/></div>
             <div className={styles.icon}><img className={styles.centerLogo} src={robonomicsLogo}
                                               alt="robonomics-logo(img2)"/></div>
             <div className={styles.icon}><img className={styles.rightLogo} src={endoStarsLogo}

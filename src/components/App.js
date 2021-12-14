@@ -39,11 +39,14 @@ export default withTranslation()(connect(
   route = path => this.routes.find(r => path.match(r[0]) !== null)?.[1]?.()
 
   render () {
-    const {t} = this.props
     return (
-      <div>
-        <Header/>
-        {this.route(this.props.location)}
+      <div className={styles.appWrapper} style={{paddingBottom: "50px"}}>
+        <div className={styles.header}>
+          <Header />
+        </div>
+        <div className={styles.pageWrapper}>
+          {this.route(this.props.location)}
+        </div>
         <div className={styles.NotificationsWrapper}>
           <Notifications/>
         </div>

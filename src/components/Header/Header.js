@@ -2,7 +2,7 @@ import { withTranslation } from "react-i18next";
 import { connect } from "react-redux";
 import React from 'react'
 import styles from './Header.module.css'
-import robonomicsLogo from '../../static/imageCenter.png'
+import robonomicsLogo from '../../static/robonomicsLogoWhite.png'
 import MVASLogo from '../../static/imageLeft.png'
 import { push } from "connected-react-router";
 import Stopwatch from "@components/Stopwatch/Stopwatch";
@@ -110,10 +110,20 @@ export default withTranslation()(connect(
         <div className={styles.info}>
           <div>
             <div className={styles.userInfo}>
-              <div className={styles.userName}>{t('AuthorizedEmployee')} {composition?.employee?.name}</div>
-              <div className={styles.userPosition}>{t('Position')} {composition?.employee?.position}</div>
+              <div className={styles.userInfoCol1}>
+                <div>{t('AuthorizedEmployee')}</div>
+                <div>{t('Position')}</div>
+                {unitID && (<div>{t('CompositionNumber')}</div>)}
+              </div>
+              <div className={styles.userInfoCol2}>
+                <div>{composition?.employee?.name}</div>
+                <div>{composition?.employee?.position}</div>
+                {unitID && (<div>{unitID}</div>)}
+              </div>
+              {/*<div className={styles.userName}>{t('AuthorizedEmployee')} {composition?.employee?.name}</div>*/}
+              {/*<div className={styles.userPosition}>{t('Position')} {composition?.employee?.position}</div>*/}
             </div>
-            {unitID && (<div>{t('CompositionNumber')} {unitID}</div>)}
+            {/*{unitID && (<div>{t('CompositionNumber')} {unitID}</div>)}*/}
           </div>
           <div className={styles.mainTimer}>
             <div className={styles.timerHeader}>

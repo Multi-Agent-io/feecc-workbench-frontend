@@ -27,6 +27,7 @@
     flex-direction: column;
 }
 .wrapper {
+    padding-top: 30px;
     margin: 0 20vw;
 }
 .startButton {
@@ -43,4 +44,14 @@
     display: flex;
     gap: 30px;
     max-width: 700px;
+}
+
+.boldText {
+    font-weight: bold;
+    display: inline;
+}
+
+.nextStep {
+    color: var(--red1);
+    font-weight: bold;
 }

@@ -12,7 +12,7 @@ import {
 } from "@reducers/stagesActions";
 import PropTypes from "prop-types"
 import { push } from "connected-react-router";
-import { CircularProgress } from "@mui/material";
+import { Button, CircularProgress } from "@mui/material";
 import { LoadingButton } from '@mui/lab'
 import { withTheme } from '@mui/styles'
 import config from '../../../configs/config.json'
@@ -146,35 +146,7 @@ export default withTheme(withTranslation()(connect(
     const {createLoading_1, loading, logoutLoading, chooseVariantModal} = this.state
     return (
       <div className={styles.wrapper}>
-        {chooseVariantModal === 0 && (
-          <div className={styles.buttonsWrapper}>
-            <div className={styles.buttons}>
-              <LoadingButton
-                loadingIndicator={<CircularProgress color='inherit' size={28}/>}
-                loading={createLoading_1 === true}
-                color="primary"
-                variant="contained"
-                onClick={() => {
-                  this.setState({createLoading_1: true},
-                    () => setTimeout(() => {
-                      this.setState({chooseVariantModal: 1},
-                        () => this.setState({createLoading_1: false}))
-                    }, 200))
-                }}
-              >{t('StartComposition')}</LoadingButton>
-            </div>
-            <div className={styles.buttons}>
-              <LoadingButton
-                loadingIndicator={<CircularProgress color='inherit' size={28}/>}
-                loading={logoutLoading}
-                color="secondary"
-                variant="outlined"
-                onClick={this.handleUserLogout}
-              >{t('FinishSession')}</LoadingButton>
-            </div>
-          </div>
-        )}
-        {chooseVariantModal === 1 && (<div>
+        {chooseVariantModal <= 1 && (<div>
           <div className={styles.header}>{t('SpecifyCompositionType')}</div>
           <div className={styles.variantsWrapper}>
             {schemas?.map((item, index) => {
@@ -185,6 +157,7 @@ export default withTheme(withTranslation()(connect(
                 return (
                   <div key={item.schema_id} className={styles.buttons}>
                     <LoadingButton
+                      size='large'
                       loadingIndicator={<CircularProgress color='inherit' size={28}/>}
                       loading={loading[index]}
                       color='primary'
@@ -207,13 +180,16 @@ export default withTheme(withTranslation()(connect(
           </div>
           <div className={styles.buttonsWrapper}>
             <div className={styles.buttons}>
-              <LoadingButton
-                loadingIndicator={<CircularProgress color='inherit' size={28}/>}
-                loading={logoutLoading}
-                color='secondary'
-                variant='outlined'
-                onClick={() => this.setState({chooseVariantModal: 0})}
-              >{t('Back')}</LoadingButton>
+              <div className={styles.buttons}>
+                <LoadingButton
+                  size='large'
+                  loadingIndicator={<CircularProgress color='inherit' size={28}/>}
+                  loading={logoutLoading}
+                  color="secondary"
+                  variant="outlined"
+                  onClick={this.handleUserLogout}
+                >{t('FinishSession')}</LoadingButton>
+              </div>
             </div>
           </div>
         </div>)}
@@ -223,6 +199,7 @@ export default withTheme(withTranslation()(connect(
           <div className={styles.schemeDetailsWrapper}>
             <div className={styles.buttons}>
               <LoadingButton
+                size='large'
                 loadingIndicator={<CircularProgress color='inherit' size={28}/>}
                 loading={logoutLoading}
                 color='secondary'
@@ -235,6 +212,7 @@ export default withTheme(withTranslation()(connect(
                 return (
                   <div key={item.schema_id} className={styles.buttons}>
                     <LoadingButton
+                      size='large'
                       loadingIndicator={<CircularProgress color='inherit' size={28}/>}
                       loading={loading[index]}
                       color='primary'
@@ -249,6 +227,7 @@ export default withTheme(withTranslation()(connect(
             </div>
             <div className={styles.buttons}>
               <LoadingButton
+                size='large'
                 loadingIndicator={<CircularProgress color='inherit' size={28}/>}
                 loading={loading[this.state.selectedScheme.included_schemas.length + 1]}
                 color='primary'
@@ -261,7 +240,6 @@ export default withTheme(withTranslation()(connect(
             </div>
           </div>
         </div>)}
-
       </div>
     )
   }
