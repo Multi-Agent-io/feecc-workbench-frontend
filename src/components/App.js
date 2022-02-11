@@ -10,6 +10,7 @@ import Composition from "@components/Composition/Composition"
 import Notifications from "@components/Notifications/Notifications"
 import { doRaiseNotification } from "@reducers/stagesActions";
 import GatherComponents from "@components/GatherComponents/GatherComponents";
+import RevisionsTracker from "@components/RevisionsTracker/RevisionsTracker";
 
 
 export default withTranslation()(connect(
@@ -49,6 +50,7 @@ export default withTranslation()(connect(
         </div>
         <div className={styles.NotificationsWrapper}>
           <Notifications/>
+          {this.props.location !== '/' && (<RevisionsTracker/>)}
         </div>
       </div>
     );

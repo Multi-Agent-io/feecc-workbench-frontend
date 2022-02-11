@@ -5,6 +5,7 @@ import { connectRouter, routerMiddleware } from 'connected-react-router'
 import {stagesInitialState, stagesReducer} from "./stagesReducer";
 
 import config from '../../configs/config.json'
+import {revisionsInitialState, revisionsReducer} from "@reducers/RevisionsReducer";
 
 
 export const history = createBrowserHistory()
@@ -12,10 +13,12 @@ export const history = createBrowserHistory()
 export default createStore(
     combineReducers({
         stages: stagesReducer,
+        revisions: revisionsReducer,
         router: connectRouter(history)
     }),
     {
-        stages: stagesInitialState
+        stages: stagesInitialState,
+        revisions: revisionsInitialState
     },
     compose(
       applyMiddleware(routerMiddleware(history)),
