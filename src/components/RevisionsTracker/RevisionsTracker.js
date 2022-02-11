@@ -19,22 +19,8 @@ export default withTranslation()(connect(
         toggle: false
     }
 
-    componentDidMount() {
-        this.props.fetchRevisions(
-            (res) => {
-                console.log('revision tracker res')
-                console.log(res)
-                return true
-            }, () => {
-            }
-        )
-    }
-
     render() {
         const {t, units} = this.props
-        // let units = [
-        //     {unit_internal_id: '123123', unit_name: 'Simple unit name'}
-        // ]
         return (
             <div className={clsx(styles.wrapper, {[styles.toggled]: !!this.state.toggle})}>
                 <div>
@@ -46,17 +32,17 @@ export default withTranslation()(connect(
                     {units?.length > 0 ?
                         <div className={styles.unitsFoundWrapper}>
                             <h2>{t('PassportsForRevision')}</h2>
-                            <div className={styles.unitsWrapper}></div>
+                            <div className={styles.unitsWrapper}>
                             {units.map((item, index) => (
                                 <div className={styles.unitsRow}>
                                     <div>{index + 1}. {item.unit_name}</div>
                                     <div>ID {item.unit_internal_id}</div>
                                 </div>
                             ))}
+                            </div>
                         </div>
                         :
                         <div className={styles.noUnitsFound}>{t('NoUnitsFound')}</div>
-
                     }
                 </div>
             </div>
