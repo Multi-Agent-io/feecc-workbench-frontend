@@ -160,9 +160,6 @@ export default withTheme(withTranslation()(connect(
         this.props.compositionID,
         (res) => {
           if(res.status_code === 200) {
-            console.log("RES | Ongoing?:", this.props.compositionOngoing)
-            console.log(res)
-
             let biography = []
             if (res.unit_biography_completed.length > 0)
               biography = res.unit_biography_completed
@@ -177,8 +174,6 @@ export default withTheme(withTranslation()(connect(
               res.schema_id,
               (innerRes) => {
                 if(innerRes.status_code === 200) {
-                  console.log('FULL COMPOSITION')
-                  console.log(this.props.composition)
                   // If this is after pause or recovery
                   if(inProgressFlag) {
                     if (this.props.compositionOngoing) {
@@ -202,16 +197,12 @@ export default withTheme(withTranslation()(connect(
                       }
                     }
                   }
-                  else {
-                    console.log('NEW UNIT')
-                  }
-
-
                 }
                 return true
               }, null)
             return true
           } else {
+            this.props.raiseNotification('Не удалось получить информацию об изделии. Попробуйте позже. Если ошибка повторится, то свяжитесь с системным администратором для устранения проблемы.')
             console.log('FETCH ERROR')
           }
         }, null)
