@@ -29,6 +29,6 @@ Complex,Составные,Composite
 SelectOneOfTheFollowingCompositions,Вы можете выбрать собрать подсборку или финальныю сборку,You have to select one of the following steps
 FinishingSteps,Финальная сборка,Final assembly
 FinishStep,Остановить здесь,Stop here
-NoUnitsFound,Нет паспортов на доработку,No passports for revision
-PassportsForRevision,Паспорта на доработку,Passports for revision
+NoUnitsFound,Нет изделий на доработку,No products for revision
+PassportsForRevision,Изделия на доработку,Products for revision
 CompositionWillProceedFrom,Сборка продолжится с шага,Composition will be proceed from the step
