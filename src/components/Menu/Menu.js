@@ -16,6 +16,7 @@ import { Button, CircularProgress } from "@mui/material";
 import { LoadingButton } from '@mui/lab'
 import { withTheme } from '@mui/styles'
 import config from '../../../configs/config.json'
+import {doFetchRevisions} from "@reducers/RevisionsActions";
 
 export default withTheme(withTranslation()(connect(
   (store) => ({
@@ -31,6 +32,8 @@ export default withTheme(withTranslation()(connect(
     doGetSchema: (schemaId, successChecker, errorChecker) => doGetSchema(dispatch, schemaId, successChecker, errorChecker),
     doLogout: (successChecker, errorChecker) => doLogout(dispatch, successChecker, errorChecker),
     doRedirectToComposition: () => dispatch(push('/composition')),
+    fetchRevisions: (successChecker, errorChecker) => doFetchRevisions(dispatch, successChecker, errorChecker),
+
 
     setSteps: (steps) => doSetSteps(dispatch, steps)
   })
@@ -54,6 +57,12 @@ export default withTheme(withTranslation()(connect(
   }
 
   componentDidMount () {
+    this.props.fetchRevisions(
+        (res) => {
+          return true
+        }, () => {
+        }
+    )
     // Get all schemas list with their names
     this.props.doGetSchemasNames(
       (res) => {
