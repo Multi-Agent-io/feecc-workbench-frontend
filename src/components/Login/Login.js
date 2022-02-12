@@ -19,9 +19,9 @@ export default withTranslation()(connect(
   (dispatch) => ({
     goToMenu: () => dispatch(push('/menu')),
     goToGatheringComponents: () => dispatch(push('/gatherComponents')),
+    goToComposition: () => dispatch(push('/composition')),
     raiseNotification: (notificationMessage) => doRaiseNotification(dispatch, notificationMessage),
     doFetchComposition: (successChecker, errorChecker) => doFetchComposition(dispatch, successChecker, errorChecker),
-    // getWorkbenchNumber: (successChecker, errorChecker) => doGetWorkbenchNumber(dispatch, successChecker, errorChecker)
   })
 )(class Login extends React.Component {
 
@@ -31,9 +31,9 @@ export default withTranslation()(connect(
     location: PropTypes.string.isRequired,
 
     goToMenu: PropTypes.func.isRequired,
+    goToGatheringComponents: PropTypes.func.isRequired,
     doFetchComposition: PropTypes.func.isRequired,
     raiseNotification: PropTypes.func.isRequired,
-    // getWorkbenchNumber: PropTypes.func.isRequired
   }
 
   state = {
@@ -46,19 +46,39 @@ export default withTranslation()(connect(
       timerID: setInterval(() => {
         this.props.doFetchComposition((res) => {
           // TODO add server response validation
-          // console.log(res.state)
-          if (res.state === 'GatherComponents' && this.props.location.split('/')[1] !== 'gatherComponents')
-            this.props.goToGatheringComponents()
+          let location = this.props.location.split('/')[1]
+          switch(res.state){
+            case 'ProductionStageOngoing':
+              // console.log("PRODUCTION__ONGOING")
+              if(location !== 'composition')
+                this.props.goToComposition()
+              break;
+            case 'GatherComponents':
+              // console.log("GATHER__COMPONENTS")
+              if(location !== 'gatherComponents')
+                this.props.goToGatheringComponents()
+              break;
+            case 'AwaitLogin':
+              // console.log("AWAIT__LOGIN")
+              break;
+            case 'AuthorizedIdling':
+              if(location !== 'menu')
+                this.props.goToMenu()
+              // console.log("AUTHORIZED__IDLING")
+              break;
+            case 'UnitAssignedIdling':
+              // console.log('UNIT__ASSIGNED__IDLING')
+              if(location !== 'composition')
+                this.props.goToComposition()
+              break;
+            default:
+              // console.log('Redirect to login')
+              break;
+          }
           return true
         }, null)
       }, config.pulling_period)
     })
-  }
-
-  componentDidUpdate (prevProps, prevState, snapshot) {
-    // Check if user is authorized. Go to main menu if yes.
-    if (this.props.authorized === true)
-      this.props.goToMenu()
   }
 
   render () {

@@ -48,8 +48,6 @@ export default withTheme(withTranslation()(connect(
   }
 
   state = {
-    createLoading_1: false,
-    createLoading_2: false,
     logoutLoading: false,
     chooseVariantModal: 0,
     loading: [],
@@ -57,12 +55,10 @@ export default withTheme(withTranslation()(connect(
   }
 
   componentDidMount () {
-    this.props.fetchRevisions(
-        (res) => {
-          return true
-        }, () => {
-        }
-    )
+
+    // Getting all products marked for revision
+    this.props.fetchRevisions((res) => {return true}, null)
+
     // Get all schemas list with their names
     this.props.doGetSchemasNames(
       (res) => {
@@ -151,10 +147,11 @@ export default withTheme(withTranslation()(connect(
   }
 
   render () {
-    const {t, schemas}                                                  = this.props
-    const {createLoading_1, loading, logoutLoading, chooseVariantModal} = this.state
+    const {t, schemas}                                 = this.props
+    const {loading, logoutLoading, chooseVariantModal} = this.state
     return (
       <div className={styles.wrapper}>
+        {/* Default view. Choose unit to complete or logout */}
         {chooseVariantModal <= 1 && (<div>
           <div className={styles.header}>{t('SpecifyCompositionType')}</div>
           <div className={styles.variantsWrapper}>
@@ -177,7 +174,6 @@ export default withTheme(withTranslation()(connect(
                             selectedScheme: item,
                             chooseVariantModal: 2
                           }, () => console.log(this.state.selectedScheme))
-                          // console.log('move to included schemas selecting')
                         } else {
                           this.handleCreateUnit(item, index)
                         }
@@ -202,6 +198,7 @@ export default withTheme(withTranslation()(connect(
             </div>
           </div>
         </div>)}
+        {/* Composite unit mode. If you select on the first step composite unit then you have to select subunit */}
         {chooseVariantModal === 2 && (<div>
           <div className={styles.header}>{this.state.selectedScheme.schema_name}</div>
           <div className={styles.subheader}>{t('SelectOneOfTheFollowingCompositions')}</div>

@@ -86,7 +86,7 @@ export const doGetSchema = (dispatch, schemaId, successChecker, errorChecker) =>
   ).then(errorChecker)
 }
 // Reworked
-export const doStartStepRecord = (dispatch, productionStageName, additionalInfo, successChecker, errorChecker) => {
+export const doStartStepRecord = (dispatch, additionalInfo, successChecker, errorChecker) => {
   axiosWrapper(
     dispatch,
     undefined,
@@ -94,7 +94,6 @@ export const doStartStepRecord = (dispatch, productionStageName, additionalInfo,
       method: 'post',
       url   : `${config.socket}/workbench/start-operation`,
       data  : {
-        production_stage_name: productionStageName,
         additional_info      : additionalInfo
       }
     },

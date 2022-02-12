@@ -34,7 +34,8 @@ export const stagesReducer = (state={}, action) => {
               .set('composition', fromJS(action))
               .setIn(['unit', 'unit_internal_id'], action.unit_internal_id !== '' && action.unit_internal_id !== null ? action.unit_internal_id : (state.getIn(['unit', 'unit_internal_id']) !== '' ? state.getIn(['unit', 'unit_internal_id']) : ''))
               .setIn(['unit', 'unit_biography'], action.unit_biography !== null ? fromJS(action.unit_biography) : '')
-              .deleteIn(['composition', 'type'])
+              // .deleteIn(['composition', 'type'])
+              // .set('composition', fromJS(action))
         case types.STAGES__CREATE_NEW_UNIT:
             return state
               .setIn(['unit', 'unit_internal_id'], fromJS(action.unit_internal_id))
