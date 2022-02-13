@@ -182,7 +182,7 @@ export default withTheme(withTranslation()(connect(
                   let newBiography = []
                   try {
                     biography.map(item => {
-                      newBiography = [...newBiography, innerRes.production_schema.production_stages.filter((v) => v.stage_id === item.stage_schema_entry_id)]
+                      newBiography = [...newBiography, innerRes.production_schema.production_stages.filter((v) => v.stage_id === item.stage_schema_entry_id)[0]]
                     })
                   }
                   catch (e) {
@@ -457,7 +457,7 @@ export default withTheme(withTranslation()(connect(
         )}
         <Stepper className={styles.stepper} activeStep={activeStep} orientation="vertical">
           {this.props.steps?.map((item, index) =>
-            (<Step id={`step_${index}`} key={item.description}>
+            (<Step id={`step_${index}`} key={item.description + index}>
               <StepLabel><div className={(index === this.state.afterPauseStep && activeStep === -1) ? styles.nextStep : ''}>{item.name}</div></StepLabel>
               <StepContent>
                 <Typography>{item.description}</Typography>

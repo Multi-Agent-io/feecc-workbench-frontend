@@ -77,7 +77,8 @@ export const doGetSchemasNames = (dispatch, successChecker, errorChecker)  => {
 export const doGetSchema = (dispatch, schemaId, successChecker, errorChecker) => {
   axiosWrapper(
     dispatch,
-    types.STAGES__SET_STEPS,
+    // types.STAGES__SET_STEPS,
+    undefined,
     {
       method: 'get',
       url: `${config.socket}/workbench/production-schemas/${schemaId}`
