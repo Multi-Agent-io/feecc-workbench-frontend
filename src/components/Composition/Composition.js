@@ -352,7 +352,7 @@ export default withTheme(withTranslation()(connect(
   proceedComposition () {
     this.handleStageRecordStart()
       .then(() => {
-        // this.setState({activeStep: this.state.afterPauseStep})
+        this.setState({activeStep: this.state.afterPauseStep})
       })
   }
 
