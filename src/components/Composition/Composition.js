@@ -160,8 +160,8 @@ export default withTheme(withTranslation()(connect(
         this.props.compositionID,
         (res) => {
           if(res.status_code === 200) {
-            console.log('__UNIT__DETEILS__')
-            console.log(res)
+            // console.log('__UNIT__DETEILS__')
+            // console.log(res)
 
             let biography = []
             if (res.unit_biography_completed.length > 0)
@@ -177,8 +177,6 @@ export default withTheme(withTranslation()(connect(
               res.schema_id,
               (innerRes) => {
                 if(innerRes.status_code === 200) {
-                  // console.log("RETURNED SCHEMA")
-                  // console.log(innerRes)
                   let newBiography = []
                   try {
                     biography.map(item => {
@@ -186,12 +184,8 @@ export default withTheme(withTranslation()(connect(
                     })
                   }
                   catch (e) {
-                    console.log("FATAL ERROR: " + e)
                   }
-                  // console.log('New schema: ', newBiography)
-                  // debugger
                   this.props.setSteps(newBiography)
-                  // debugger
                   // If this is after pause or recovery
                   if(inProgressFlag) {
                     if (this.props.compositionOngoing) {
