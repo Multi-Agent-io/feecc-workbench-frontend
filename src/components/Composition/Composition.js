@@ -86,61 +86,6 @@ export default withTheme(withTranslation()(connect(
   }
 
   componentDidMount () {
-    // setTimeout(() => {
-    //   if (this.props.compositionID !== undefined) {
-    //     this.props.doGetUnitDetails(
-    //       this.props.compositionID,
-    //       (res) => {
-    //         if (res.status_code === 200) {
-    //           // this.props.doGetSchema(
-    //           //   res.schema_id,
-    //           //   (res) => {
-    //           //     if (res.status_code === 200) {
-    //           //       setTimeout(() => {
-    //           //         let recoveryStage = this.props.unit.unit_biography[this.props.unit.unit_biography.length - 1]
-    //           //         let search        = this.props.steps.filter((v) => v.name === recoveryStage)
-    //           //         let index         = this.props.steps.indexOf(search[0])
-    //           //         if (this.props.state === 'ProductionStageOngoing') {
-    //           //           debugger
-    //           //           setTimeout(() => {
-    //           //             if (index !== -1) {
-    //           //               this.setState({activeStep: index})
-    //           //               setTimeout(() => this.stopwatches[index].start(), 100)
-    //           //             } else {
-    //           //               this.props.raiseNotification('Ошибка определения этапа сборки. Попробуйте перазагрузить страницу.')
-    //           //             }
-    //           //           }, 300)
-    //           //         } else if (this.props.state === 'UnitAssignedIdling') {
-    //           //           debugger
-    //           //           if (this.props.unit.unit_biography.length > 0) {
-    //           //             debugger
-    //           //             setTimeout(() => {
-    //           //               if (index !== -1) {
-    //           //                 this.setState({afterPauseStep: index + 1})
-    //           //                 // setTimeout(() => {
-    //           //                 //   console.log(`After pause step is currently: ${this.state.afterPauseStep}`)
-    //           //                 // }, 2000)
-    //           //               } else {
-    //           //                 this.props.raiseNotification(`Ошибка определения этапа сборки. Попробуйте перазагрузить страницу.`)
-    //           //               }
-    //           //             }, 300)
-    //           //           }
-    //           //         }
-    //           //       }, 200)
-    //           //       return true
-    //           //     } else {
-    //           //       this.props.raiseNotification('Ошибка получения схемы сборки. Попробуйте перезугрузить страницу.')
-    //           //       return false
-    //           //     }
-    //           //   }, null)
-    //           return true
-    //         } else {
-    //           this.props.raiseNotification('Ошибка получения информации о сборке. Попробуйте обновить страницу.')
-    //           return false
-    //         }
-    //       }, null)
-    //   }
-    // }, 400)
     setTimeout(() => {
       this.fetchComposition()
     }, 400)
