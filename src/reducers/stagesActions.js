@@ -147,7 +147,7 @@ export const doRemoveNotification = (dispatch, notificationID) => {
 export const doSetSteps = (dispatch, steps) => {
   dispatch({
     type : types.STAGES__SET_STEPS,
-    steps: steps
+    production_schema: {production_stages: steps}
   })
 }
 // Reworked

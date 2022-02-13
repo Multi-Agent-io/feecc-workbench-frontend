@@ -160,6 +160,9 @@ export default withTheme(withTranslation()(connect(
         this.props.compositionID,
         (res) => {
           if(res.status_code === 200) {
+            console.log('__UNIT__DETEILS__')
+            console.log(res)
+
             let biography = []
             if (res.unit_biography_completed.length > 0)
               biography = res.unit_biography_completed
@@ -174,6 +177,21 @@ export default withTheme(withTranslation()(connect(
               res.schema_id,
               (innerRes) => {
                 if(innerRes.status_code === 200) {
+                  // console.log("RETURNED SCHEMA")
+                  // console.log(innerRes)
+                  let newBiography = []
+                  try {
+                    biography.map(item => {
+                      newBiography = [...newBiography, innerRes.production_schema.production_stages.filter((v) => v.stage_id === item.stage_schema_entry_id)]
+                    })
+                  }
+                  catch (e) {
+                    console.log("FATAL ERROR: " + e)
+                  }
+                  // console.log('New schema: ', newBiography)
+                  // debugger
+                  this.props.setSteps(newBiography)
+                  // debugger
                   // If this is after pause or recovery
                   if(inProgressFlag) {
                     if (this.props.compositionOngoing) {
@@ -191,7 +209,10 @@ export default withTheme(withTranslation()(connect(
 
                     } else {
                       if(res.unit_biography_pending.length > 0) {
-                        this.setState({afterPauseStep: res.unit_biography_completed.length, afterPauseStepName: res.unit_biography_pending[0]})
+                        // debugger
+                        // console.log(res)
+                        this.setState({afterPauseStep: res.unit_biography_completed.length, afterPauseStepName: res.unit_biography_pending[0].stage_name})
+                        // debugger
                       } else {
                         this.setState({activeStep: res.unit_biography_completed.length})
                       }
@@ -357,6 +378,8 @@ export default withTheme(withTranslation()(connect(
   }
 
   timeToRegular = (seconds) => {
+    if(seconds === undefined)
+      seconds = 0
     return new Date(seconds * 1000).toISOString().substr(11, 8)
   }
 
