@@ -77,7 +77,8 @@ export const doGetSchemasNames = (dispatch, successChecker, errorChecker)  => {
 export const doGetSchema = (dispatch, schemaId, successChecker, errorChecker) => {
   axiosWrapper(
     dispatch,
-    types.STAGES__SET_STEPS,
+    // types.STAGES__SET_STEPS,
+    undefined,
     {
       method: 'get',
       url: `${config.socket}/workbench/production-schemas/${schemaId}`
@@ -86,7 +87,7 @@ export const doGetSchema = (dispatch, schemaId, successChecker, errorChecker) =>
   ).then(errorChecker)
 }
 // Reworked
-export const doStartStepRecord = (dispatch, productionStageName, additionalInfo, successChecker, errorChecker) => {
+export const doStartStepRecord = (dispatch, additionalInfo, successChecker, errorChecker) => {
   axiosWrapper(
     dispatch,
     undefined,
@@ -94,7 +95,6 @@ export const doStartStepRecord = (dispatch, productionStageName, additionalInfo,
       method: 'post',
       url   : `${config.socket}/workbench/start-operation`,
       data  : {
-        production_stage_name: productionStageName,
         additional_info      : additionalInfo
       }
     },
@@ -148,7 +148,7 @@ export const doRemoveNotification = (dispatch, notificationID) => {
 export const doSetSteps = (dispatch, steps) => {
   dispatch({
     type : types.STAGES__SET_STEPS,
-    steps: steps
+    production_schema: {production_stages: steps}
   })
 }
 // Reworked

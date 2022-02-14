@@ -22,6 +22,7 @@ export default withTheme(withTranslation()(connect(
   (store) => ({
     steps: store.stages.get('steps')?.toJS(),
     unit: store.stages.get('unit')?.toJS(),
+    composition: store.stages.get('composition')?.toJS(),
     compositionOngoing: store.stages.getIn(['composition', 'operation_ongoing']),
     compositionID: store.stages.getIn(['composition', 'unit_internal_id']),
     afterPause: new URLSearchParams(store.router.location.search).get('afterPause'),
@@ -30,7 +31,7 @@ export default withTheme(withTranslation()(connect(
   }),
   (dispatch) => ({
     goToMenu: () => dispatch(push('/menu')),
-    startStepRecord: (productionStageName, additionalInfo, successChecker, errorChecker) => doStartStepRecord(dispatch, productionStageName, additionalInfo, successChecker, errorChecker),
+    startStepRecord: (additionalInfo, successChecker, errorChecker) => doStartStepRecord(dispatch, additionalInfo, successChecker, errorChecker),
     stopStepRecord: (additionalInfo, prematureEnding, successChecker, errorChecker) => doStopStepRecord(dispatch, additionalInfo, prematureEnding, successChecker, errorChecker),
     uploadComposition: (successChecker, errorChecker) => doCompositionUpload(dispatch, successChecker, errorChecker),
     raiseNotification: (notificationMessage) => doRaiseNotification(dispatch, notificationMessage),
@@ -73,6 +74,7 @@ export default withTheme(withTranslation()(connect(
   state = {
     activeStep: -1,
     afterPauseStep: -1,
+    afterPauseStepName: '',
     stepDuration: 0,
     loading: [],
     onPause: false,
@@ -85,64 +87,92 @@ export default withTheme(withTranslation()(connect(
 
   componentDidMount () {
     setTimeout(() => {
-      if (this.props.compositionID !== undefined) {
-        this.props.doGetUnitDetails(
-          this.props.compositionID,
-          (res) => {
-            if (res.status_code === 200) {
-              this.props.doGetSchema(
-                res.schema_id,
-                (res) => {
-                  if (res.status_code === 200) {
-                    setTimeout(() => {
-                      let recoveryStage = this.props.unit.unit_biography[this.props.unit.unit_biography.length - 1]
-                      let search        = this.props.steps.filter((v) => v.name === recoveryStage)
-                      let index         = this.props.steps.indexOf(search[0])
-                      if (this.props.state === 'ProductionStageOngoing') {
-                        setTimeout(() => {
-                          if (index !== -1) {
-                            this.setState({activeStep: index})
-                            setTimeout(() => this.stopwatches[index].start(), 100)
-                          } else {
-                            this.props.raiseNotification('Ошибка определения этапа сборки. Попробуйте перазагрузить страницу.')
-                          }
-                        }, 300)
-                      } else if (this.props.state === 'UnitAssignedIdling') {
-                        if (this.props.unit.unit_biography.length > 0) {
-                          setTimeout(() => {
-                            if (index !== -1) {
-                              this.setState({afterPauseStep: index + 1})
-                              setTimeout(() => {
-                                console.log(`After pause step is currently: ${this.state.afterPauseStep}`)
-                              }, 2000)
-                            } else {
-                              this.props.raiseNotification(`Ошибка определения этапа сборки. Попробуйте перазагрузить страницу.`)
-                            }
-                          }, 300)
-                        }
-                      }
-                    }, 200)
-                    return true
-                  } else {
-                    this.props.raiseNotification('Ошибка получения схемы сборки. Попробуйте перезугрузить страницу.')
-                    return false
-                  }
-                }, null)
-              return true
-            } else {
-              this.props.raiseNotification('Ошибка получения информации о сборке. Попробуйте обновить страницу.')
-              return false
-            }
-          }, null)
-      }
+      this.fetchComposition()
     }, 400)
   }
 
+  componentDidUpdate(prevProps, prevState, snapshot) {
+    if(prevProps.compositionID !== this.props.compositionID) {
+      setTimeout(() => {
+        this.fetchComposition()
+      }, 400)
+    }
+  }
+
+  fetchComposition() {
+    if(this.props.compositionID !== '' && this.props.compositionID !== undefined) {
+      this.props.doGetUnitDetails(
+        this.props.compositionID,
+        (res) => {
+          if(res.status_code === 200) {
+            // console.log('__UNIT__DETEILS__')
+            // console.log(res)
+
+            let biography = []
+            if (res.unit_biography_completed.length > 0)
+              biography = res.unit_biography_completed
+            if (res.unit_biography_pending.length > 0)
+              biography = [...biography, ...res.unit_biography_pending]
+
+            let inProgressFlag = false
+            // If this is not new unit -> set inProgressFlag to true
+            if(res.unit_biography_completed.length > 0)
+              inProgressFlag = true
+            this.props.doGetSchema(
+              res.schema_id,
+              (innerRes) => {
+                if(innerRes.status_code === 200) {
+                  let newBiography = []
+                  try {
+                    biography.map(item => {
+                      newBiography = [...newBiography, innerRes.production_schema.production_stages.filter((v) => v.stage_id === item.stage_schema_entry_id)[0]]
+                    })
+                  }
+                  catch (e) {
+                  }
+                  this.props.setSteps(newBiography)
+                  // If this is after pause or recovery
+                  if(inProgressFlag) {
+                    if (this.props.compositionOngoing) {
+                      if (res.unit_biography_completed.length === 0) {
+                        this.setState({activeStep: 0})
+                        setTimeout(() => {
+                          this.stopwatches[0]?.start()
+                        }, 300)
+                      } else {
+                        this.setState({activeStep: res.unit_biography_completed.length - 1})
+                        setTimeout(() => {
+                          this.stopwatches[res.unit_biography_completed.length - 1]?.start()
+                        }, 300)
+                      }
+
+                    } else {
+                      if(res.unit_biography_pending.length > 0) {
+                        // debugger
+                        // console.log(res)
+                        this.setState({afterPauseStep: res.unit_biography_completed.length, afterPauseStepName: res.unit_biography_pending[0].stage_name})
+                        // debugger
+                      } else {
+                        this.setState({activeStep: res.unit_biography_completed.length})
+                      }
+                    }
+                  }
+                }
+                return true
+              }, null)
+            return true
+          } else {
+            this.props.raiseNotification('Не удалось получить информацию об изделии. Попробуйте позже. Если ошибка повторится, то свяжитесь с системным администратором для устранения проблемы.')
+            console.log('FETCH ERROR')
+          }
+        }, null)
+    }
+  }
+
   // Start record for the current step
-  handleStageRecordStart (stageName, loadingNumber = 1) {
+  handleStageRecordStart (loadingNumber = 1) {
     return new Promise((resolve, reject) => {
       this.props.startStepRecord(
-        stageName,
         {},
         (res) => {
           if (res.status_code === 200) {
@@ -153,9 +183,6 @@ export default withTheme(withTranslation()(connect(
             resolve('OK')
             setTimeout(() => {
               this.stopwatches[this.state.activeStep]?.start()
-              // console.log(`activeStep: ${this.state.activeStep}`)
-              // console.log(`step`)
-              // console.log(this.stopwatches)
             }, 300)
             return true
           } else {
@@ -196,7 +223,7 @@ export default withTheme(withTranslation()(connect(
   // Stop current record, start next and move step
   handleNextCompositionStep (nextTitle, nextStepID) {
     this.handleStageRecordStop()
-      .then(() => this.handleStageRecordStart(nextTitle))
+      .then(() => this.handleStageRecordStart())
       .then(() => {
         this.setState({activeStep: this.state.activeStep + 1})
         document.getElementById(nextStepID).scrollIntoView({
@@ -283,19 +310,21 @@ export default withTheme(withTranslation()(connect(
   }
 
   proceedComposition () {
-    this.handleStageRecordStart(this.props.steps[this.state.afterPauseStep].name)
+    this.handleStageRecordStart()
       .then(() => {
         this.setState({activeStep: this.state.afterPauseStep})
       })
   }
 
   timeToRegular = (seconds) => {
+    if(seconds === undefined)
+      seconds = 0
     return new Date(seconds * 1000).toISOString().substr(11, 8)
   }
 
   render () {
-    const {t}                            = this.props
-    const {activeStep, loading, onPause} = this.state
+    const {t}                                                = this.props
+    const {activeStep, loading, onPause, afterPauseStepName} = this.state
     return (
       <div className={styles.wrapper}>
         {activeStep === -1 && this.state.afterPauseStep === -1 && (
@@ -335,7 +364,10 @@ export default withTheme(withTranslation()(connect(
         )}
         {activeStep === -1 && this.state.afterPauseStep !== -1 && (
           <div>
-            <div className={styles.textWrapper}>{t('DropWarning')}{t('CompositionWillProceedFrom')}<div className={styles.boldText}> "{this.props.steps[this.state.afterPauseStep]?.name}".</div></div>
+            <div className={styles.textWrapper}>
+              {t('DropWarning')}{t('CompositionWillProceedFrom')}
+              <div className={styles.boldText}> "{afterPauseStepName}".</div>
+            </div>
             <div className={styles.buttonsWrapper}>
               <div className={styles.button}>
                 <LoadingButton
@@ -364,7 +396,7 @@ export default withTheme(withTranslation()(connect(
         )}
         <Stepper className={styles.stepper} activeStep={activeStep} orientation="vertical">
           {this.props.steps?.map((item, index) =>
-            (<Step id={`step_${index}`} key={item.description}>
+            (<Step id={`step_${index}`} key={item.description + index}>
               <StepLabel><div className={(index === this.state.afterPauseStep && activeStep === -1) ? styles.nextStep : ''}>{item.name}</div></StepLabel>
               <StepContent>
                 <Typography>{item.description}</Typography>
