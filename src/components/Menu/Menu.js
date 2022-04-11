@@ -18,6 +18,7 @@ import { withTheme } from '@mui/styles'
 import config from '../../../configs/config.json'
 import {doFetchRevisions} from "@reducers/RevisionsActions";
 
+
 export default withTheme(withTranslation()(connect(
   (store) => ({
     unitID: store.stages.getIn(['unit', 'unit_internal_id']),
@@ -55,7 +56,6 @@ export default withTheme(withTranslation()(connect(
   }
 
   componentDidMount () {
-
     // Getting all products marked for revision
     this.props.fetchRevisions((res) => {return true}, null)
 

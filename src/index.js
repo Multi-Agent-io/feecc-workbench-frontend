@@ -8,6 +8,7 @@ import './index.scss'
 import { ConnectedRouter } from "connected-react-router";
 import './i18n'
 import { createTheme, ThemeProvider } from "@mui/material";
+import ModalProvider from "@reducers/context/ModalProvider";
 
 const theme = createTheme({
   palette: {
@@ -64,7 +65,9 @@ const build = () => render(
     <Provider store={store}>
       <ThemeProvider theme={theme}>
         <ConnectedRouter history={history}>
-          <App/>
+          <ModalProvider>
+            <App/>
+          </ModalProvider>
         </ConnectedRouter>
       </ThemeProvider>
     </Provider>
