@@ -11,6 +11,7 @@ import Notifications from "@components/Notifications/Notifications"
 import { doRaiseNotification } from "@reducers/stagesActions";
 import GatherComponents from "@components/GatherComponents/GatherComponents";
 import RevisionsTracker from "@components/RevisionsTracker/RevisionsTracker";
+import { Modal } from "@components/Modal/Modal";
 
 
 export default withTranslation()(connect(
@@ -41,7 +42,9 @@ export default withTranslation()(connect(
 
   render () {
     return (
-      <div className={styles.appWrapper} style={{paddingBottom: "50px"}}>
+      <>
+        <Modal/>
+        <div className={styles.appWrapper} style={{paddingBottom: "50px"}}>
         <div className={styles.header}>
           <Header />
         </div>
@@ -53,6 +56,8 @@ export default withTranslation()(connect(
           {this.props.location !== '/' && (<RevisionsTracker/>)}
         </div>
       </div>
+
+      </>
     );
   }
 }))

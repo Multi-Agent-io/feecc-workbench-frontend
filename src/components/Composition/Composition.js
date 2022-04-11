@@ -1,5 +1,5 @@
-import { withTranslation } from "react-i18next";
-import { connect } from "react-redux";
+import { withTranslation } from "react-i18next"
+import { connect } from "react-redux"
 import React from 'react'
 import styles from './Composition.module.css'
 import {
@@ -8,17 +8,19 @@ import {
   doSetBetweenFlag, doSetSteps,
   doStartStepRecord,
   doStopStepRecord
-} from "@reducers/stagesActions";
-import { push } from "connected-react-router";
-import Stopwatch from "@components/Stopwatch/Stopwatch";
-import PropTypes from "prop-types";
-import { CircularProgress, Step, StepContent, StepLabel, Stepper, Typography } from "@mui/material";
+} from "@reducers/stagesActions"
+import { push } from "connected-react-router"
+import Stopwatch from "@components/Stopwatch/Stopwatch"
+import PropTypes from "prop-types"
+import { CircularProgress, Step, StepContent, StepLabel, Stepper, Typography } from "@mui/material"
 
+import { withContext } from "@reducers/context/withContext"
 import { withTheme } from '@mui/styles'
-import { LoadingButton } from "@mui/lab";
+import { LoadingButton } from "@mui/lab"
 
+import { ToMainMenuModal } from "@components/Modals/ToMainMenu/ToMainMenuModal"
 
-export default withTheme(withTranslation()(connect(
+export default withContext(withTheme(withTranslation()(connect(
   (store) => ({
     steps: store.stages.get('steps')?.toJS(),
     unit: store.stages.get('unit')?.toJS(),
@@ -66,7 +68,7 @@ export default withTheme(withTranslation()(connect(
     doGetUnitDetails: PropTypes.func.isRequired
   }
 
-  constructor (props) {
+  constructor(props) {
     super(props);
     this.stopwatches = []
   }
@@ -85,14 +87,14 @@ export default withTheme(withTranslation()(connect(
     this.setState({stepDuration: duration})
   }
 
-  componentDidMount () {
+  componentDidMount() {
     setTimeout(() => {
       this.fetchComposition()
     }, 400)
   }
 
   componentDidUpdate(prevProps, prevState, snapshot) {
-    if(prevProps.compositionID !== this.props.compositionID) {
+    if (prevProps.compositionID !== this.props.compositionID) {
       setTimeout(() => {
         this.fetchComposition()
       }, 400)
@@ -100,11 +102,11 @@ export default withTheme(withTranslation()(connect(
   }
 
   fetchComposition() {
-    if(this.props.compositionID !== '' && this.props.compositionID !== undefined) {
+    if (this.props.compositionID !== '' && this.props.compositionID !== undefined) {
       this.props.doGetUnitDetails(
         this.props.compositionID,
         (res) => {
-          if(res.status_code === 200) {
+          if (res.status_code === 200) {
             // console.log('__UNIT__DETEILS__')
             // console.log(res)
 
@@ -116,23 +118,22 @@ export default withTheme(withTranslation()(connect(
 
             let inProgressFlag = false
             // If this is not new unit -> set inProgressFlag to true
-            if(res.unit_biography_completed.length > 0)
+            if (res.unit_biography_completed.length > 0)
               inProgressFlag = true
             this.props.doGetSchema(
               res.schema_id,
               (innerRes) => {
-                if(innerRes.status_code === 200) {
+                if (innerRes.status_code === 200) {
                   let newBiography = []
                   try {
                     biography.map(item => {
                       newBiography = [...newBiography, innerRes.production_schema.production_stages.filter((v) => v.stage_id === item.stage_schema_entry_id)[0]]
                     })
-                  }
-                  catch (e) {
+                  } catch (e) {
                   }
                   this.props.setSteps(newBiography)
                   // If this is after pause or recovery
-                  if(inProgressFlag) {
+                  if (inProgressFlag) {
                     if (this.props.compositionOngoing) {
                       if (res.unit_biography_completed.length === 0) {
                         this.setState({activeStep: 0})
@@ -147,10 +148,13 @@ export default withTheme(withTranslation()(connect(
                       }
 
                     } else {
-                      if(res.unit_biography_pending.length > 0) {
+                      if (res.unit_biography_pending.length > 0) {
                         // debugger
                         // console.log(res)
-                        this.setState({afterPauseStep: res.unit_biography_completed.length, afterPauseStepName: res.unit_biography_pending[0].stage_name})
+                        this.setState({
+                          afterPauseStep: res.unit_biography_completed.length,
+                          afterPauseStepName: res.unit_biography_pending[0].stage_name
+                        })
                         // debugger
                       } else {
                         this.setState({activeStep: res.unit_biography_completed.length})
@@ -170,13 +174,13 @@ export default withTheme(withTranslation()(connect(
   }
 
   // Start record for the current step
-  handleStageRecordStart (loadingNumber = 1) {
+  handleStageRecordStart(loadingNumber = 1) {
     return new Promise((resolve, reject) => {
       this.props.startStepRecord(
         {},
         (res) => {
           if (res.status_code === 200) {
-            let arr            = this.state.loading
+            let arr = this.state.loading
             arr[loadingNumber] = false
             this.setState({loading: arr})
             this.props.setBetweenFlag(false)
@@ -197,9 +201,9 @@ export default withTheme(withTranslation()(connect(
   }
 
   // Stop record for the current step
-  handleStageRecordStop (loadBlock = 1, isPause = false) {
+  handleStageRecordStop(loadBlock = 1, isPause = false) {
     return new Promise((resolve, reject) => {
-      let arr        = this.state.loading
+      let arr = this.state.loading
       arr[loadBlock] = true
       this.setState({loading: arr})
       this.props.setBetweenFlag(true)
@@ -221,7 +225,7 @@ export default withTheme(withTranslation()(connect(
   }
 
   // Stop current record, start next and move step
-  handleNextCompositionStep (nextTitle, nextStepID) {
+  handleNextCompositionStep(nextTitle, nextStepID) {
     this.handleStageRecordStop()
       .then(() => this.handleStageRecordStart())
       .then(() => {
@@ -235,9 +239,9 @@ export default withTheme(withTranslation()(connect(
   }
 
   // Upload finished composition
-  handleCompositionUpload () {
+  handleCompositionUpload() {
     let arr = this.state.loading
-    arr[2]  = true
+    arr[2] = true
     this.setState({loading: arr})
     return new Promise((resolve) => {
       this.props.uploadComposition(
@@ -254,13 +258,13 @@ export default withTheme(withTranslation()(connect(
   }
 
   // Set this composition on pause and go to unit create selection
-  setOnPause () {
+  setOnPause() {
     this.handleStageRecordStop(3)
       .then(() => this.props.dropUnit(
         (res) => {
           if (res.status_code === 200) {
             let arr = this.state.loading
-            arr[3]  = false
+            arr[3] = false
             this.setState({loading: arr})
             this.props.setBetweenFlag(false)
             return true
@@ -271,24 +275,24 @@ export default withTheme(withTranslation()(connect(
         }, null))
   }
 
-  setOnSmallPause () {
+  setOnSmallPause() {
     this.handleStageRecordStop(2, true)
       .then(() => {
         let arr = this.state.loading
-        arr[2]  = false
+        arr[2] = false
         this.setState({onPause: true, loading: arr})
       })
   }
 
-  unpause () {
+  unpause() {
     // console.log(this.props.steps[this.state.activeStep].name)
     this.handleStageRecordStart(this.props.steps[this.state.activeStep].name, 2)
       .then(() => this.setState({onPause: false}))
   }
 
-  cancelComposition () {
+  cancelComposition() {
     let arr = this.state.loading
-    arr[2]  = true
+    arr[2] = true
     this.setState({loading: arr})
     return new Promise((resolve) => {
       this.props.dropUnit(
@@ -309,7 +313,7 @@ export default withTheme(withTranslation()(connect(
     })
   }
 
-  proceedComposition () {
+  proceedComposition() {
     this.handleStageRecordStart()
       .then(() => {
         this.setState({activeStep: this.state.afterPauseStep})
@@ -317,27 +321,27 @@ export default withTheme(withTranslation()(connect(
   }
 
   timeToRegular = (seconds) => {
-    if(seconds === undefined)
+    if (seconds === undefined)
       seconds = 0
     return new Date(seconds * 1000).toISOString().substr(11, 8)
   }
 
-  render () {
-    const {t}                                                = this.props
+  render() {
+    const {t} = this.props
     const {activeStep, loading, onPause, afterPauseStepName} = this.state
     return (
-      <div className={styles.wrapper}>
-        {activeStep === -1 && this.state.afterPauseStep === -1 && (
-          <div className={styles.buttonsWrapper}>
-            <div className={styles.button}>
+      <div className={ styles.wrapper }>
+        { activeStep === -1 && this.state.afterPauseStep === -1 && (
+          <div className={ styles.buttonsWrapper }>
+            <div className={ styles.button }>
               <LoadingButton
                 size="medium"
-                loadingIndicator={<CircularProgress color='inherit' size={28}/>}
+                loadingIndicator={ <CircularProgress color='inherit' size={ 28 }/> }
                 variant='contained'
                 color='primary'
-                disabled={loading[1]}
-                loading={loading[1]}
-                onClick={() => {
+                disabled={ loading[1] }
+                loading={ loading[1] }
+                onClick={ () => {
                   this.handleStageRecordStart(this.props.steps[0]?.name)
                     .then(() => {
                       this.setState({activeStep: this.state.activeStep + 1})
@@ -346,71 +350,87 @@ export default withTheme(withTranslation()(connect(
                         block: "center"
                       })
                     })
-                }}
-              >{t('StartComposition')}</LoadingButton>
+                } }
+              >{ t('StartComposition') }</LoadingButton>
             </div>
-            <div className={styles.button}>
+            <div className={ styles.button }>
               <LoadingButton
                 size="medium"
-                loadingIndicator={<CircularProgress color='inherit' size={28}/>}
+                loadingIndicator={ <CircularProgress color='inherit' size={ 28 }/> }
                 variant='outlined'
                 color='secondary'
-                disabled={loading[2]}
-                loading={loading[2]}
-                onClick={() => this.cancelComposition().then(() => setTimeout(() => this.props.goToMenu(), 400))}
-              >{t('CancelComposition')}</LoadingButton>
+                disabled={ loading[2] }
+                loading={ loading[2] }
+                onClick={ () =>
+                  this.props.context.onOpen(
+                    <ToMainMenuModal
+                      onReturn={ () => {
+                        this.cancelComposition()
+                          .then(() => setTimeout(() => {
+                            this.props.context.onClose()
+                            this.props.goToMenu()
+                          }, 400))
+                      } }
+                      onProceed={ () => this.props.context.onClose() }
+                    />
+                  )
+                }
+              >{ t('CancelComposition') }</LoadingButton>
             </div>
           </div>
-        )}
-        {activeStep === -1 && this.state.afterPauseStep !== -1 && (
+        ) }
+        { activeStep === -1 && this.state.afterPauseStep !== -1 && (
           <div>
-            <div className={styles.textWrapper}>
-              {t('DropWarning')}{t('CompositionWillProceedFrom')}
-              <div className={styles.boldText}> "{afterPauseStepName}".</div>
+            <div className={ styles.textWrapper }>
+              { t('DropWarning') }{ t('CompositionWillProceedFrom') }
+              <div className={ styles.boldText }> "{ afterPauseStepName }".</div>
             </div>
-            <div className={styles.buttonsWrapper}>
-              <div className={styles.button}>
+            <div className={ styles.buttonsWrapper }>
+              <div className={ styles.button }>
                 <LoadingButton
                   size="medium"
-                  loadingIndicator={<CircularProgress color='inherit' size={28}/>}
+                  loadingIndicator={ <CircularProgress color='inherit' size={ 28 }/> }
                   variant='contained'
                   color='primary'
-                  disabled={loading[1]}
-                  loading={loading[1]}
-                  onClick={() => this.proceedComposition()}
-                >{t('ProceedComposition')}</LoadingButton>
+                  disabled={ loading[1] }
+                  loading={ loading[1] }
+                  onClick={ () => this.proceedComposition() }
+                >{ t('ProceedComposition') }</LoadingButton>
               </div>
-              <div className={styles.button}>
+              <div className={ styles.button }>
                 <LoadingButton
                   size="medium"
-                  loadingIndicator={<CircularProgress color='inherit' size={28}/>}
+                  loadingIndicator={ <CircularProgress color='inherit' size={ 28 }/> }
                   variant='outlined'
                   color='secondary'
-                  disabled={loading[2]}
-                  loading={loading[2]}
-                  onClick={() => this.cancelComposition().then(() => setTimeout(() => this.props.goToMenu(), 400))}
-                >{t('CancelComposition')}</LoadingButton>
+                  disabled={ loading[2] }
+                  loading={ loading[2] }
+                  onClick={ () => this.cancelComposition().then(() => setTimeout(() => this.props.goToMenu(), 400)) }
+                >{ t('CancelComposition') }</LoadingButton>
               </div>
             </div>
           </div>
-        )}
-        <Stepper className={styles.stepper} activeStep={activeStep} orientation="vertical">
-          {this.props.steps?.map((item, index) =>
-            (<Step id={`step_${index}`} key={item.description + index}>
-              <StepLabel><div className={(index === this.state.afterPauseStep && activeStep === -1) ? styles.nextStep : ''}>{item.name}</div></StepLabel>
+        ) }
+        <Stepper className={ styles.stepper } activeStep={ activeStep } orientation="vertical">
+          { this.props.steps?.map((item, index) =>
+            (<Step id={ `step_${ index }` } key={ item.description + index }>
+              <StepLabel>
+                <div
+                  className={ (index === this.state.afterPauseStep && activeStep === -1) ? styles.nextStep : '' }>{ item.name }</div>
+              </StepLabel>
               <StepContent>
-                <Typography>{item.description}</Typography>
+                <Typography>{ item.description }</Typography>
                 <div>
-                  <div className={styles.controls}>
-                    <div className={styles.button}>
+                  <div className={ styles.controls }>
+                    <div className={ styles.button }>
                       <LoadingButton
                         size="medium"
-                        loadingIndicator={<CircularProgress color='inherit' size={28}/>}
+                        loadingIndicator={ <CircularProgress color='inherit' size={ 28 }/> }
                         variant='contained'
                         color='primary'
-                        loading={loading[1]}
-                        disabled={loading[1]}
-                        onClick={() => {
+                        loading={ loading[1] }
+                        disabled={ loading[1] }
+                        onClick={ () => {
                           if (activeStep === this.props.steps?.length - 1) {
                             this.handleStageRecordStop()
                               .then(() => {
@@ -422,23 +442,22 @@ export default withTheme(withTranslation()(connect(
                                 })
                               })
                           } else {
-                            this.handleNextCompositionStep(this.props.steps[index + 1]?.name, `step_${index + 1}`)
+                            this.handleNextCompositionStep(this.props.steps[index + 1]?.name, `step_${ index + 1 }`)
                           }
-                        }}
+                        } }
                       >
-                        {activeStep === this.props.steps?.length - 1 ? t('Finish') : t('Next')}
+                        { activeStep === this.props.steps?.length - 1 ? t('Finish') : t('Next') }
                       </LoadingButton>
-
                     </div>
-                    <div className={styles.button}>
+                    <div className={ styles.button }>
                       <LoadingButton
                         size="medium"
-                        loadingIndicator={<CircularProgress color='inherit' size={28}/>}
+                        loadingIndicator={ <CircularProgress color='inherit' size={ 28 }/> }
                         variant='outlined'
                         color='primary'
-                        loading={loading[2]}
-                        disabled={loading[2]}
-                        onClick={() => {
+                        loading={ loading[2] }
+                        disabled={ loading[2] }
+                        onClick={ () => {
                           if (!onPause) {
                             this.setOnSmallPause()
                             this.stopwatches[index].stop()
@@ -446,57 +465,57 @@ export default withTheme(withTranslation()(connect(
                             this.unpause()
                             this.stopwatches[index].start()
                           }
-                        }}
-                      >{onPause ? 'Снять с паузы' : t('SetOnPause')}</LoadingButton>
+                        } }
+                      >{ onPause ? 'Снять с паузы' : t('SetOnPause') }</LoadingButton>
                     </div>
-                    {activeStep !== this.props.steps?.length - 1 && (
+                    { activeStep !== this.props.steps?.length - 1 && (
                       <div>
-
-                        <div className={styles.button}>
+                        <div className={ styles.button }>
                           <LoadingButton
                             size="large"
-                            loadingIndicator={<CircularProgress color='inherit' size={28}/>}
+                            loadingIndicator={ <CircularProgress color='inherit' size={ 28 }/> }
                             variant='outlined'
                             color='secondary'
-                            loading={loading[3]}
-                            disabled={loading[3]}
-                            onClick={() => this.setOnPause()}
-                          >{t('FinishStep')}</LoadingButton>
+                            loading={ loading[3] }
+                            disabled={ loading[3] }
+                            onClick={ () => this.setOnPause() }
+                          >{ t('FinishStep') }</LoadingButton>
                         </div>
                       </div>
-                    )}
-                    <div className={styles.timerWrapper}>
-                      <Stopwatch setStepDuration={this.setStepDuration} ref={item => this.stopwatches[index] = item}/>
-                      {item.duration_seconds !== 0 && this.timeToRegular(item.duration_seconds)}
+                    ) }
+                    <div className={ styles.timerWrapper }>
+                      <Stopwatch setStepDuration={ this.setStepDuration }
+                                 ref={ item => this.stopwatches[index] = item }/>
+                      { item.duration_seconds !== 0 && this.timeToRegular(item.duration_seconds) }
                     </div>
                   </div>
                 </div>
               </StepContent>
-            </Step>))}
+            </Step>)) }
         </Stepper>
-        {activeStep === this.props.steps?.length && (
-          <div className={styles.button}>
+        { activeStep === this.props.steps?.length && (
+          <div className={ styles.button }>
             <LoadingButton
               size="medium"
-              loadingIndicator={<CircularProgress color='inherit' size={28}/>}
-              className={styles.button}
+              loadingIndicator={ <CircularProgress color='inherit' size={ 28 }/> }
+              className={ styles.button }
               id="savePassportButton"
               variant='contained'
               color='primary'
-              loading={loading[2]}
-              disabled={loading[2]}
-              onClick={() => this.handleCompositionUpload().then(() => {
+              loading={ loading[2] }
+              disabled={ loading[2] }
+              onClick={ () => this.handleCompositionUpload().then(() => {
                 this.props.dropUnit(() => {
                   return true
                 }, null)
                 setTimeout(() => {
                   this.props.goToMenu()
                 }, 300)
-              })}
-            >{t('SavePassport')}</LoadingButton>
+              }) }
+            >{ t('SavePassport') }</LoadingButton>
           </div>
-        )}
+        ) }
       </div>
     )
   }
-})))
+}))))
