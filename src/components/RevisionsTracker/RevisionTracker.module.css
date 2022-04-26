@@ -35,6 +35,10 @@
     box-shadow: 0 0 12px gray;
     padding: 20px;
 }
+
+.wrapper:not(.toggled) .contentWrapper {
+    box-shadow: none;
+}
 .noUnitsFound {
     display: flex;
     height: 100%;
@@ -42,6 +46,7 @@
     justify-content: center;
     align-items: center;
     font-size: 36px;
+
 }
 
 .unitsFoundWrapper {
@@ -55,7 +60,11 @@
 }
 
 .unitsWrapper {
+    height: 400px;
+    width: 100%;
     margin-top: 20px;
+    overflow-y: auto;
+
 }
 
 .unitsRow {
