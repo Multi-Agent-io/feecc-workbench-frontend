@@ -3,8 +3,13 @@ import store from './main'
 import config from '../../configs/config.json'
 import axios from "axios";
 
+
+export const doFetchComposition = (dispatch, composition) => {
+  dispatch({type: types.STAGES__FETCH_COMPOSITION, ...composition})
+}
+
 // Reworked
-export const doFetchComposition = (dispatch, successChecker, errorChecker) => {
+export const doFetchComposition_deprecated = (dispatch, successChecker, errorChecker) => {
   // To check if one record stopped and new started without /status request as it drops composition timer
   if (!store.getState().stages.get('betweenEndAndStartFlag')) {
     fetchWrapper(

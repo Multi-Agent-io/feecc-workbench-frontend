@@ -8,10 +8,12 @@ import Login from "@components/Login/Login"
 import Menu from "@components/Menu/Menu"
 import Composition from "@components/Composition/Composition"
 import Notifications from "@components/Notifications/Notifications"
-import { doRaiseNotification } from "@reducers/stagesActions";
+import { doFetchComposition, doRaiseNotification } from "@reducers/stagesActions";
 import GatherComponents from "@components/GatherComponents/GatherComponents";
 import RevisionsTracker from "@components/RevisionsTracker/RevisionsTracker";
 import { Modal } from "@components/Modal/Modal";
+import config from "../../configs/config.json";
+import { push } from "connected-react-router";
 
 
 export default withTranslation()(connect(
@@ -20,11 +22,21 @@ export default withTranslation()(connect(
   }),
   (dispatch) => ({
     raiseNotification: (notificationMessage) => doRaiseNotification(dispatch, notificationMessage),
+    goToMenu: () => dispatch(push('/menu')),
+    goToGatheringComponents: () => dispatch(push('/gatherComponents')),
+    goToComposition: () => dispatch(push('/composition')),
+
+    doFetchComposition: (composition) => doFetchComposition(dispatch, composition)
   })
 )(class App extends Component {
 
   static propTypes = {
     location: PropTypes.string.isRequired,
+
+    goToMenu: PropTypes.func.isRequired,
+    goToGatheringComponents: PropTypes.func.isRequired,
+    goToComposition: PropTypes.func.isRequired,
+    doFetchComposition: PropTypes.func.isRequired
   }
 
   routes = [
@@ -36,6 +48,47 @@ export default withTranslation()(connect(
 
   constructor (props) {
     super(props)
+  }
+
+
+  componentDidMount() {
+    let eventSource = new EventSource(`${config.socket}/workbench/status/stream`)
+    eventSource.onmessage = (e) => {
+      let res = JSON.parse(e.data)
+
+      this.props.doFetchComposition(res)
+
+      let location = this.props.location.split('/')[1]
+      switch(res.state){
+        case 'ProductionStageOngoing':
+          // console.log("PRODUCTION__ONGOING")
+          if(location !== 'composition')
+            this.props.goToComposition()
+          break;
+        case 'GatherComponents':
+          // console.log("GATHER__COMPONENTS")
+          if(location !== 'gatherComponents')
+            this.props.goToGatheringComponents()
+          break;
+        case 'AwaitLogin':
+          // console.log("AWAIT__LOGIN")
+          break;
+        case 'AuthorizedIdling':
+          // console.log('redirect to menu')
+          if(location !== 'menu')
+            this.props.goToMenu()
+          // console.log("AUTHORIZED__IDLING")
+          break;
+        case 'UnitAssignedIdling':
+          // console.log('UNIT__ASSIGNED__IDLING')
+          if(location !== 'composition')
+            this.props.goToComposition()
+          break;
+        default:
+          break;
+      }
+
+    }
   }
 
   route = path => this.routes.find(r => path.match(r[0]) !== null)?.[1]?.()

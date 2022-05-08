@@ -5,6 +5,8 @@ import {doFetchRevisions} from "@reducers/RevisionsActions";
 import styles from './RevisionTracker.module.css'
 import arrowLeft from '../../icons/arrow_left.svg'
 import arrowRight from '../../icons/arrow_right.svg'
+import arrow from '../../icons/arrow.svg'
+
 import clsx from 'clsx'
 
 export default withTranslation()(connect(
@@ -25,7 +27,8 @@ export default withTranslation()(connect(
             <div className={clsx(styles.wrapper, {[styles.toggled]: !!this.state.toggle})}>
                 <div>
                     <div onClick={() => this.setState({toggle: !this.state.toggle})} className={styles.arrowWrapper}>
-                        {!this.state.toggle ? (<img src={arrowLeft}/>) : (<img src={arrowRight}/>)}
+                          <img className={clsx({[styles.rotated]: this.state.toggle})}
+                            src={arrow}/>
                     </div>
                 </div>
                 <div className={styles.contentWrapper}>
