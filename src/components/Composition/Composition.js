@@ -14,37 +14,14 @@ import Stopwatch from "@components/Stopwatch/Stopwatch"
 import PropTypes from "prop-types"
 import { CircularProgress, Step, StepContent, StepLabel, Stepper, Typography } from "@mui/material"
 
+import { withSnackbar } from "notistack"
 import { withContext } from "@reducers/context/withContext"
 import { withTheme } from '@mui/styles'
 import { LoadingButton } from "@mui/lab"
 
 import { ToMainMenuModal } from "@components/Modals/ToMainMenu/ToMainMenuModal"
 
-export default withContext(withTheme(withTranslation()(connect(
-  (store) => ({
-    steps: store.stages.get('steps')?.toJS(),
-    unit: store.stages.get('unit')?.toJS(),
-    composition: store.stages.get('composition')?.toJS(),
-    compositionOngoing: store.stages.getIn(['composition', 'operation_ongoing']),
-    compositionID: store.stages.getIn(['composition', 'unit_internal_id']),
-    afterPause: new URLSearchParams(store.router.location.search).get('afterPause'),
-    pauseTimestamp: new URLSearchParams(store.router.location.search)?.get('timestamp'),
-    state: store.stages.getIn(['composition', 'state'])
-  }),
-  (dispatch) => ({
-    goToMenu: () => dispatch(push('/menu')),
-    startStepRecord: (additionalInfo, successChecker, errorChecker) => doStartStepRecord(dispatch, additionalInfo, successChecker, errorChecker),
-    stopStepRecord: (additionalInfo, prematureEnding, successChecker, errorChecker) => doStopStepRecord(dispatch, additionalInfo, prematureEnding, successChecker, errorChecker),
-    uploadComposition: (successChecker, errorChecker) => doCompositionUpload(dispatch, successChecker, errorChecker),
-    raiseNotification: (notificationMessage) => doRaiseNotification(dispatch, notificationMessage),
-    setSteps: (steps) => doSetSteps(dispatch, steps),
-    setBetweenFlag: (state) => doSetBetweenFlag(dispatch, state),
-    dropUnit: (successChecker, errorChecker) => doRemoveUnit(dispatch, successChecker, errorChecker),
-
-    doGetSchema: (schemaId, successChecker, errorChecker) => doGetSchema(dispatch, schemaId, successChecker, errorChecker),
-    doGetUnitDetails: (unitID, successChecker, errorChecker) => doGetUnitInformation(dispatch, unitID, successChecker, errorChecker)
-  })
-)(class Composition extends React.Component {
+class Composition extends React.Component {
 
   static propTypes = {
     steps: PropTypes.object,
@@ -65,7 +42,8 @@ export default withContext(withTheme(withTranslation()(connect(
     dropUnit: PropTypes.func.isRequired,
     addTimestampToIgnore: PropTypes.func.isRequired,
     doGetSchema: PropTypes.func.isRequired,
-    doGetUnitDetails: PropTypes.func.isRequired
+    doGetUnitDetails: PropTypes.func.isRequired,
+    enqueueSnackbar: PropTypes.func.isRequired
   }
 
   constructor(props) {
@@ -166,7 +144,7 @@ export default withContext(withTheme(withTranslation()(connect(
               }, null)
             return true
           } else {
-            this.props.raiseNotification('Не удалось получить информацию об изделии. Попробуйте позже. Если ошибка повторится, то свяжитесь с системным администратором для устранения проблемы.')
+            this.props.enqueueSnackbar("Не удалось получить информацию об изделии. Попробуйте позже. Если ошибка повторится, то свяжитесь с системным администратором для устранения проблемы.", { variant: 'error' })
             console.log('FETCH ERROR')
           }
         }, null)
@@ -190,7 +168,7 @@ export default withContext(withTheme(withTranslation()(connect(
             }, 300)
             return true
           } else {
-            this.props.raiseNotification('Не удалось начать запись этапа. Попробуйте повторить позже. При многократном повторении данной ошибки обратитесь к системному администратору.')
+            this.props.enqueueSnackbar("Не удалось начать запись этапа. Попробуйте повторить позже. При многократном повторении данной ошибки обратитесь к системному администратору.",  { variant: 'error' })
             reject('Error during attempt to start recording')
             return false
           }
@@ -215,7 +193,7 @@ export default withContext(withTheme(withTranslation()(connect(
             resolve('OK')
             return true
           } else {
-            this.props.raiseNotification('Не удалось завершить запись этапа. Попробуйте повторить позже. При многократном повторении данной ошибки обратитесь к системному администратору.')
+            this.props.enqueueSnackbar("Не удалось завершить запись этапа. Попробуйте повторить позже. При многократном повторении данной ошибки обратитесь к системному администратору.",  { variant: 'error' })
             reject('Error during attempt to stop recording')
             return false
           }
@@ -250,7 +228,7 @@ export default withContext(withTheme(withTranslation()(connect(
             resolve('OK')
             return true
           } else {
-            this.props.raiseNotification('Ошибка загзузки сборки. Попробуйте повторить позже. При многократном повторении данной ошибки обратитесь к системному администратору.')
+            this.props.enqueueSnackbar("Ошибка загзузки сборки. Попробуйте повторить позже. При многократном повторении данной ошибки обратитесь к системному администратору.",  { variant: 'error' })
             return false
           }
         }, null)
@@ -269,7 +247,7 @@ export default withContext(withTheme(withTranslation()(connect(
             this.props.setBetweenFlag(false)
             return true
           } else {
-            this.props.raiseNotification('Не удалось убрать сборку со стола. Попробуйте позже. Если ошибка повторится, то свяжитесь с системным администратором для устранения проблемы.')
+            this.props.enqueueSnackbar("Не удалось убрать сборку со стола. Попробуйте позже. Если ошибка повторится, то свяжитесь с системным администратором для устранения проблемы.",  { variant: 'error' })
             return false
           }
         }, null))
@@ -306,7 +284,7 @@ export default withContext(withTheme(withTranslation()(connect(
             resolve('OK')
             return true
           } else {
-            this.props.raiseNotification('Не удалось убрать сборку со стола. Попробуйте позже. Если ошибка повторится, то свяжитесь с системным администратором для устранения проблемы.')
+            this.props.enqueueSnackbar("Не удалось убрать сборку со стола. Попробуйте позже. Если ошибка повторится, то свяжитесь с системным администратором для устранения проблемы.",  { variant: 'error' })
             return false
           }
         }, null)
@@ -518,4 +496,43 @@ export default withContext(withTheme(withTranslation()(connect(
       </div>
     )
   }
-}))))
+}
+
+
+export default withSnackbar(
+  withContext(
+    withTheme(
+      withTranslation()(
+        connect(
+          (store) => ({
+            steps: store.stages.get('steps')?.toJS(),
+            unit: store.stages.get('unit')?.toJS(),
+            composition: store.stages.get('composition')?.toJS(),
+            compositionOngoing: store.stages.getIn(['composition', 'operation_ongoing']),
+            compositionID: store.stages.getIn(['composition', 'unit_internal_id']),
+            afterPause: new URLSearchParams(store.router.location.search).get('afterPause'),
+            pauseTimestamp: new URLSearchParams(store.router.location.search)?.get('timestamp'),
+            state: store.stages.getIn(['composition', 'state'])
+          }),
+          (dispatch) => ({
+            goToMenu: () => dispatch(push('/menu')),
+            startStepRecord: (additionalInfo, successChecker, errorChecker) => doStartStepRecord(dispatch, additionalInfo, successChecker, errorChecker),
+            stopStepRecord: (additionalInfo, prematureEnding, successChecker, errorChecker) => doStopStepRecord(dispatch, additionalInfo, prematureEnding, successChecker, errorChecker),
+            uploadComposition: (successChecker, errorChecker) => doCompositionUpload(dispatch, successChecker, errorChecker),
+            raiseNotification: (notificationMessage) => doRaiseNotification(dispatch, notificationMessage),
+            setSteps: (steps) => doSetSteps(dispatch, steps),
+            setBetweenFlag: (state) => doSetBetweenFlag(dispatch, state),
+            dropUnit: (successChecker, errorChecker) => doRemoveUnit(dispatch, successChecker, errorChecker),
+
+            doGetSchema: (schemaId, successChecker, errorChecker) => doGetSchema(dispatch, schemaId, successChecker, errorChecker),
+            doGetUnitDetails: (unitID, successChecker, errorChecker) => doGetUnitInformation(dispatch, unitID, successChecker, errorChecker)
+          })
+        )(Composition)
+      )
+    )
+  )
+)
+
+
+
+

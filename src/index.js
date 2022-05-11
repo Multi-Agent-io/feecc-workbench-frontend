@@ -9,6 +9,7 @@ import { ConnectedRouter } from "connected-react-router";
 import './i18n'
 import { createTheme, ThemeProvider } from "@mui/material";
 import ModalProvider from "@reducers/context/ModalProvider";
+import { SnackbarProvider } from 'notistack'
 
 const theme = createTheme({
   palette: {
@@ -65,9 +66,11 @@ const build = () => render(
     <Provider store={store}>
       <ThemeProvider theme={theme}>
         <ConnectedRouter history={history}>
-          <ModalProvider>
-            <App/>
-          </ModalProvider>
+          <SnackbarProvider maxSnack={5}>
+            <ModalProvider>
+              <App/>
+            </ModalProvider>
+          </SnackbarProvider>
         </ConnectedRouter>
       </ThemeProvider>
     </Provider>
