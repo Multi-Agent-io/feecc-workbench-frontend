@@ -407,7 +407,7 @@ class Composition extends React.Component {
                         variant='contained'
                         color='primary'
                         loading={ loading[1] }
-                        disabled={ loading[1] }
+                        disabled={ loading[1] || onPause }
                         onClick={ () => {
                           if (activeStep === this.props.steps?.length - 1) {
                             this.handleStageRecordStop()
