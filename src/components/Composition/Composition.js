@@ -530,7 +530,7 @@ class Composition extends React.Component {
                             variant="outlined"
                             color="secondary"
                             loading={loading[3]}
-                            disabled={loading[3]}
+                            disabled={loading[3] || onPause}
                             onClick={() => this.setOnPause()}
                           >
                             {t("FinishStep")}
