@@ -72,6 +72,10 @@ class Composition extends React.Component {
     this.setState({ stepDuration: duration });
   };
 
+  componentDidMount() {
+    this.fetchComposition();
+  }
+
   componentDidUpdate(prevProps, prevState, snapshot) {
     if (prevProps.compositionID !== this.props.compositionID) { // If compositionID changed - fetch composition
       this.fetchComposition();
@@ -88,6 +92,7 @@ class Composition extends React.Component {
         this.props.compositionID,
         (res) => {
           if (res.status_code === 200) {
+            // console.log("Unit details received")
             let biography = [];
             if (res.unit_biography_completed.length > 0)
               biography = res.unit_biography_completed;
@@ -117,6 +122,7 @@ class Composition extends React.Component {
                   this.props.setSteps(newBiography);
                   // If this is after pause or recovery
                   if (inProgressFlag) {
+                    console.log("detected in progress");
                     if (this.props.compositionOngoing) {
                       if (res.unit_biography_completed.length === 0) {
                         this.setState({ activeStep: 0 });
