@@ -37,7 +37,7 @@ export default withTranslation()(connect(
                             <h2>{t('PassportsForRevision')}</h2>
                             <div className={styles.unitsWrapper}>
                             {units.map((item, index) => (
-                                <div className={styles.unitsRow}>
+                                <div key={item.unit_internal_id} className={styles.unitsRow}>
                                     <div>{index + 1}. {item.unit_name}</div>
                                     <div>ID {item.unit_internal_id}</div>
                                 </div>
