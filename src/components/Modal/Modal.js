@@ -1,9 +1,9 @@
-import React, { useContext, useEffect } from 'react'
+import React, { useContext } from 'react'
 import ModalActionsContext from "@reducers/context/modal-context";
 
 import styles from './Modal.module.css'
 
-export const Modal = (props) => {
+export const Modal = () => {
   const {visible, onClose, content} = useContext(ModalActionsContext)
 
   return (
