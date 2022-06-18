@@ -54,6 +54,7 @@ export default withSnackbar(withTranslation()(connect(
   state = {
     eventSource: null,
     reconnectInterval: 10,
+    SSEErrorFlag: false,
   }
 
 
@@ -123,12 +124,15 @@ export default withSnackbar(withTranslation()(connect(
 
     }
     this.eventSource.onerror = (e) => {
+      this.setState({SSEErrorFlag: true});
       this.props.enqueueSnackbar(`Соединение с сервером потеряно. Попытка повторного подключения через ${this.state.reconnectInterval} секунд`, {variant: "error"});
       this.eventSource.close();
       this.reconnectSSE()
     }
     this.eventSource.onopen = (e) => {
-      this.props.enqueueSnackbar('Соединение с сервером установлено', { variant: 'success' });
+      if(this.state.SSEErrorFlag) {
+        this.props.enqueueSnackbar('Соединение с сервером восстановлено', { variant: 'success' });
+      }
     }
   }
 
