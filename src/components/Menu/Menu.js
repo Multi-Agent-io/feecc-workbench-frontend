@@ -44,7 +44,7 @@ export default withTheme(withTranslation()(connect(
     authorized: PropTypes.bool,
     unitID: PropTypes.string,
     raiseNotification: PropTypes.func.isRequired,
-    doCreateUnit: PropTypes.func.isRequired,
+    createUnit: PropTypes.func.isRequired,
     doLogout: PropTypes.func.isRequired
   }
 
