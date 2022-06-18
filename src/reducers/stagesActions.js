@@ -170,7 +170,7 @@ export const doGetUnitInformation = (dispatch, unitID, successChecker, errorChec
         url: `${ config.socket }/unit/${ unitID }/info`,
       },
       successChecker
-    ).then(errorChecker)
+    ).catch(errorChecker)
 }
 
 export const doSetBetweenFlag = (dispatch, state) => {
