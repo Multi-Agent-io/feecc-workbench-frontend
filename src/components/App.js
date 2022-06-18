@@ -14,9 +14,10 @@ import RevisionsTracker from "@components/RevisionsTracker/RevisionsTracker";
 import { Modal } from "@components/Modal/Modal";
 import config from "../../configs/config.json";
 import { push } from "connected-react-router";
+import { withSnackbar } from "notistack";
 
 
-export default withTranslation()(connect(
+export default withSnackbar(withTranslation()(connect(
   (store) => ({
     location: store.router.location.pathname,
   }),
@@ -47,13 +48,44 @@ export default withTranslation()(connect(
   ]
 
   constructor (props) {
-    super(props)
+    super(props);
+  }
+
+  state = {
+    eventSource: null,
+    reconnectInterval: 10,
   }
 
 
-  componentDidMount() {
-    let eventSource = new EventSource(`${config.socket}/workbench/status/stream`)
-    eventSource.onmessage = (e) => {
+  isFunction(functionToCheck) {
+    return functionToCheck && {}.toString.call(functionToCheck) === '[object Function]';
+  }
+  
+  debounce(func, wait) {
+      let timeout;
+      let waitFunc;
+      
+      return function() {
+          if (this.isFunction(wait)) {
+              waitFunc = wait;
+          }
+          else {
+              waitFunc = function() { return wait };
+          }
+          
+          let context = this, args = arguments;
+          const later = function() {
+              timeout = null;
+              func.apply(context, args);
+          };
+          clearTimeout(timeout);
+          timeout = setTimeout(later, waitFunc());
+      };
+  }
+
+  setupSSEConnection () {
+    this.eventSource = new EventSource(`${config.socket}/workbench/status/stream`)
+    this.eventSource.onmessage = (e) => {
       let res = JSON.parse(e.data)
 
       this.props.doFetchComposition(res)
@@ -74,9 +106,10 @@ export default withTranslation()(connect(
           // console.log("AWAIT__LOGIN")
           break;
         case 'AuthorizedIdling':
-          // console.log('redirect to menu')
-          if(location !== 'menu')
-            this.props.goToMenu()
+          if(location !== 'menu') {
+            this.props.goToMenu();
+            console.log('==ROUTER== redirect to menu');
+          }
           // console.log("AUTHORIZED__IDLING")
           break;
         case 'UnitAssignedIdling':
@@ -89,6 +122,25 @@ export default withTranslation()(connect(
       }
 
     }
+    this.eventSource.onerror = (e) => {
+      this.props.enqueueSnackbar(`Соединение с сервером потеряно. Попытка повторного подключения через ${this.state.reconnectInterval} секунд`, {variant: "error"});
+      this.eventSource.close();
+      this.reconnectSSE()
+    }
+    this.eventSource.onopen = (e) => {
+      this.props.enqueueSnackbar('Соединение с сервером установлено', { variant: 'success' });
+    }
+  }
+
+  reconnectSSE = this.debounce(function (){
+    this.setupSSEConnection();
+  }, () => {
+      return this.state.reconnectInterval * 1000;
+  }) 
+  // 
+
+  componentDidMount() {
+    this.setupSSEConnection();
   }
 
   route = path => this.routes.find(r => path.match(r[0]) !== null)?.[1]?.()
@@ -113,5 +165,4 @@ export default withTranslation()(connect(
       </>
     );
   }
-}))
-
+})))
