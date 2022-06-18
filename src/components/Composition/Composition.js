@@ -84,7 +84,6 @@ class Composition extends React.Component {
       && this.props.compositionID !== undefined
       && this.props.compositionID !== null
     ) {
-      // debugger;
       this.props.doGetUnitDetails(
         this.props.compositionID,
         (res) => {

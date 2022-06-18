@@ -40,7 +40,6 @@ export default withTranslation()(connect(
     redirectToLogin: PropTypes.func.isRequired,
     goToMenu: PropTypes.func.isRequired,
     redirectToComposition: PropTypes.func.isRequired,
-    getBarcode: PropTypes.func.isRequired,
     setQuery: PropTypes.func.isRequired,
     setCompositionID: PropTypes.func.isRequired,
   }
@@ -55,9 +54,12 @@ export default withTranslation()(connect(
   }
 
   componentDidMount () {
-    if (!this.props.composition.employee_logged_in) {
-      this.props.redirectToLogin()
-    }
+    setTimeout(() => {
+      if (!this.props.composition.employee_logged_in) {
+        this.props.redirectToLogin()
+      }
+    }, 300)
+    
   }
 
   componentDidUpdate (prevProps, prevState, snapshot) {
