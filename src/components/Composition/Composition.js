@@ -8,7 +8,6 @@ import {
   doGetUnitInformation,
   doRaiseNotification,
   doRemoveUnit,
-  doSetBetweenFlag,
   doSetSteps,
   doStartStepRecord,
   doStopStepRecord,
@@ -34,7 +33,7 @@ import { ToMainMenuModal } from "@components/Modals/ToMainMenu/ToMainMenuModal";
 
 class Composition extends React.Component {
   static propTypes = {
-    steps: PropTypes.object,
+    steps: PropTypes.array,
     unit: PropTypes.object,
     compositionOngoing: PropTypes.bool,
     compositionID: PropTypes.string,
@@ -48,9 +47,7 @@ class Composition extends React.Component {
     uploadComposition: PropTypes.func.isRequired,
     raiseNotification: PropTypes.func.isRequired,
     setSteps: PropTypes.func.isRequired,
-    setBetweenFlag: PropTypes.func.isRequired,
     dropUnit: PropTypes.func.isRequired,
-    addTimestampToIgnore: PropTypes.func.isRequired,
     doGetSchema: PropTypes.func.isRequired,
     doGetUnitDetails: PropTypes.func.isRequired,
     enqueueSnackbar: PropTypes.func.isRequired,
@@ -75,32 +72,23 @@ class Composition extends React.Component {
     this.setState({ stepDuration: duration });
   };
 
-  componentDidMount() {
-    setTimeout(() => {
-      this.fetchComposition();
-    }, 400);
-  }
-
   componentDidUpdate(prevProps, prevState, snapshot) {
-    if (prevProps.compositionID !== this.props.compositionID) {
-      setTimeout(() => {
-        this.fetchComposition();
-      }, 400);
+    if (prevProps.compositionID !== this.props.compositionID) { // If compositionID changed - fetch composition
+      this.fetchComposition();
     }
   }
 
   fetchComposition() {
     if (
-      this.props.compositionID !== "" &&
-      this.props.compositionID !== undefined
+      this.props.compositionID !== ""
+      && this.props.compositionID !== undefined
+      && this.props.compositionID !== null
     ) {
+      // debugger;
       this.props.doGetUnitDetails(
         this.props.compositionID,
         (res) => {
           if (res.status_code === 200) {
-            // console.log('__UNIT__DETEILS__')
-            // console.log(res)
-
             let biography = [];
             if (res.unit_biography_completed.length > 0)
               biography = res.unit_biography_completed;
@@ -124,7 +112,9 @@ class Composition extends React.Component {
                         )[0],
                       ];
                     });
-                  } catch (e) {}
+                  } catch (e) {
+                    throw new Error(e)
+                  }
                   this.props.setSteps(newBiography);
                   // If this is after pause or recovery
                   if (inProgressFlag) {
@@ -134,26 +124,23 @@ class Composition extends React.Component {
                         setTimeout(() => {
                           this.stopwatches[0]?.start();
                         }, 300);
-                      } else {
+                      } else if (res.unit_biography_pending.length > 0) {
                         this.setState({
-                          activeStep: res.unit_biography_completed.length - 1,
+                          activeStep: res.unit_biography_completed.length,
                         });
                         setTimeout(() => {
                           this.stopwatches[
-                            res.unit_biography_completed.length - 1
+                            res.unit_biography_completed.length
                           ]?.start();
                         }, 300);
                       }
                     } else {
                       if (res.unit_biography_pending.length > 0) {
-                        // debugger
-                        // console.log(res)
                         this.setState({
                           afterPauseStep: res.unit_biography_completed.length,
                           afterPauseStepName:
                             res.unit_biography_pending[0].stage_name,
                         });
-                        // debugger
                       } else {
                         this.setState({
                           activeStep: res.unit_biography_completed.length,
@@ -175,7 +162,9 @@ class Composition extends React.Component {
             console.log("FETCH ERROR");
           }
         },
-        null
+        (e) => {
+          console.log();
+        }
       );
     }
   }
@@ -190,7 +179,6 @@ class Composition extends React.Component {
             let arr = this.state.loading;
             arr[loadingNumber] = false;
             this.setState({ loading: arr });
-            this.props.setBetweenFlag(false);
             resolve("OK");
             setTimeout(() => {
               this.stopwatches[this.state.activeStep]?.start();
@@ -216,7 +204,6 @@ class Composition extends React.Component {
       let arr = this.state.loading;
       arr[loadBlock] = true;
       this.setState({ loading: arr });
-      this.props.setBetweenFlag(true);
       this.props.stopStepRecord({}, isPause, (res) => {
         if (res.status_code === 200) {
           resolve("OK");
@@ -275,7 +262,6 @@ class Composition extends React.Component {
           let arr = this.state.loading;
           arr[3] = false;
           this.setState({ loading: arr });
-          this.props.setBetweenFlag(false);
           return true;
         } else {
           this.props.enqueueSnackbar(
@@ -297,7 +283,6 @@ class Composition extends React.Component {
   }
 
   unpause() {
-    // console.log(this.props.steps[this.state.activeStep].name)
     this.handleStageRecordStart(
       this.props.steps[this.state.activeStep].name,
       2
@@ -314,7 +299,6 @@ class Composition extends React.Component {
           setTimeout(() => {
             arr[2] = true;
             this.setState({ loading: arr });
-            // this.setState({loading_2: false})
           }, 400);
           resolve("OK");
           return true;
@@ -386,11 +370,10 @@ class Composition extends React.Component {
                   this.props.context.onOpen(
                     <ToMainMenuModal
                       onReturn={() => {
-                        this.cancelComposition().then(() =>
-                          setTimeout(() => {
-                            this.props.context.onClose();
-                            this.props.goToMenu();
-                          }, 400)
+                        this.cancelComposition().then(() =>{
+                          this.props.context.onClose();
+                          this.props.goToMenu();
+                        }
                         );
                       }}
                       onProceed={() => this.props.context.onClose()}
@@ -483,7 +466,7 @@ class Composition extends React.Component {
                         onClick={() => {
                           if (activeStep === this.props.steps?.length - 1) {
                             this.handleStageRecordStop().then(() => {
-                              this.props.setBetweenFlag(false);
+                              // this.props.setBetweenFlag(false);
                               this.setState({
                                 activeStep: activeStep + 1,
                                 loading_1: false,
@@ -647,7 +630,6 @@ export default withSnackbar(
             raiseNotification: (notificationMessage) =>
               doRaiseNotification(dispatch, notificationMessage),
             setSteps: (steps) => doSetSteps(dispatch, steps),
-            setBetweenFlag: (state) => doSetBetweenFlag(dispatch, state),
             dropUnit: (successChecker, errorChecker) =>
               doRemoveUnit(dispatch, successChecker, errorChecker),
 
