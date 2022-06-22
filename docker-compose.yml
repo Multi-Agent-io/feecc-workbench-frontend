@@ -5,6 +5,12 @@ services:
     build:
       context: ./
       dockerfile: Dockerfile
+      args: 
+        APPLICATION_SOCKET: ${APPLICATION_SOCKET}
+        INTERFACE_LANGUAGE: ${INTERFACE_LANGUAGE}
+        DEV_SHOW_REDICERS: ${DEV_SHOW_REDICERS}
+        SHOW_TEST_SCHEMAS: ${SHOW_TEST_SCHEMAS}
+        USE_DEVTOOLS: ${USE_DEVTOOLS}
     ports:
       - "0.0.0.0:3000:3000"
     restart: always
