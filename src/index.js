@@ -11,6 +11,9 @@ import { createTheme, ThemeProvider } from "@mui/material";
 import ModalProvider from "@reducers/context/ModalProvider";
 import { SnackbarProvider } from 'notistack'
 
+require('dotenv').config()
+
+
 const theme = createTheme({
   palette: {
     primary: {

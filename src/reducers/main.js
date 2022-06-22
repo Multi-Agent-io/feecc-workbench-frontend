@@ -4,7 +4,6 @@ import { createBrowserHistory } from 'history'
 import { connectRouter, routerMiddleware } from 'connected-react-router'
 import {stagesInitialState, stagesReducer} from "./stagesReducer";
 
-import config from '../../configs/config.json'
 import {revisionsInitialState, revisionsReducer} from "@reducers/RevisionsReducer";
 import { composeWithDevTools } from "redux-devtools-extension";
 
@@ -20,7 +19,7 @@ export default createStore(
         stages: stagesInitialState,
         revisions: revisionsInitialState
     },
-    config.use_devtools 
+    process.env.USE_DEVTOOLS
     ? composeWithDevTools(applyMiddleware(routerMiddleware(history)))
     : compose(applyMiddleware(routerMiddleware(history)))
 )

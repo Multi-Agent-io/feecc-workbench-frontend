@@ -1,6 +1,5 @@
 import { axiosWrapper, fetchWrapper, types } from "@reducers/common";
 import store from './main'
-import config from '../../configs/config.json'
 import axios from "axios";
 
 
@@ -34,7 +33,7 @@ export const doCreateUnit = (dispatch, schemaID, successChecker, errorChecker) =
     types.STAGES__CREATE_NEW_UNIT,
     {
       method: "post",
-      url: `${ config.socket }/unit/new/${ schemaID }`,
+      url: `${process.env.APPLICATION_SOCKET}/unit/new/${ schemaID }`,
     },
     successChecker
   ).then(errorChecker)
@@ -46,7 +45,7 @@ export const doAssignUnit = (dispatch, unit_id, successChecker, errorChecker) =>
     undefined,
     {
       method: 'post',
-      url: `${ config.socket }/workbench/assign-unit/${ unit_id }`
+      url: `${process.env.APPLICATION_SOCKET}/workbench/assign-unit/${ unit_id }`
     },
     successChecker
   ).then(errorChecker)
@@ -58,7 +57,7 @@ export const doLogout = (dispatch, successChecker, errorChecker) => {
     types.STAGES__FETCH_COMPOSITION,
     {
       method: 'post',
-      url: `${ config.socket }/employee/log-out`,
+      url: `${process.env.APPLICATION_SOCKET}/employee/log-out`,
       data: {
         workbench_no: store.getState().stages.get('workbench_no')
       }
@@ -73,7 +72,7 @@ export const doGetSchemasNames = (dispatch, successChecker, errorChecker) => {
     types.STAGES__SET_PRODUCTION_SCHEMAS,
     {
       method: 'get',
-      url: `${ config.socket }/workbench/production-schemas/names`
+      url: `${process.env.APPLICATION_SOCKET}/workbench/production-schemas/names`
     },
     successChecker
   ).then(errorChecker)
@@ -86,7 +85,7 @@ export const doGetSchema = (dispatch, schemaId, successChecker, errorChecker) =>
     undefined,
     {
       method: 'get',
-      url: `${ config.socket }/workbench/production-schemas/${ schemaId }`
+      url: `${process.env.APPLICATION_SOCKET}/workbench/production-schemas/${ schemaId }`
     },
     successChecker
   ).then(errorChecker)
@@ -98,7 +97,7 @@ export const doStartStepRecord = (dispatch, additionalInfo, successChecker, erro
     undefined,
     {
       method: 'post',
-      url: `${ config.socket }/workbench/start-operation`,
+      url: `${process.env.APPLICATION_SOCKET}/workbench/start-operation`,
       data: {
         additional_info: additionalInfo
       }
@@ -113,7 +112,7 @@ export const doStopStepRecord = (dispatch, additionalInfo, prematureEnding, succ
     undefined,
     {
       method: 'post',
-      url: `${ config.socket }/workbench/end-operation`,
+      url: `${process.env.APPLICATION_SOCKET}/workbench/end-operation`,
       data: {
         workbench_no: store.getState().stages.get('workbench_no'),
         additional_info: additionalInfo,
@@ -130,7 +129,7 @@ export const doCompositionUpload = (dispatch, successChecker, errorChecker) => {
     types.STAGES__RESET_UNIT,
     {
       method: 'post',
-      url: `${ config.socket }/unit/upload`,
+      url: `${process.env.APPLICATION_SOCKET}/unit/upload`,
     },
     successChecker
   ).then(errorChecker)
@@ -167,7 +166,7 @@ export const doGetUnitInformation = (dispatch, unitID, successChecker, errorChec
       // types.STAGES__GET_UNIT_INFORMATION,
       {
         method: 'get',
-        url: `${ config.socket }/unit/${ unitID }/info`,
+        url: `${process.env.APPLICATION_SOCKET}/unit/${ unitID }/info`,
       },
       successChecker
     ).catch(errorChecker)
@@ -192,7 +191,7 @@ export const doRemoveUnit = (dispatch, successChecker, errorChecker) => {
     dispatch,
     types.STAGES__RESET_UNIT,
     {
-      url: `${ config.socket }/workbench/remove-unit`,
+      url: `${process.env.APPLICATION_SOCKET}/workbench/remove-unit`,
       method: 'post',
     },
     successChecker

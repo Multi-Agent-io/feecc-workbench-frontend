@@ -1,4 +1,5 @@
 const path = require("path");
+const Dotenv = require("dotenv-webpack");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 
 module.exports = {
@@ -88,6 +89,9 @@ module.exports = {
     plugins: [
         new HtmlWebpackPlugin({
             template: 'src/index.html'
+        }),
+        new Dotenv({
+            path: '.env'
         })
     ],
     
@@ -99,5 +103,8 @@ module.exports = {
             '@reducers': path.resolve(__dirname, 'src/reducers'),
             '@steps': path.resolve(__dirname, 'configs/unitsSteps')
         }
-    }
+    },
+    node: {
+        fs: "empty"
+     }
 };

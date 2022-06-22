@@ -1,5 +1,4 @@
 import fetch from 'cross-fetch'
-import config from '../../configs/config.json'
 import axios from "axios";
 
 export const types = {
@@ -37,7 +36,7 @@ export const reportAxiosError = (error) => {
 
 export const fetchWrapper = (dispatch, url, event, opts, successChecker) => {
   // console.log(`fetching ${url}`)
-  return fetch(`${config.socket}${url}`, opts)
+  return fetch(`${process.env.APPLICATION_SOCKET}${url}`, opts)
     .then(res => {
       if (res.status >= 400)
         throw new Error(JSON.stringify(res.json()))

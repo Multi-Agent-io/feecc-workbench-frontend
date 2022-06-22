@@ -9,7 +9,6 @@ import Stopwatch from "@components/Stopwatch/Stopwatch";
 import PropTypes from "prop-types";
 import { doSetCompositionID } from "@reducers/stagesActions";
 import { setQueryValues } from "@reducers/routerActions";
-// import config from '../../../configs/config.json'
 
 export default withTranslation()(connect(
   (store) => ({

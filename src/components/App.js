@@ -12,10 +12,8 @@ import { doFetchComposition, doRaiseNotification } from "@reducers/stagesActions
 import GatherComponents from "@components/GatherComponents/GatherComponents";
 import RevisionsTracker from "@components/RevisionsTracker/RevisionsTracker";
 import { Modal } from "@components/Modal/Modal";
-import config from "../../configs/config.json";
 import { push } from "connected-react-router";
 import { withSnackbar } from "notistack";
-
 
 export default withSnackbar(withTranslation()(connect(
   (store) => ({
@@ -85,7 +83,7 @@ export default withSnackbar(withTranslation()(connect(
   }
 
   setupSSEConnection () {
-    this.eventSource = new EventSource(`${config.socket}/workbench/status/stream`)
+    this.eventSource = new EventSource(`${process.env.APPLICATION_SOCKET}/workbench/status/stream`)
     this.eventSource.onmessage = (e) => {
       let res = JSON.parse(e.data)
 
@@ -125,13 +123,15 @@ export default withSnackbar(withTranslation()(connect(
     }
     this.eventSource.onerror = (e) => {
       this.setState({SSEErrorFlag: true});
-      this.props.enqueueSnackbar(`Соединение с сервером потеряно. Попытка повторного подключения через ${this.state.reconnectInterval} секунд`, {variant: "error"});
+      this.props.enqueueSnackbar(`Соединение с сервером не может быть установлено. Попытка повторного подключения через ${this.state.reconnectInterval} секунд`, {variant: "error"});
       this.eventSource.close();
       this.reconnectSSE()
     }
     this.eventSource.onopen = (e) => {
       if(this.state.SSEErrorFlag) {
         this.props.enqueueSnackbar('Соединение с сервером восстановлено', { variant: 'success' });
+      } else {
+        this.props.enqueueSnackbar('Соединение с сервером установлено', { variant: 'success' });
       }
     }
   }
