@@ -6,11 +6,11 @@ services:
       context: ./
       dockerfile: Dockerfile
       args: 
-        APPLICATION_SOCKET: ${APPLICATION_SOCKET}
-        INTERFACE_LANGUAGE: ${INTERFACE_LANGUAGE}
-        DEV_SHOW_REDUCERS: ${DEV_SHOW_REDUCERS}
-        SHOW_TEST_SCHEMAS: ${SHOW_TEST_SCHEMAS}
-        USE_DEVTOOLS: ${USE_DEVTOOLS}
+        APPLICATION_SOCKET: "http://localhost:5001"
+        INTERFACE_LANGUAGE: "ru"
+        DEV_SHOW_REDUCERS: "true"
+        SHOW_TEST_SCHEMAS: "true"
+        USE_DEVTOOLS: "true"
     ports:
       - "0.0.0.0:3000:3000"
     restart: always

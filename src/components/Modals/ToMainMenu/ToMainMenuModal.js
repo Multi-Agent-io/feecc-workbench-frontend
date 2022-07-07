@@ -5,7 +5,7 @@ import { CircularProgress } from '@mui/material'
 import styles from './ToMainMenuModal.module.css'
 import { useTranslation } from "react-i18next";
 
-export const ToMainMenuModal = (props) => {
+const ToMainMenuModal = (props) => {
   const {onClose} = useContext(ModalActionsContext)
 
   const {t} = useTranslation()
@@ -44,3 +44,5 @@ export const ToMainMenuModal = (props) => {
     </div>
   </div>)
 }
+
+export default ToMainMenuModal;

@@ -15,7 +15,6 @@ import { push } from "connected-react-router";
 import { Button, CircularProgress } from "@mui/material";
 import { LoadingButton } from '@mui/lab'
 import { withTheme } from '@mui/styles'
-import config from '../../../configs/config.json'
 import {doFetchRevisions} from "@reducers/RevisionsActions";
 
 
@@ -157,7 +156,7 @@ export default withTheme(withTranslation()(connect(
           <div className={styles.variantsWrapper}>
             {schemas?.map((item, index) => {
               let show_flag = !item.schema_id.startsWith('test_')
-              if (config.show_test_schemas && !show_flag)
+              if (process.env.SHOW_TEST_SCHEMAS && !show_flag)
                 show_flag = true
               if (show_flag)
                 return (

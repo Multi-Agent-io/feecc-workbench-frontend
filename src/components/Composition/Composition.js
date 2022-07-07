@@ -29,7 +29,7 @@ import { withContext } from "@reducers/context/withContext";
 import { withTheme } from "@mui/styles";
 import { LoadingButton } from "@mui/lab";
 
-import { ToMainMenuModal } from "@components/Modals/ToMainMenu/ToMainMenuModal";
+import ToMainMenuModal from "../Modals/ToMainMenu/ToMainMenuModal";
 
 class Composition extends React.Component {
   static propTypes = {
