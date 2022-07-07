@@ -200,8 +200,10 @@ export default withSnackbar(
           );
           notificationsEventSourse.onmessage = (message) => {
             const res = JSON.parse(message.data);
-
-            this.props.enqueueSnackbar(res.message, res);
+            if (res.persist) {
+              res.action = CloseActionButton;
+            }
+            this.props.enqueueSnackbar(res.message, { ...res });
           }
           notificationsEventSourse.onerror = () => {
             this.state.notificationsEventSource.close();
