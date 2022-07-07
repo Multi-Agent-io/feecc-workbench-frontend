@@ -41,7 +41,7 @@ export default withTheme(withTranslation()(connect(
           )
       }
       setTimeout(() => {
-        console.log('schemas received')
+        // console.log('schemas received')
         console.log(this.state.schemas)
       },1000)
 

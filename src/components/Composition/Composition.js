@@ -30,6 +30,8 @@ import { withTheme } from "@mui/styles";
 import { LoadingButton } from "@mui/lab";
 
 import ToMainMenuModal from "../Modals/ToMainMenu/ToMainMenuModal";
+import ProceedNotSaved from "../Modals/ProceedNotSaved/ProceedNotSaved";
+import RepeatCloseActionButton from "../RepeatCloseActionButton/RepeatCloseActionButton";
 
 class Composition extends React.Component {
   static propTypes = {
@@ -68,6 +70,17 @@ class Composition extends React.Component {
     afterPause: false,
   };
 
+  closeButtonAction = (key) => (
+    <div>
+      <button
+        className={styles.notificationButton}
+        onClick={() => this.props.closeSnackbar(key)}
+      >
+        Закрыть
+      </button>
+    </div>
+  );
+
   setStepDuration = (duration) => {
     this.setState({ stepDuration: duration });
   };
@@ -77,16 +90,17 @@ class Composition extends React.Component {
   }
 
   componentDidUpdate(prevProps, prevState, snapshot) {
-    if (prevProps.compositionID !== this.props.compositionID) { // If compositionID changed - fetch composition
+    if (prevProps.compositionID !== this.props.compositionID) {
+      // If compositionID changed - fetch composition
       this.fetchComposition();
     }
   }
 
   fetchComposition() {
     if (
-      this.props.compositionID !== ""
-      && this.props.compositionID !== undefined
-      && this.props.compositionID !== null
+      this.props.compositionID !== "" &&
+      this.props.compositionID !== undefined &&
+      this.props.compositionID !== null
     ) {
       this.props.doGetUnitDetails(
         this.props.compositionID,
@@ -117,12 +131,12 @@ class Composition extends React.Component {
                       ];
                     });
                   } catch (e) {
-                    throw new Error(e)
+                    throw new Error(e);
                   }
                   this.props.setSteps(newBiography);
                   // If this is after pause or recovery
                   if (inProgressFlag) {
-                    console.log("detected in progress");
+                    // console.log("detected in progress");
                     if (this.props.compositionOngoing) {
                       if (res.unit_biography_completed.length === 0) {
                         this.setState({ activeStep: 0 });
@@ -161,14 +175,14 @@ class Composition extends React.Component {
             return true;
           } else {
             this.props.enqueueSnackbar(
-            `Не удалось получить информацию об изделии. Попробуйте позже. Если ошибка повторится, то свяжитесь с системным администратором для устранения проблемы. Код ошибки: ${res.status_code}`,
+              `Не удалось получить информацию об изделии. Попробуйте позже. Если ошибка повторится, то свяжитесь с системным администратором для устранения проблемы. Код ошибки: ${res.status_code}`,
               { variant: "error" }
             );
-            console.log("FETCH ERROR");
+            // console.log("FETCH ERROR");
           }
         },
         (e) => {
-          console.log();
+          console.log(e);
         }
       );
     }
@@ -191,7 +205,7 @@ class Composition extends React.Component {
             return true;
           } else {
             this.props.enqueueSnackbar(
-            `Не удалось начать запись этапа. Попробуйте повторить позже. При многократном повторении данной ошибки обратитесь к системному администратору. Код ошибки: ${res.status_code}`,
+              `Не удалось начать запись этапа. Попробуйте повторить позже. При многократном повторении данной ошибки обратитесь к системному администратору. Код ошибки: ${res.status_code}`,
               { variant: "error" }
             );
             reject("Error during attempt to start recording");
@@ -218,6 +232,8 @@ class Composition extends React.Component {
             `Не удалось завершить запись этапа. Попробуйте повторить позже. При многократном повторении данной ошибки обратитесь к системному администратору. Код ошибки ${res.status_code}`,
             { variant: "error" }
           );
+          arr[loadBlock] = false;
+          this.setState({ loading: arr });
           reject("Error during attempt to stop recording");
           return false;
         }
@@ -247,12 +263,34 @@ class Composition extends React.Component {
       this.props.uploadComposition((res) => {
         if (res.status_code === 200) {
           resolve("OK");
+          arr[2] = false;
+          this.setState({ loading: arr });
+          this.props.enqueueSnackbar(
+            `Паспорт ${this.props.compositionID} успешно загружен в сеть IPFS`,
+            {
+              variant: "success",
+            }
+          );
           return true;
         } else {
+          const bindObject = {
+            action: () =>
+              this.props.context.onOpen(
+                <ProceedNotSaved onNoSave={this.props.dropUnit} unitID={this.props.compositionID} />
+              ),
+            actionName: "Продолжить без сохранения"
+          };
           this.props.enqueueSnackbar(
-            `Ошибка загзузки сборки. Попробуйте повторить позже. При многократном повторении данной ошибки обратитесь к системному администратору. Код ошибки ${res.status_code}`,
-            { variant: "error" }
+            `Ошибка загзузки сборки. Код ответа ${
+              res.status_code
+            }. Текст ответа: ${JSON.stringify(res.detail)}`,
+            {
+              variant: "error",
+              action: RepeatCloseActionButton.bind(bindObject),
+            }
           );
+          arr[2] = false;
+          this.setState({ loading: arr });
           return false;
         }
       }, null);
@@ -375,11 +413,10 @@ class Composition extends React.Component {
                   this.props.context.onOpen(
                     <ToMainMenuModal
                       onReturn={() => {
-                        this.cancelComposition().then(() =>{
+                        this.cancelComposition().then(() => {
                           this.props.context.onClose();
                           this.props.goToMenu();
-                        }
-                        );
+                        });
                       }}
                       onProceed={() => this.props.context.onClose()}
                     />

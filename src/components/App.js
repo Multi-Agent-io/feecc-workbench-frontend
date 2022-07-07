@@ -1,172 +1,246 @@
 import React, { Component } from "react";
-import styles from './App.module.css';
+import styles from "./App.module.css";
 import { connect } from "react-redux";
-import PropTypes from 'prop-types'
+import PropTypes from "prop-types";
 import { withTranslation } from "react-i18next";
-import Header from '@components/Header/Header'
-import Login from "@components/Login/Login"
-import Menu from "@components/Menu/Menu"
-import Composition from "@components/Composition/Composition"
-import Notifications from "@components/Notifications/Notifications"
-import { doFetchComposition, doRaiseNotification } from "@reducers/stagesActions";
+import Header from "@components/Header/Header";
+import Login from "@components/Login/Login";
+import Menu from "@components/Menu/Menu";
+import Composition from "@components/Composition/Composition";
+import Notifications from "@components/Notifications/Notifications";
+import {
+  doFetchComposition,
+  doRaiseNotification,
+} from "@reducers/stagesActions";
 import GatherComponents from "@components/GatherComponents/GatherComponents";
 import RevisionsTracker from "@components/RevisionsTracker/RevisionsTracker";
 import { Modal } from "@components/Modal/Modal";
+import CloseActionButton from "./CloseActionButton/CloseActionButton";
+import RepeatCloseActionButton from "./RepeatCloseActionButton/RepeatCloseActionButton";
 import { push } from "connected-react-router";
 import { withSnackbar } from "notistack";
 
-export default withSnackbar(withTranslation()(connect(
-  (store) => ({
-    location: store.router.location.pathname,
-  }),
-  (dispatch) => ({
-    raiseNotification: (notificationMessage) => doRaiseNotification(dispatch, notificationMessage),
-    goToMenu: () => dispatch(push('/menu')),
-    goToGatheringComponents: () => dispatch(push('/gatherComponents')),
-    goToComposition: () => dispatch(push('/composition')),
+export default withSnackbar(
+  withTranslation()(
+    connect(
+      (store) => ({
+        location: store.router.location.pathname,
+      }),
+      (dispatch) => ({
+        raiseNotification: (notificationMessage) =>
+          doRaiseNotification(dispatch, notificationMessage),
+        goToMenu: () => dispatch(push("/menu")),
+        goToGatheringComponents: () => dispatch(push("/gatherComponents")),
+        goToComposition: () => dispatch(push("/composition")),
 
-    doFetchComposition: (composition) => doFetchComposition(dispatch, composition)
-  })
-)(class App extends Component {
+        doFetchComposition: (composition) =>
+          doFetchComposition(dispatch, composition),
+      })
+    )(
+      class App extends Component {
+        static propTypes = {
+          location: PropTypes.string.isRequired,
 
-  static propTypes = {
-    location: PropTypes.string.isRequired,
+          goToMenu: PropTypes.func.isRequired,
+          goToGatheringComponents: PropTypes.func.isRequired,
+          goToComposition: PropTypes.func.isRequired,
+          doFetchComposition: PropTypes.func.isRequired,
+        };
 
-    goToMenu: PropTypes.func.isRequired,
-    goToGatheringComponents: PropTypes.func.isRequired,
-    goToComposition: PropTypes.func.isRequired,
-    doFetchComposition: PropTypes.func.isRequired
-  }
+        routes = [
+          ["^/$", () => <Login />],
+          ["^/menu", () => <Menu />],
+          ["^/composition", () => <Composition />],
+          ["^/gatherComponents", () => <GatherComponents />],
+        ];
 
-  routes = [
-    ['^/$', () => <Login/>],
-    ['^/menu', () => <Menu/>],
-    ['^/composition', () => <Composition/>],
-    ['^/gatherComponents', () => <GatherComponents/>]
-  ]
+        constructor(props) {
+          super(props);
+        }
 
-  constructor (props) {
-    super(props);
-  }
+        state = {
+          eventSource: null,
+          reconnectInterval: 10,
+          SSEErrorFlag: false,
+        };
 
-  state = {
-    eventSource: null,
-    reconnectInterval: 10,
-    SSEErrorFlag: false,
-  }
-
-
-  isFunction(functionToCheck) {
-    return functionToCheck && {}.toString.call(functionToCheck) === '[object Function]';
-  }
-  
-  debounce(func, wait) {
-      let timeout;
-      let waitFunc;
-      
-      return function() {
-          if (this.isFunction(wait)) {
-              waitFunc = wait;
+        setupSSEConnection = () => {
+          if (
+            this.state.eventSource !== null &&
+            this.state.eventSource !== undefined
+          ) {
+            this.state.eventSource.close();
+            this.setState({ eventSrouce: null });
+            clearTimeout(this.state.reconnectTimer);
           }
-          else {
-              waitFunc = function() { return wait };
-          }
-          
-          let context = this, args = arguments;
-          const later = function() {
-              timeout = null;
-              func.apply(context, args);
+          const eventSource = new EventSource(
+            `${process.env.APPLICATION_SOCKET}/workbench/status/stream`
+          );
+          eventSource.onmessage = (e) => {
+            let res = JSON.parse(e.data);
+
+            this.props.doFetchComposition(res);
+
+            let location = this.props.location.split("/")[1];
+            switch (res.state) {
+              case "ProductionStageOngoing":
+                // console.log("PRODUCTION__ONGOING")
+                if (location !== "composition") this.props.goToComposition();
+                break;
+              case "GatherComponents":
+                // console.log("GATHER__COMPONENTS")
+                if (location !== "gatherComponents")
+                  this.props.goToGatheringComponents();
+                break;
+              case "AwaitLogin":
+                // console.log("AWAIT__LOGIN")
+                break;
+              case "AuthorizedIdling":
+                if (location !== "menu") {
+                  this.props.goToMenu();
+                  // console.log("==ROUTER== redirect to menu");
+                }
+                // console.log("AUTHORIZED__IDLING")
+                break;
+              case "UnitAssignedIdling":
+                // console.log('UNIT__ASSIGNED__IDLING')
+                if (location !== "composition") this.props.goToComposition();
+                break;
+              default:
+                break;
+            }
           };
-          clearTimeout(timeout);
-          timeout = setTimeout(later, waitFunc());
-      };
-  }
+          eventSource.onerror = (e) => {
+            this.setState({ SSEErrorFlag: true });
+            const errorEvent = this.props.enqueueSnackbar(
+              `Соединение с сервером не может быть установлено. Попытка повторного подключения через ${this.state.reconnectInterval} секунд`,
+              {
+                variant: "error",
+                persist: true,
+                action: RepeatCloseActionButton.bind({ action: this.setupSSEConnection, actionName: "Повторить" }),
+                preventDuplicate: true,
+              }
+            );
+            this.setState({ errorEvent });
+            this.state.eventSource.close();
 
-  setupSSEConnection () {
-    this.eventSource = new EventSource(`${process.env.APPLICATION_SOCKET}/workbench/status/stream`)
-    this.eventSource.onmessage = (e) => {
-      let res = JSON.parse(e.data)
+            this.newReconnectSSE();
+          };
 
-      this.props.doFetchComposition(res)
+          eventSource.onopen = (e) => {
+            this.props.closeSnackbar(this.state.errorEvent);
+            this.setState({ errorEvent: null });
 
-      let location = this.props.location.split('/')[1]
-      switch(res.state){
-        case 'ProductionStageOngoing':
-          // console.log("PRODUCTION__ONGOING")
-          if(location !== 'composition')
-            this.props.goToComposition()
-          break;
-        case 'GatherComponents':
-          // console.log("GATHER__COMPONENTS")
-          if(location !== 'gatherComponents')
-            this.props.goToGatheringComponents()
-          break;
-        case 'AwaitLogin':
-          // console.log("AWAIT__LOGIN")
-          break;
-        case 'AuthorizedIdling':
-          if(location !== 'menu') {
-            this.props.goToMenu();
-            console.log('==ROUTER== redirect to menu');
+            if (this.state.SSEErrorFlag) {
+              if (this.state.errorEvent !== null) this.state.errorEvent.close();
+              this.setState({ errorEvent: null });
+              this.props.enqueueSnackbar(
+                "Соединение с сервером восстановлено",
+                {
+                  variant: "success",
+                  persist: false,
+                  action: CloseActionButton,
+                  preventDuplicate: false,
+                }
+              );
+            } else {
+              this.props.enqueueSnackbar("Соединение с сервером установлено", {
+                variant: "success",
+                persist: false,
+                action: CloseActionButton,
+                preventDuplicate: false,
+              });
+            }
+          };
+          this.setState({ eventSource });
+        };
+
+        newReconnectSSE = () => {
+          if (
+            this.state.errorEvent !== null &&
+            this.state.errorEvent !== undefined
+          ) {
+            this.state.eventSource.close();
           }
-          // console.log("AUTHORIZED__IDLING")
-          break;
-        case 'UnitAssignedIdling':
-          // console.log('UNIT__ASSIGNED__IDLING')
-          if(location !== 'composition')
-            this.props.goToComposition()
-          break;
-        default:
-          break;
+          // console.log(
+          //   "new reconnect attempt. EventSource: ",
+          //   this.state.eventSource
+          // );
+          const reconnectTimer = setTimeout(() => {
+            this.setupSSEConnection();
+          }, 10000);
+
+          this.setState({ reconnectTimer });
+        };
+
+        reconnectNotificationsSSE = () => {
+          if (
+            this.state.notificationsEventSource !== null && 
+            this.state.notificationsEventSource !== undefined
+          ) {
+            this.state.notificationsEventSource.close();
+          }
+          const notificationsReconnectTimer = setTimeout(() => {
+            this.setupNotificationsSSEConnection();
+          }, 1000)
+          this.setState({ notificationsReconnectTimer });
+        }
+
+        setupNotificationsSSEConnection = () => {
+          if (
+            this.state.notificationsEventSource !== null &&
+            this.state.notificationsEventSource !== undefined
+          ) {
+            this.state.notificationsEventSource.close();
+            this.setState({ notificationsEventSource: null });
+            clearTimeout(this.state.notificationsReconnectTimer);
+          }
+          const notificationsEventSourse = new EventSource(
+            `${process.env.APPLICATION_SOCKET}/notifications`
+          );
+          notificationsEventSourse.onmessage = (message) => {
+            const res = JSON.parse(message.data);
+
+            this.props.enqueueSnackbar(res.message, res);
+          }
+          notificationsEventSourse.onerror = () => {
+            this.state.notificationsEventSource.close();
+            this.reconnectNotificationsSSE();
+          }
+          this.setState({ notificationsEventSourse });
+        }
+
+        componentDidMount() {
+          this.setupSSEConnection();
+          this.setupNotificationsSSEConnection();
+        }
+
+        route = (path) =>
+          this.routes.find((r) => path.match(r[0]) !== null)?.[1]?.();
+
+        render() {
+          return (
+            <>
+              <Modal />
+              <div
+                className={styles.appWrapper}
+                style={{ paddingBottom: "50px" }}
+              >
+                <div className={styles.header}>
+                  <Header />
+                </div>
+                <div className={styles.pageWrapper}>
+                  {this.route(this.props.location)}
+                </div>
+                <div className={styles.NotificationsWrapper}>
+                  <Notifications />
+                  {this.props.location !== "/" && <RevisionsTracker />}
+                </div>
+              </div>
+            </>
+          );
+        }
       }
-
-    }
-    this.eventSource.onerror = (e) => {
-      this.setState({SSEErrorFlag: true});
-      this.props.enqueueSnackbar(`Соединение с сервером не может быть установлено. Попытка повторного подключения через ${this.state.reconnectInterval} секунд`, {variant: "error"});
-      this.eventSource.close();
-      this.reconnectSSE()
-    }
-    this.eventSource.onopen = (e) => {
-      if(this.state.SSEErrorFlag) {
-        this.props.enqueueSnackbar('Соединение с сервером восстановлено', { variant: 'success' });
-      } else {
-        this.props.enqueueSnackbar('Соединение с сервером установлено', { variant: 'success' });
-      }
-    }
-  }
-
-  reconnectSSE = this.debounce(function (){
-    this.setupSSEConnection();
-  }, () => {
-      return this.state.reconnectInterval * 1000;
-  }) 
-  // 
-
-  componentDidMount() {
-    this.setupSSEConnection();
-  }
-
-  route = path => this.routes.find(r => path.match(r[0]) !== null)?.[1]?.()
-
-  render () {
-    return (
-      <>
-        <Modal/>
-        <div className={styles.appWrapper} style={{paddingBottom: "50px"}}>
-        <div className={styles.header}>
-          <Header />
-        </div>
-        <div className={styles.pageWrapper}>
-          {this.route(this.props.location)}
-        </div>
-        <div className={styles.NotificationsWrapper}>
-          <Notifications/>
-          {this.props.location !== '/' && (<RevisionsTracker/>)}
-        </div>
-      </div>
-
-      </>
-    );
-  }
-})))
+    )
+  )
+);
