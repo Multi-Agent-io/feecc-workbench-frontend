@@ -158,9 +158,6 @@ export default withSnackbar(
                       return true;
                     },
                     (e) => {
-                    //   // THIS ONE
-                    //   // this.props.enqueueSnackbar('Ошибка при создании юнита', {variant: 'error'});
-                    //   // console.log("Create unit error", e);
                       let arr = this.state.loading;
                       arr[index] = false;
                       this.setState({ loading: arr });
@@ -178,16 +175,10 @@ export default withSnackbar(
                   return false;
                 }
               },
-              // null
               (e) => {
-                //   // THIS ONE
-                this.props.enqueueSnackbar("Ошибка получения схем", {
-                  variant: "error",
-                });
-                console.log("Schemas error", e);
-                //   let arr = this.state.loading;
-                //   arr[index] = false;
-                //   this.setState({ loading: arr });
+                let arr = this.state.loading;
+                arr[index] = false;
+                this.setState({ loading: arr });
               }
             );
           };
