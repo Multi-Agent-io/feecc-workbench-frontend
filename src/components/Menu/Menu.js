@@ -146,7 +146,11 @@ export default withSnackbar(
                             }
                           },
                           (e) => {
-                            console.log('Unit assign error', e);
+                            console.log("Unit assign error", e);
+                            let arr = this.state.loading;
+                            arr[index] = false;
+                            this.setState({ loading: arr });
+                            return false;
                           }
                           // () => {
                           //   this.props.enqueueSnackbar(
@@ -166,8 +170,13 @@ export default withSnackbar(
                         this.setState({ loading: arr });
                         return false;
                       }
-                    }, (e) => {
-                      console.log('Creat unit error', e);
+                    },
+                    () => {
+                      console.log("Create unit error", e);
+                      let arr = this.state.loading;
+                      arr[index] = false;
+                      this.setState({ loading: arr });
+                      return false;
                     }
                   );
                   return true;
@@ -183,7 +192,11 @@ export default withSnackbar(
                 }
               },
               (e) => {
-                console.log('Get schemas error', e);
+                console.log("Get schema error", e);
+                let arr = this.state.loading;
+                arr[index] = false;
+                this.setState({ loading: arr });
+                return false;
               }
             );
           };
