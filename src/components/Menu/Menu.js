@@ -77,7 +77,8 @@ export default withSnackbar(
                   this.props.authorized
                 ) {
                   this.props.enqueueSnackbar(
-                    "Внимание! Доступно 0 сборок. Свяжитесь с администратором системы для добавления необходимых сборок в базу.", {variant: 'warning'}
+                    "Внимание! Доступно 0 сборок. Свяжитесь с администратором системы для добавления необходимых сборок в базу.",
+                    { variant: "warning" }
                   );
                 }
                 return true;
@@ -99,7 +100,8 @@ export default withSnackbar(
                   // Check if the whole scheme is empty
                   if (schema === null) {
                     this.props.enqueueSnackbar(
-                      "Ошибка. Данная схема отсутствует. Связитесь с администратором для решения данной проблемы.", {variant: 'error'}
+                      "Данная схема отсутствует. Связитесь с администратором для решения данной проблемы.",
+                      { variant: "error" }
                     );
                     let arr = this.state.loading;
                     arr[index] = false;
@@ -109,7 +111,8 @@ export default withSnackbar(
                   // Check if this scheme has no stages at all
                   if (schema.production_stages === null) {
                     this.props.enqueueSnackbar(
-                      "Ошибка. Данная схема не содежит ни одного этапа. Связитесь с администратором для решения данной проблемы.", {variant: 'error'}
+                      "Данная схема не содежит ни одного этапа. Связитесь с администратором для решения данной проблемы.",
+                      { variant: "error" }
                     );
                     let arr = this.state.loading;
                     arr[index] = false;
@@ -120,60 +123,73 @@ export default withSnackbar(
                   this.props.createUnit(
                     item.schema_id,
                     (r) => {
-                      this.props.doAssignUnit(
-                        r.unit_internal_id,
-                        (r) => {
-                          if (r.status_code === 200) {
-                            if (
-                              schema?.required_components_schema_ids === null
-                            ) {
-                              this.props.doRedirectToComposition();
+                      if (r.status_code === 200) {
+                        this.props.doAssignUnit(
+                          r.unit_internal_id,
+                          (r) => {
+                            if (r.status_code === 200) {
+                              if (
+                                schema?.required_components_schema_ids === null
+                              ) {
+                                this.props.doRedirectToComposition();
+                              }
+                              let arr = this.state.loading;
+                              arr[index] = false;
+                              this.setState({ loading: arr });
+                              return true;
+                            } else {
+                              let arr = this.state.loading;
+                              arr[index] = false;
+                              this.setState({ loading: arr });
+                              return false;
                             }
-                            let arr = this.state.loading;
-                            arr[index] = false;
-                            this.setState({ loading: arr });
-                            return true;
-                          } else {
+                          },
+                          () => {
+                            this.props.enqueueSnackbar(
+                              "Не удалось установить юнит на стол",
+                              { variant: "error" }
+                            );
                             let arr = this.state.loading;
                             arr[index] = false;
                             this.setState({ loading: arr });
                             return false;
                           }
-                        },
-                        () => {
-                          this.props.enqueueSnackbar('Ошибка при установке юнита на стол', {variant: 'error'});
-                          let arr = this.state.loading;
-                          arr[index] = false;
-                          this.setState({ loading: arr });
-                          return false;
-                        }
-                      );
-                      return true;
+                        );
+                        return true;
+                      } else {
+                        console.log('Assung unit return false');
+                        return false;
+                      }
                     },
-                    () => {
-                      this.props.enqueueSnackbar('Ошибка при создании юнита', {variant: 'error'});
+                    (e) => {
+                      // THIS ONE
+                      // this.props.enqueueSnackbar('Ошибка при создании юнита', {variant: 'error'});
+                      console.log('Create unit error', e);
                       let arr = this.state.loading;
                       arr[index] = false;
                       this.setState({ loading: arr });
-                      return false;
                     }
                   );
                   return true;
                 } else {
                   this.props.enqueueSnackbar(
-                    "Ошибка при получении схем сборки. Попробуйте перезагрузить страницу.", {variant: 'error'}
+                    "Ошибка при получении схем сборки. Попробуйте перезагрузить страницу.",
+                    { variant: "error" }
                   );
                   let arr = this.state.loading;
                   arr[index] = false;
                   this.setState({ loading: arr });
                   return false;
                 }
-              },
-              () => {
+              }, 
+              // null
+              (e) => {
+              //   // THIS ONE
                 this.props.enqueueSnackbar('Ошибка получения схем', {variant: 'error'});
-                let arr = this.state.loading;
-                arr[index] = false;
-                this.setState({ loading: arr });
+                console.log('Schemas error', e);
+              //   let arr = this.state.loading;
+              //   arr[index] = false;
+              //   this.setState({ loading: arr });
               }
             );
           };
