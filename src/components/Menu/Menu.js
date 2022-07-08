@@ -144,16 +144,17 @@ export default withSnackbar(
                             return false;
                           }
                         },
-                        () => {
-                          this.props.enqueueSnackbar(
-                            "Не удалось установить юнит на стол",
-                            { variant: "error" }
-                          );
-                          let arr = this.state.loading;
-                          arr[index] = false;
-                          this.setState({ loading: arr });
-                          return false;
-                        }
+                        null
+                        // () => {
+                        //   this.props.enqueueSnackbar(
+                        //     "Не удалось установить юнит на стол",
+                        //     { variant: "error" }
+                        //   );
+                        //   let arr = this.state.loading;
+                        //   arr[index] = false;
+                        //   this.setState({ loading: arr });
+                        //   return false;
+                        // }
                       );
                       return true;
                     },
