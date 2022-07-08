@@ -132,7 +132,9 @@ export default withSnackbar(
             this.setState({ errorEvent: null });
 
             if (this.state.SSEErrorFlag) {
-              if (this.state.errorEvent !== null) this.state.errorEvent.close();
+              if (this.state.errorEvent !== null) {
+                this.props.closeSnackbar(this.state.errorEvent);
+              }
               this.setState({ errorEvent: null });
               this.props.enqueueSnackbar(
                 "Соединение с сервером восстановлено",
@@ -183,6 +185,7 @@ export default withSnackbar(
           const notificationsReconnectTimer = setTimeout(() => {
             this.setupNotificationsSSEConnection();
           }, 1000)
+          
           this.setState({ notificationsReconnectTimer });
         }
 
