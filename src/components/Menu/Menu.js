@@ -145,7 +145,9 @@ export default withSnackbar(
                               return false;
                             }
                           },
-                          null
+                          (e) => {
+                            console.log('Unit assign error', e);
+                          }
                           // () => {
                           //   this.props.enqueueSnackbar(
                           //     "Не удалось установить юнит на стол",
@@ -164,7 +166,9 @@ export default withSnackbar(
                         this.setState({ loading: arr });
                         return false;
                       }
-                    }, null
+                    }, (e) => {
+                      console.log('Creat unit error', e);
+                    }
                   );
                   return true;
                 } else {
@@ -178,7 +182,9 @@ export default withSnackbar(
                   return false;
                 }
               },
-              null
+              (e) => {
+                console.log('Get schemas error', e);
+              }
             );
           };
 
