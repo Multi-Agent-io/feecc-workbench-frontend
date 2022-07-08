@@ -123,46 +123,48 @@ export default withSnackbar(
                   this.props.createUnit(
                     item.schema_id,
                     (r) => {
-                      this.props.doAssignUnit(
-                        r.unit_internal_id,
-                        (r) => {
-                          if (r.status_code === 200) {
-                            if (
-                              schema?.required_components_schema_ids === null
-                            ) {
-                              this.props.doRedirectToComposition();
+                      if (r.status_code === 200) {
+                        this.props.doAssignUnit(
+                          r.unit_internal_id,
+                          (r) => {
+                            if (r.status_code === 200) {
+                              if (
+                                schema?.required_components_schema_ids === null
+                              ) {
+                                this.props.doRedirectToComposition();
+                              }
+                              let arr = this.state.loading;
+                              arr[index] = false;
+                              this.setState({ loading: arr });
+                              return true;
+                            } else {
+                              console.log("assign unit res not 200");
+                              let arr = this.state.loading;
+                              arr[index] = false;
+                              this.setState({ loading: arr });
+                              return false;
                             }
-                            let arr = this.state.loading;
-                            arr[index] = false;
-                            this.setState({ loading: arr });
-                            return true;
-                          } else {
-                            console.log("assign unit res not 200");
-                            let arr = this.state.loading;
-                            arr[index] = false;
-                            this.setState({ loading: arr });
-                            return false;
-                          }
-                        },
-                        null
-                        // () => {
-                        //   this.props.enqueueSnackbar(
-                        //     "Не удалось установить юнит на стол",
-                        //     { variant: "error" }
-                        //   );
-                        //   let arr = this.state.loading;
-                        //   arr[index] = false;
-                        //   this.setState({ loading: arr });
-                        //   return false;
-                        // }
-                      );
-                      return true;
-                    },
-                    (e) => {
-                      let arr = this.state.loading;
-                      arr[index] = false;
-                      this.setState({ loading: arr });
-                    }
+                          },
+                          null
+                          // () => {
+                          //   this.props.enqueueSnackbar(
+                          //     "Не удалось установить юнит на стол",
+                          //     { variant: "error" }
+                          //   );
+                          //   let arr = this.state.loading;
+                          //   arr[index] = false;
+                          //   this.setState({ loading: arr });
+                          //   return false;
+                          // }
+                        );
+                        return true;
+                      } else {
+                        let arr = this.state.loading;
+                        arr[index] = false;
+                        this.setState({ loading: arr });
+                        return false;
+                      }
+                    }, null
                   );
                   return true;
                 } else {
@@ -176,11 +178,7 @@ export default withSnackbar(
                   return false;
                 }
               },
-              (e) => {
-                let arr = this.state.loading;
-                arr[index] = false;
-                this.setState({ loading: arr });
-              }
+              null
             );
           };
 
