@@ -23,7 +23,7 @@ export const doFetchComposition_deprecated = (dispatch, successChecker, errorChe
         }
       },
       successChecker
-    ).then(errorChecker)
+    ).catch(errorChecker)
   }
 }
 // Reworked
@@ -36,7 +36,7 @@ export const doCreateUnit = (dispatch, schemaID, successChecker, errorChecker) =
       url: `${process.env.APPLICATION_SOCKET}/unit/new/${ schemaID }`,
     },
     successChecker
-  ).then(errorChecker)
+  ).catch(errorChecker)
 }
 // Reworked
 export const doAssignUnit = (dispatch, unit_id, successChecker, errorChecker) => {
@@ -48,7 +48,7 @@ export const doAssignUnit = (dispatch, unit_id, successChecker, errorChecker) =>
       url: `${process.env.APPLICATION_SOCKET}/workbench/assign-unit/${ unit_id }`
     },
     successChecker
-  ).then(errorChecker)
+  ).catch(errorChecker)
 }
 // Reworked
 export const doLogout = (dispatch, successChecker, errorChecker) => {
@@ -63,7 +63,7 @@ export const doLogout = (dispatch, successChecker, errorChecker) => {
       }
     },
     successChecker
-  ).then(errorChecker)
+  ).catch(errorChecker)
 }
 // Reworked
 export const doGetSchemasNames = (dispatch, successChecker, errorChecker) => {
@@ -75,7 +75,7 @@ export const doGetSchemasNames = (dispatch, successChecker, errorChecker) => {
       url: `${process.env.APPLICATION_SOCKET}/workbench/production-schemas/names`
     },
     successChecker
-  ).then(errorChecker)
+  ).catch(errorChecker)
 }
 // Reworked
 export const doGetSchema = (dispatch, schemaId, successChecker, errorChecker) => {
@@ -88,7 +88,7 @@ export const doGetSchema = (dispatch, schemaId, successChecker, errorChecker) =>
       url: `${process.env.APPLICATION_SOCKET}/workbench/production-schemas/${ schemaId }`
     },
     successChecker
-  ).then(errorChecker)
+  ).catch(errorChecker)
 }
 // Reworked
 export const doStartStepRecord = (dispatch, additionalInfo, successChecker, errorChecker) => {
@@ -103,7 +103,7 @@ export const doStartStepRecord = (dispatch, additionalInfo, successChecker, erro
       }
     },
     successChecker
-  ).then(errorChecker)
+  ).catch(errorChecker)
 }
 // Reworked
 export const doStopStepRecord = (dispatch, additionalInfo, prematureEnding, successChecker, errorChecker) => {
@@ -120,7 +120,7 @@ export const doStopStepRecord = (dispatch, additionalInfo, prematureEnding, succ
       }
     },
     successChecker
-  ).then(errorChecker)
+  ).catch(errorChecker)
 }
 // Reworked
 export const doCompositionUpload = (dispatch, successChecker, errorChecker) => {
@@ -132,7 +132,7 @@ export const doCompositionUpload = (dispatch, successChecker, errorChecker) => {
       url: `${process.env.APPLICATION_SOCKET}/unit/upload`,
     },
     successChecker
-  ).then(errorChecker)
+  ).catch(errorChecker)
 }
 // Reworked
 export const doRaiseNotification = (dispatch, notificationMessage) => {
@@ -195,5 +195,5 @@ export const doRemoveUnit = (dispatch, successChecker, errorChecker) => {
       method: 'post',
     },
     successChecker
-  ).then(errorChecker)
+  ).catch(errorChecker)
 }
