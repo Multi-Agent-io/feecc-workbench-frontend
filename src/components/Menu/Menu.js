@@ -95,6 +95,7 @@ export default withSnackbar(
             this.props.doGetSchema(
               item.schema_id,
               (res) => {
+                console.log('Schema get res', res);
                 if (res.status_code === 200) {
                   let schema = res.production_schema;
                   // Check if the whole scheme is empty
@@ -123,6 +124,8 @@ export default withSnackbar(
                   this.props.createUnit(
                     item.schema_id,
                     (r) => {
+                      console.log('__CREATE_UNIT_RES__')
+                      console.log(r)
                       if (r.status_code === 200) {
                         this.props.doAssignUnit(
                           r.unit_internal_id,
@@ -164,7 +167,7 @@ export default withSnackbar(
                         return false;
                       }
                     },
-                    () => {
+                    (e) => {
                       console.log("Create unit error", e);
                       let arr = this.state.loading;
                       arr[index] = false;
