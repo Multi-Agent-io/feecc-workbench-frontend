@@ -123,52 +123,48 @@ export default withSnackbar(
                   this.props.createUnit(
                     item.schema_id,
                     (r) => {
-                      if (r.status_code === 200) {
-                        this.props.doAssignUnit(
-                          r.unit_internal_id,
-                          (r) => {
-                            if (r.status_code === 200) {
-                              if (
-                                schema?.required_components_schema_ids === null
-                              ) {
-                                this.props.doRedirectToComposition();
-                              }
-                              let arr = this.state.loading;
-                              arr[index] = false;
-                              this.setState({ loading: arr });
-                              return true;
-                            } else {
-                              let arr = this.state.loading;
-                              arr[index] = false;
-                              this.setState({ loading: arr });
-                              return false;
+                      this.props.doAssignUnit(
+                        r.unit_internal_id,
+                        (r) => {
+                          if (r.status_code === 200) {
+                            if (
+                              schema?.required_components_schema_ids === null
+                            ) {
+                              this.props.doRedirectToComposition();
                             }
-                          },
-                          () => {
-                            this.props.enqueueSnackbar(
-                              "Не удалось установить юнит на стол",
-                              { variant: "error" }
-                            );
+                            let arr = this.state.loading;
+                            arr[index] = false;
+                            this.setState({ loading: arr });
+                            return true;
+                          } else {
+                            console.log("assign unit res not 200");
                             let arr = this.state.loading;
                             arr[index] = false;
                             this.setState({ loading: arr });
                             return false;
                           }
-                        );
-                        return true;
-                      } else {
-                        console.log('Assung unit return false');
-                        return false;
-                      }
-                    },
-                    (e) => {
-                      // THIS ONE
-                      // this.props.enqueueSnackbar('Ошибка при создании юнита', {variant: 'error'});
-                      console.log('Create unit error', e);
-                      let arr = this.state.loading;
-                      arr[index] = false;
-                      this.setState({ loading: arr });
-                    }
+                        },
+                        () => {
+                          this.props.enqueueSnackbar(
+                            "Не удалось установить юнит на стол",
+                            { variant: "error" }
+                          );
+                          let arr = this.state.loading;
+                          arr[index] = false;
+                          this.setState({ loading: arr });
+                          return false;
+                        }
+                      );
+                      return true;
+                    }, null
+                    // (e) => {
+                    //   // THIS ONE
+                    //   // this.props.enqueueSnackbar('Ошибка при создании юнита', {variant: 'error'});
+                    //   // console.log("Create unit error", e);
+                    //   let arr = this.state.loading;
+                    //   arr[index] = false;
+                    //   this.setState({ loading: arr });
+                    // }
                   );
                   return true;
                 } else {
@@ -181,15 +177,17 @@ export default withSnackbar(
                   this.setState({ loading: arr });
                   return false;
                 }
-              }, 
+              },
               // null
               (e) => {
-              //   // THIS ONE
-                this.props.enqueueSnackbar('Ошибка получения схем', {variant: 'error'});
-                console.log('Schemas error', e);
-              //   let arr = this.state.loading;
-              //   arr[index] = false;
-              //   this.setState({ loading: arr });
+                //   // THIS ONE
+                this.props.enqueueSnackbar("Ошибка получения схем", {
+                  variant: "error",
+                });
+                console.log("Schemas error", e);
+                //   let arr = this.state.loading;
+                //   arr[index] = false;
+                //   this.setState({ loading: arr });
               }
             );
           };
