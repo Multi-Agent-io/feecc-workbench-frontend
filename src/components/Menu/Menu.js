@@ -15,6 +15,7 @@ import PropTypes from "prop-types";
 import { push } from "connected-react-router";
 import { Button, CircularProgress } from "@mui/material";
 import { LoadingButton } from "@mui/lab";
+import { withSnackbar } from "notistack";
 import { withTheme } from "@mui/styles";
 import { doFetchRevisions } from "@reducers/RevisionsActions";
 
