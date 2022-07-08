@@ -156,15 +156,15 @@ export default withSnackbar(
                         }
                       );
                       return true;
-                    }, null
-                    // (e) => {
+                    },
+                    (e) => {
                     //   // THIS ONE
                     //   // this.props.enqueueSnackbar('Ошибка при создании юнита', {variant: 'error'});
                     //   // console.log("Create unit error", e);
-                    //   let arr = this.state.loading;
-                    //   arr[index] = false;
-                    //   this.setState({ loading: arr });
-                    // }
+                      let arr = this.state.loading;
+                      arr[index] = false;
+                      this.setState({ loading: arr });
+                    }
                   );
                   return true;
                 } else {
