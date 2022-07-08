@@ -152,18 +152,11 @@ export default withSnackbar(
                             this.setState({ loading: arr });
                             return false;
                           }
-                          // () => {
-                          //   this.props.enqueueSnackbar(
-                          //     "Не удалось установить юнит на стол",
-                          //     { variant: "error" }
-                          //   );
-                          //   let arr = this.state.loading;
-                          //   arr[index] = false;
-                          //   this.setState({ loading: arr });
-                          //   return false;
-                          // }
-                        );
-                        return true;
+                        ).then(() => { 
+                          console.log('Do assign unit .then')
+                          return true;
+                        });
+                        // return true;
                       } else {
                         let arr = this.state.loading;
                         arr[index] = false;
@@ -178,8 +171,11 @@ export default withSnackbar(
                       this.setState({ loading: arr });
                       return false;
                     }
-                  );
-                  return true;
+                  ).then(() => {
+                    console.log('do get schema .then')
+                    return true;
+                  });
+                  // return true;
                 } else {
                   this.props.enqueueSnackbar(
                     "Ошибка при получении схем сборки. Попробуйте перезагрузить страницу.",
