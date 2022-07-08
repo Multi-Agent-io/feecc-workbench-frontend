@@ -195,21 +195,21 @@ export default withSnackbar(
             this.setState({ notificationsEventSource: null });
             clearTimeout(this.state.notificationsReconnectTimer);
           }
-          const notificationsEventSourse = new EventSource(
+          const notificationsEventSource = new EventSource(
             `${process.env.APPLICATION_SOCKET}/notifications`
           );
-          notificationsEventSourse.onmessage = (message) => {
+          notificationsEventSource.onmessage = (message) => {
             const res = JSON.parse(message.data);
             if (res.persist) {
               res.action = CloseActionButton;
             }
             this.props.enqueueSnackbar(res.message, { ...res });
           }
-          notificationsEventSourse.onerror = () => {
+          notificationsEventSource.onerror = () => {
             this.state.notificationsEventSource.close();
             this.reconnectNotificationsSSE();
           }
-          this.setState({ notificationsEventSourse });
+          this.setState({ notificationsEventSource });
         }
 
         componentDidMount() {
