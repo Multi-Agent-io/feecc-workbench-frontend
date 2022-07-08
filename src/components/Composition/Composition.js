@@ -606,6 +606,7 @@ class Composition extends React.Component {
                     return true;
                   }, null);
                   setTimeout(() => {
+                    console.log("Go to menu");
                     this.props.goToMenu();
                   }, 300);
                 })
