@@ -276,9 +276,12 @@ class Composition extends React.Component {
           const bindObject = {
             action: () =>
               this.props.context.onOpen(
-                <ProceedNotSaved onNoSave={this.props.dropUnit} unitID={this.props.compositionID} />
+                <ProceedNotSaved
+                  onNoSave={this.props.dropUnit}
+                  unitID={this.props.compositionID}
+                />
               ),
-            actionName: "Продолжить без сохранения"
+            actionName: "Продолжить без сохранения",
           };
           this.props.enqueueSnackbar(
             `Ошибка загзузки сборки. Код ответа ${
@@ -602,13 +605,17 @@ class Composition extends React.Component {
               disabled={loading[2]}
               onClick={() =>
                 this.handleCompositionUpload().then(() => {
-                  this.props.dropUnit(() => {
-                    return true;
+                  this.props.dropUnit((res) => {
+                    if (res.status_code === 200) {
+                      setTimeout(() => {
+                        console.log("Go to menu");
+                        this.props.goToMenu();
+                      }, 300);
+                      return true;
+                    } else {
+                      this.props.enqueueSnackbar('Ошибка при попытке убрать юнит со стола', {variant: 'warning'});
+                    }
                   }, null);
-                  setTimeout(() => {
-                    console.log("Go to menu");
-                    this.props.goToMenu();
-                  }, 300);
                 })
               }
             >
