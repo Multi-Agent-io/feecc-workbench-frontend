@@ -42,3 +42,4 @@ ThenYouHaveToAcknowledge,то вам важно понимать следующ�
 UsedComponentsAreNowNotAvailableForOthers,использованные при её старте компоненты уже не получится использовать для других сборок,used components are not available for other composition
 RecommendToFinish,Рекомендуется завершить финальную сборку,It's recommended to finish final composition
 YouCanChooseWhatToDoNext,Вы можете выбрать что сделать дальше - перейти на главное меню или вернуться к сборке,You can choose what to do next - go back to the main menu or proceed composition
+ReloadPage,Перезагрузить страницу,Reload page

@@ -19,6 +19,7 @@ import CloseActionButton from "./CloseActionButton/CloseActionButton";
 import RepeatCloseActionButton from "./RepeatCloseActionButton/RepeatCloseActionButton";
 import { push } from "connected-react-router";
 import { withSnackbar } from "notistack";
+import ReloadButton from "./ReloadButton/ReloadButton";
 
 export default withSnackbar(
   withTranslation()(
@@ -232,6 +233,9 @@ export default withSnackbar(
                 <div className={styles.NotificationsWrapper}>
                   <Notifications />
                   {this.props.location !== "/" && <RevisionsTracker />}
+                </div>
+                <div className={styles.ReloadButtonWrapper}>
+                  <ReloadButton />
                 </div>
               </div>
             </>
