@@ -80,3 +80,15 @@ export const axiosWrapper = (dispatch, event, opts, successChecker) => {
     })
 }
 
+export const promiseAxiosWrapper = (dispatch, event, opts) => {
+  return new Promise((resolve, reject) => {
+    axios(opts)
+    .then((res) => {
+      if (event !== undefined) {
+        dispatch((typeof event === 'string') ? { type: event, ...res.data } : event(res.data))
+      }
+      resolve(res)
+    })
+    .catch(reject)
+  })
+}

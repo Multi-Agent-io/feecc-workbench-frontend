@@ -1,14 +1,15 @@
 .contentWrapper {
-
 }
 
 .contentHeader {
     font-size: 2.5rem;
+    font-weight: 300;
 }
 
 .contentText {
     padding-top: 20px;
     font-size: 1.5rem;
+    font-weight: 300;
 }
 
 .buttonsWrapper {

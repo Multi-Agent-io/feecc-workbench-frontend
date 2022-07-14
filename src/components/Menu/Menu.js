@@ -18,6 +18,11 @@ import { LoadingButton } from "@mui/lab";
 import { withSnackbar } from "notistack";
 import { withTheme } from "@mui/styles";
 import { doFetchRevisions } from "@reducers/RevisionsActions";
+import {
+  newDoAssignUnit,
+  newDoCreateUnit,
+  newDoGetSchema,
+} from "../../reducers/stagesActions";
 
 export default withSnackbar(
   withTheme(
@@ -33,12 +38,15 @@ export default withSnackbar(
             doRaiseNotification(dispatch, notificationMessage),
           createUnit: (schemaID, successChecker, errorChecker) =>
             doCreateUnit(dispatch, schemaID, successChecker, errorChecker),
+          newCreateUnit: (schemaID) => newDoCreateUnit(dispatch, schemaID),
           doAssignUnit: (unit_id, successChecker, errorChecker) =>
             doAssignUnit(dispatch, unit_id, successChecker, errorChecker),
+          newDoAssignUnit: (unitID) => newDoAssignUnit(dispatch, unitID),
           doGetSchemasNames: (successChecker, errorChecker) =>
             doGetSchemasNames(dispatch, successChecker, errorChecker),
           doGetSchema: (schemaId, successChecker, errorChecker) =>
             doGetSchema(dispatch, schemaId, successChecker, errorChecker),
+          newDoGetSchema: (schemaId) => newDoGetSchema(dispatch, schemaId),
           doLogout: (successChecker, errorChecker) =>
             doLogout(dispatch, successChecker, errorChecker),
           doRedirectToComposition: () => dispatch(push("/composition")),
@@ -88,116 +96,64 @@ export default withSnackbar(
             }, null);
           }
 
+          toggleButtonLoading(index, setCallback = () => {}) {
+            let loading = this.state.loading;
+            loading[index] = !loading[index];
+            this.setState({ loading }, setCallback);
+          }
+
           handleCreateUnit = (item, index) => {
-            let arr = this.state.loading;
-            arr[index] = true;
-            this.setState({ loading: arr });
-            this.props.doGetSchema(
-              item.schema_id,
-              (res) => {
-                console.log('Schema get res', res);
-                if (res.status_code === 200) {
-                  let schema = res.production_schema;
-                  // Check if the whole scheme is empty
-                  if (schema === null) {
-                    this.props.enqueueSnackbar(
-                      "Данная схема отсутствует. Связитесь с администратором для решения данной проблемы.",
-                      { variant: "error" }
-                    );
-                    let arr = this.state.loading;
-                    arr[index] = false;
-                    this.setState({ loading: arr });
-                    return false;
-                  }
-                  // Check if this scheme has no stages at all
-                  if (schema.production_stages === null) {
-                    this.props.enqueueSnackbar(
-                      "Данная схема не содежит ни одного этапа. Связитесь с администратором для решения данной проблемы.",
-                      { variant: "error" }
-                    );
-                    let arr = this.state.loading;
-                    arr[index] = false;
-                    this.setState({ loading: arr });
-                    return false;
-                  }
-                  this.props.setSteps(schema.production_stages);
-                  this.props.createUnit(
-                    item.schema_id,
-                    (r) => {
-                      console.log('__CREATE_UNIT_RES__')
-                      console.log(r)
-                      if (r.status_code === 200) {
-                        this.props.doAssignUnit(
-                          r.unit_internal_id,
-                          (r) => {
-                            if (r.status_code === 200) {
-                              if (
-                                schema?.required_components_schema_ids === null
-                              ) {
-                                this.props.doRedirectToComposition();
-                              }
-                              let arr = this.state.loading;
-                              arr[index] = false;
-                              this.setState({ loading: arr });
-                              return true;
-                            } else {
-                              console.log("assign unit res not 200");
-                              let arr = this.state.loading;
-                              arr[index] = false;
-                              this.setState({ loading: arr });
-                              return false;
-                            }
-                          },
-                          (e) => {
-                            console.log("Unit assign error", e);
-                            let arr = this.state.loading;
-                            arr[index] = false;
-                            this.setState({ loading: arr });
-                            return false;
-                          }
-                        ).then(() => { 
-                          console.log('Do assign unit .then')
-                          return true;
-                        });
-                        // return true;
-                      } else {
-                        let arr = this.state.loading;
-                        arr[index] = false;
-                        this.setState({ loading: arr });
-                        return false;
-                      }
-                    },
-                    (e) => {
-                      console.log("Create unit error", e);
-                      let arr = this.state.loading;
-                      arr[index] = false;
-                      this.setState({ loading: arr });
-                      return false;
+            this.toggleButtonLoading(index);
+            this.props
+              .newDoGetSchema(item.schema_id)
+              .then(
+                (res) =>
+                  new Promise((resolve, reject) => {
+                    let schema = res.data.production_schema;
+                    // Check if the whole scheme is empty
+                    if (schema === null) {
+                      this.props.enqueueSnackbar(
+                        "Ошибка. Данная схема отсутствует. Связитесь с администратором для решения данной проблемы.",
+                        { variant: "error" }
+                      );
+                      reject(res);
                     }
-                  ).then(() => {
-                    console.log('do get schema .then')
-                    return true;
-                  });
-                  // return true;
-                } else {
-                  this.props.enqueueSnackbar(
-                    "Ошибка при получении схем сборки. Попробуйте перезагрузить страницу.",
-                    { variant: "error" }
-                  );
-                  let arr = this.state.loading;
-                  arr[index] = false;
-                  this.setState({ loading: arr });
-                  return false;
-                }
-              },
-              (e) => {
-                console.log("Get schema error", e);
-                let arr = this.state.loading;
-                arr[index] = false;
-                this.setState({ loading: arr });
-                return false;
-              }
-            );
+                    // Check if this scheme has no stages at all
+                    if (schema.production_stages === null) {
+                      this.props.enqueueSnackbar(
+                        "Ошибка. Данная схема не содежит ни одного этапа. Связитесь с администратором для решения данной проблемы.",
+                        { variant: "error" }
+                      );
+                      reject(res);
+                    }
+                    this.props.setSteps(schema.production_stages);
+                    resolve({...res, schemaID: item.schema_id});
+                  })
+              )
+              .then(
+                (res) =>
+                  new Promise((resolve, reject) => {
+                    this.props
+                      .newCreateUnit(res.schemaID)
+                      .then((r) => {
+                        resolve({
+                          schema: res.production_schema,
+                          unitID: r.data.unit_internal_id,
+                        })}
+                      )
+                      .catch(reject);
+                  })
+              )
+              .then(({schema, unitID}) => new Promise((resolve, reject) => {
+                this.props.newDoAssignUnit(unitID).then(resolve(schema)).catch(reject)
+              })).then((res) => {
+                this.toggleButtonLoading(index);
+              })
+              .catch((err) => {
+                this.toggleButtonLoading(index);
+                // console.log("Error");
+                // console.log(err);
+              });
           };
 
           handleUserLogout = () => {

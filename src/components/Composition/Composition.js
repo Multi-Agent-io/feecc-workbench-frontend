@@ -32,6 +32,10 @@ import { LoadingButton } from "@mui/lab";
 import ToMainMenuModal from "../Modals/ToMainMenu/ToMainMenuModal";
 import ProceedNotSaved from "../Modals/ProceedNotSaved/ProceedNotSaved";
 import RepeatCloseActionButton from "../RepeatCloseActionButton/RepeatCloseActionButton";
+import {
+  newDoCompositionUpload,
+  newDoRemoveUnit,
+} from "../../reducers/stagesActions";
 
 class Composition extends React.Component {
   static propTypes = {
@@ -94,6 +98,12 @@ class Composition extends React.Component {
       // If compositionID changed - fetch composition
       this.fetchComposition();
     }
+  }
+
+  toggleButtonLoading(index, setCallback = () => {}) {
+    let loading = this.state.loading;
+    loading[index] = !loading[index];
+    this.setState({ loading }, setCallback);
   }
 
   fetchComposition() {
@@ -195,9 +205,7 @@ class Composition extends React.Component {
         {},
         (res) => {
           if (res.status_code === 200) {
-            let arr = this.state.loading;
-            arr[loadingNumber] = false;
-            this.setState({ loading: arr });
+            this.toggleButtonLoading(loadingNumber);
             resolve("OK");
             setTimeout(() => {
               this.stopwatches[this.state.activeStep]?.start();
@@ -220,9 +228,7 @@ class Composition extends React.Component {
   // Stop record for the current step
   handleStageRecordStop(loadBlock = 1, isPause = false) {
     return new Promise((resolve, reject) => {
-      let arr = this.state.loading;
-      arr[loadBlock] = true;
-      this.setState({ loading: arr });
+      this.toggleButtonLoading(loadBlock);
       this.props.stopStepRecord({}, isPause, (res) => {
         if (res.status_code === 200) {
           resolve("OK");
@@ -232,8 +238,7 @@ class Composition extends React.Component {
             `Не удалось завершить запись этапа. Попробуйте повторить позже. При многократном повторении данной ошибки обратитесь к системному администратору. Код ошибки ${res.status_code}`,
             { variant: "error" }
           );
-          arr[loadBlock] = false;
-          this.setState({ loading: arr });
+          this.toggleButtonLoading(loadBlock);
           reject("Error during attempt to stop recording");
           return false;
         }
@@ -256,48 +261,57 @@ class Composition extends React.Component {
 
   // Upload finished composition
   handleCompositionUpload() {
-    let arr = this.state.loading;
-    arr[2] = true;
-    this.setState({ loading: arr });
-    return new Promise((resolve) => {
-      this.props.uploadComposition((res) => {
-        if (res.status_code === 200) {
-          resolve("OK");
-          arr[2] = false;
-          this.setState({ loading: arr });
-          this.props.enqueueSnackbar(
-            `Паспорт ${this.props.compositionID} успешно загружен в сеть IPFS`,
-            {
-              variant: "success",
-            }
-          );
-          return true;
-        } else {
+    this.toggleButtonLoading(2);
+    this.props
+      .newUploadComposition()
+      .then(
+        (res) =>
+          new Promise((resolve, reject) => {
+            this.props
+              .newDropUnit()
+              .then(() => {
+                const resp = res.data.detail.split(" ");
+                resolve(resp[resp.length - 1]);
+              })
+              .catch(reject);
+          })
+      )
+      .then((unitID) => {
+        this.toggleButtonLoading(2);
+        this.props.enqueueSnackbar(
+          `Паспорт ${unitID} успешно загружен в сеть IPFS`,
+          {
+            variant: "success",
+          }
+        );
+      })
+      .catch((res) => {
+        if (res !== undefined) {
           const bindObject = {
             action: () =>
               this.props.context.onOpen(
                 <ProceedNotSaved
-                  onNoSave={this.props.dropUnit}
+                  onNoSave={() => {
+                    this.props.dropUnit();
+                    this.props.closeSnackbar(this.state.proceedKey);
+                  }}
                   unitID={this.props.compositionID}
                 />
               ),
             actionName: "Продолжить без сохранения",
           };
-          this.props.enqueueSnackbar(
-            `Ошибка загзузки сборки. Код ответа ${
-              res.status_code
-            }. Текст ответа: ${JSON.stringify(res.detail)}`,
+          const proceedKey = this.props.enqueueSnackbar(
+            `Ошибка загзузки сборки. Код ответа ${res?.response?.status}`,
             {
               variant: "error",
               action: RepeatCloseActionButton.bind(bindObject),
+              persist: true,
             }
           );
-          arr[2] = false;
-          this.setState({ loading: arr });
-          return false;
+          this.setState({proceedKey});
         }
-      }, null);
-    });
+        this.toggleButtonLoading(2);
+      });
   }
 
   // Set this composition on pause and go to unit create selection
@@ -305,9 +319,7 @@ class Composition extends React.Component {
     this.handleStageRecordStop(3).then(() =>
       this.props.dropUnit((res) => {
         if (res.status_code === 200) {
-          let arr = this.state.loading;
-          arr[3] = false;
-          this.setState({ loading: arr });
+          this.toggleButtonLoading(3);
           return true;
         } else {
           this.props.enqueueSnackbar(
@@ -322,9 +334,8 @@ class Composition extends React.Component {
 
   setOnSmallPause() {
     this.handleStageRecordStop(2, true).then(() => {
-      let arr = this.state.loading;
-      arr[2] = false;
-      this.setState({ onPause: true, loading: arr });
+      this.toggleButtonLoading(2);
+      this.setState({ onPause: true });
     });
   }
 
@@ -336,15 +347,12 @@ class Composition extends React.Component {
   }
 
   cancelComposition() {
-    let arr = this.state.loading;
-    arr[2] = true;
-    this.setState({ loading: arr });
+    this.toggleButtonLoading(2);
     return new Promise((resolve) => {
       this.props.dropUnit((res) => {
         if (res.status_code === 200) {
           setTimeout(() => {
-            arr[2] = true;
-            this.setState({ loading: arr });
+            this.toggleButtonLoading(2);
           }, 400);
           resolve("OK");
           return true;
@@ -603,21 +611,7 @@ class Composition extends React.Component {
               color="primary"
               loading={loading[2]}
               disabled={loading[2]}
-              onClick={() =>
-                this.handleCompositionUpload().then(() => {
-                  this.props.dropUnit((res) => {
-                    if (res.status_code === 200) {
-                      setTimeout(() => {
-                        console.log("Go to menu");
-                        this.props.goToMenu();
-                      }, 300);
-                      return true;
-                    } else {
-                      this.props.enqueueSnackbar('Ошибка при попытке убрать юнит со стола', {variant: 'warning'});
-                    }
-                  }, null);
-                })
-              }
+              onClick={() => this.handleCompositionUpload()}
             >
               {t("SavePassport")}
             </LoadingButton>
@@ -677,12 +671,13 @@ export default withSnackbar(
               ),
             uploadComposition: (successChecker, errorChecker) =>
               doCompositionUpload(dispatch, successChecker, errorChecker),
+            newUploadComposition: () => newDoCompositionUpload(dispatch),
             raiseNotification: (notificationMessage) =>
               doRaiseNotification(dispatch, notificationMessage),
             setSteps: (steps) => doSetSteps(dispatch, steps),
             dropUnit: (successChecker, errorChecker) =>
               doRemoveUnit(dispatch, successChecker, errorChecker),
-
+            newDropUnit: () => newDoRemoveUnit(dispatch),
             doGetSchema: (schemaId, successChecker, errorChecker) =>
               doGetSchema(dispatch, schemaId, successChecker, errorChecker),
             doGetUnitDetails: (unitID, successChecker, errorChecker) =>

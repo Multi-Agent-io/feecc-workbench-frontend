@@ -80,7 +80,6 @@ export default withSnackbar(
             let res = JSON.parse(e.data);
 
             this.props.doFetchComposition(res);
-
             let location = this.props.location.split("/")[1];
             switch (res.state) {
               case "ProductionStageOngoing":
@@ -117,7 +116,10 @@ export default withSnackbar(
               {
                 variant: "error",
                 persist: true,
-                action: RepeatCloseActionButton.bind({ action: this.setupSSEConnection, actionName: "Повторить" }),
+                action: RepeatCloseActionButton.bind({
+                  action: this.setupSSEConnection,
+                  actionName: "Повторить",
+                }),
                 preventDuplicate: true,
               }
             );
@@ -129,13 +131,8 @@ export default withSnackbar(
 
           eventSource.onopen = (e) => {
             this.props.closeSnackbar(this.state.errorEvent);
-            this.setState({ errorEvent: null });
 
             if (this.state.SSEErrorFlag) {
-              if (this.state.errorEvent !== null) {
-                this.props.closeSnackbar(this.state.errorEvent);
-              }
-              this.setState({ errorEvent: null });
               this.props.enqueueSnackbar(
                 "Соединение с сервером восстановлено",
                 {
@@ -164,10 +161,6 @@ export default withSnackbar(
           ) {
             this.state.eventSource.close();
           }
-          // console.log(
-          //   "new reconnect attempt. EventSource: ",
-          //   this.state.eventSource
-          // );
           const reconnectTimer = setTimeout(() => {
             this.setupSSEConnection();
           }, 10000);
@@ -177,17 +170,16 @@ export default withSnackbar(
 
         reconnectNotificationsSSE = () => {
           if (
-            this.state.notificationsEventSource !== null && 
+            this.state.notificationsEventSource !== null &&
             this.state.notificationsEventSource !== undefined
           ) {
             this.state.notificationsEventSource.close();
           }
           const notificationsReconnectTimer = setTimeout(() => {
             this.setupNotificationsSSEConnection();
-          }, 1000)
-          
+          }, 1000);
           this.setState({ notificationsReconnectTimer });
-        }
+        };
 
         setupNotificationsSSEConnection = () => {
           if (
@@ -198,22 +190,22 @@ export default withSnackbar(
             this.setState({ notificationsEventSource: null });
             clearTimeout(this.state.notificationsReconnectTimer);
           }
-          const notificationsEventSource = new EventSource(
+          const notificationsEventSourse = new EventSource(
             `${process.env.APPLICATION_SOCKET}/notifications`
           );
-          notificationsEventSource.onmessage = (message) => {
+          notificationsEventSourse.onmessage = (message) => {
             const res = JSON.parse(message.data);
             if (res.persist) {
               res.action = CloseActionButton;
             }
             this.props.enqueueSnackbar(res.message, { ...res });
-          }
-          notificationsEventSource.onerror = () => {
-            this.state.notificationsEventSource.close();
+          };
+          notificationsEventSourse.onerror = () => {
+            this.state.notificationsEventSourse.close();
             this.reconnectNotificationsSSE();
-          }
-          this.setState({ notificationsEventSource });
-        }
+          };
+          this.setState({ notificationsEventSourse });
+        };
 
         componentDidMount() {
           this.setupSSEConnection();
