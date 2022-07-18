@@ -41,4 +41,4 @@ const ReloadWarning = (props) => {
   );
 };
 
-export default ReloadWar;
+export default ReloadWarning;
