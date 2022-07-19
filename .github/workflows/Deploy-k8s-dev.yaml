@@ -1,32 +1,32 @@
-name: Deploy in dev-k8s
-on:
-  push:
-    branches: [ dev ]
-  pull_request:
-    branches: [ dev ]
+# name: Deploy in dev-k8s
+# on:
+#   push:
+#     branches: [ dev ]
+#   pull_request:
+#     branches: [ dev ]
     
-jobs:
-  Build-and-push-DockerCont:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
+# jobs:
+#   Build-and-push-DockerCont:
+#     runs-on: ubuntu-latest
+#     steps:
+#       - uses: actions/checkout@v2
 
-      - name: Install doctl
-        uses: digitalocean/action-doctl@v2.1.0
-        with:
-          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+#       - name: Install doctl
+#         uses: digitalocean/action-doctl@v2.1.0
+#         with:
+#           token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
 
-      - name: Login in Container Registry Digital Ocean
-        run: doctl registry login
+#       - name: Login in Container Registry Digital Ocean
+#         run: doctl registry login
 
-      - name: Build Docker Container
-        run: docker build ./ -t ${{ secrets.DOREGISTRY}}/feecc-workbench-frontend:dev
+#       - name: Build Docker Container
+#         run: docker build ./ -t ${{ secrets.DOREGISTRY}}/feecc-workbench-frontend:dev
       
-      - name: Tag container for Container Registry Digital Ocean
-        run: docker tag ${{ secrets.DOREGISTRY}}/feecc-workbench-frontend:dev ${{ secrets.DOREGISTRY}}/feecc-workbench-frontend
+#       - name: Tag container for Container Registry Digital Ocean
+#         run: docker tag ${{ secrets.DOREGISTRY}}/feecc-workbench-frontend:dev ${{ secrets.DOREGISTRY}}/feecc-workbench-frontend
 
-      - name: Push container in Container Registry Digital Ocean
-        run: docker push ${{ secrets.DOREGISTRY}}/feecc-workbench-frontend:dev
+#       - name: Push container in Container Registry Digital Ocean
+#         run: docker push ${{ secrets.DOREGISTRY}}/feecc-workbench-frontend:dev
 
   # Push-DockerCont:
   #   needs: [Build-and-push-DockerCont]
