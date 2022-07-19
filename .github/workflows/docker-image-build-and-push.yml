@@ -9,6 +9,8 @@ on:
     branches:
       - dev
       - master
+  pull_request_target:
+    types: [assigned, opened, synchronize, reopened]
 
 jobs:
   build-and-push-image:
