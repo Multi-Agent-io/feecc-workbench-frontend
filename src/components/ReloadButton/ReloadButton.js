@@ -12,7 +12,7 @@ class ReloadButton extends React.Component {
         <LoadingButton
           variant="outlined"
           color="secondary"
-          size="large"
+          size="medium"
           onClick={() => {
             const href = window.location.href;
             const hrefElementsNum = href.split("/").length;
@@ -25,6 +25,8 @@ class ReloadButton extends React.Component {
                   }
                 />
               );
+            } else {
+              window.location.href = window.location.href
             }
           }}
         >
