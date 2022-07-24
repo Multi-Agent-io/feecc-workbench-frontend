@@ -6,7 +6,6 @@ import {
   doAssignUnit,
   doCreateUnit,
   doGetSchema,
-  doGetSchemasNames,
   doLogout,
   doRaiseNotification,
   doSetSteps,
@@ -42,8 +41,6 @@ export default withSnackbar(
           doAssignUnit: (unit_id, successChecker, errorChecker) =>
             doAssignUnit(dispatch, unit_id, successChecker, errorChecker),
           newDoAssignUnit: (unitID) => newDoAssignUnit(dispatch, unitID),
-          doGetSchemasNames: (successChecker, errorChecker) =>
-            doGetSchemasNames(dispatch, successChecker, errorChecker),
           doGetSchema: (schemaId, successChecker, errorChecker) =>
             doGetSchema(dispatch, schemaId, successChecker, errorChecker),
           newDoGetSchema: (schemaId) => newDoGetSchema(dispatch, schemaId),
@@ -75,24 +72,6 @@ export default withSnackbar(
             // Getting all products marked for revision
             this.props.fetchRevisions((res) => {
               return true;
-            }, null);
-
-            // Get all schemas list with their names
-            this.props.doGetSchemasNames((res) => {
-              if (res.status_code === 200) {
-                if (
-                  res.available_schemas.length === 0 &&
-                  this.props.authorized
-                ) {
-                  this.props.enqueueSnackbar(
-                    "Внимание! Доступно 0 сборок. Свяжитесь с администратором системы для добавления необходимых сборок в базу.",
-                    { variant: "warning" }
-                  );
-                }
-                return true;
-              } else {
-                return false;
-              }
             }, null);
           }
 

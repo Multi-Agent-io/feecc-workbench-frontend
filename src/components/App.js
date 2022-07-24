@@ -11,6 +11,7 @@ import Notifications from "@components/Notifications/Notifications";
 import {
   doFetchComposition,
   doRaiseNotification,
+  doGetSchemasNames,
 } from "@reducers/stagesActions";
 import GatherComponents from "@components/GatherComponents/GatherComponents";
 import RevisionsTracker from "@components/RevisionsTracker/RevisionsTracker";
@@ -33,7 +34,8 @@ export default withSnackbar(
         goToMenu: () => dispatch(push("/menu")),
         goToGatheringComponents: () => dispatch(push("/gatherComponents")),
         goToComposition: () => dispatch(push("/composition")),
-
+        doGetSchemasNames: (successChecker, errorChecker) =>
+            doGetSchemasNames(dispatch, successChecker, errorChecker),
         doFetchComposition: (composition) =>
           doFetchComposition(dispatch, composition),
       })
@@ -211,6 +213,25 @@ export default withSnackbar(
         componentDidMount() {
           this.setupSSEConnection();
           this.setupNotificationsSSEConnection();
+
+          // Get all schemas list with their names
+          this.props.doGetSchemasNames((res) => {
+            if (res.status_code === 200) {
+              if (
+                res.available_schemas.length === 0 &&
+                this.props.authorized
+              ) {
+                this.props.enqueueSnackbar(
+                  "Внимание! Доступно 0 сборок. Свяжитесь с администратором системы для добавления необходимых сборок в базу.",
+                  { variant: "warning" }
+                );
+              }
+              return true;
+            } else {
+              return false;
+            }
+          }, null);
+
         }
 
         route = (path) =>
