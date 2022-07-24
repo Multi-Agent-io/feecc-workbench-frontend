@@ -308,7 +308,7 @@ class Composition extends React.Component {
               persist: true,
             }
           );
-          this.setState({proceedKey});
+          this.setState({ proceedKey });
         }
         this.toggleButtonLoading(2);
       });
@@ -601,20 +601,48 @@ class Composition extends React.Component {
           ))}
         </Stepper>
         {activeStep === this.props.steps?.length && (
-          <div className={styles.button}>
-            <LoadingButton
-              size="medium"
-              loadingIndicator={<CircularProgress color="inherit" size={28} />}
-              className={styles.button}
-              id="savePassportButton"
-              variant="contained"
-              color="primary"
-              loading={loading[2]}
-              disabled={loading[2]}
-              onClick={() => this.handleCompositionUpload()}
-            >
-              {t("SavePassport")}
-            </LoadingButton>
+          <div className={styles.controls}>
+            <div className={styles.button}>
+              <LoadingButton
+                size="medium"
+                loadingIndicator={
+                  <CircularProgress color="inherit" size={28} />
+                }
+                className={styles.button}
+                id="savePassportButton"
+                variant="contained"
+                color="primary"
+                loading={loading[2]}
+                disabled={loading[2]}
+                onClick={() => this.handleCompositionUpload()}
+              >
+                {t("SavePassport")}
+              </LoadingButton>
+            </div>
+            <div className={styles.button}>
+              <LoadingButton
+                size="medium"
+                loadingIndicator={
+                  <CircularProgress color="inherit" size={28} />
+                }
+                className={styles.button}
+                id="savePassportButton"
+                variant="outlined"
+                color="secondary"
+                loading={false}
+                disabled={false}
+                onClick={() =>
+                  this.props.context.onOpen(
+                    <ProceedNotSaved
+                      onNoSave={() => this.props.newDropUnit()}
+                      unitID={this.props.compositionID}
+                    />
+                  )
+                }
+              >
+                Продолжить без сохранения
+              </LoadingButton>
+            </div>
           </div>
         )}
       </div>
