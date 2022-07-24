@@ -100,9 +100,13 @@ class Composition extends React.Component {
     }
   }
 
-  toggleButtonLoading(index, setCallback = () => {}) {
+  toggleButtonLoading(index, value, setCallback = () => {}) {
     let loading = this.state.loading;
-    loading[index] = !loading[index];
+    if (value === undefined) {
+      loading[index] = !loading[index];
+    } else {
+      loading[index] = value;
+    }
     this.setState({ loading }, setCallback);
   }
 
@@ -205,7 +209,7 @@ class Composition extends React.Component {
         {},
         (res) => {
           if (res.status_code === 200) {
-            this.toggleButtonLoading(loadingNumber);
+            this.toggleButtonLoading(loadingNumber, false);
             resolve("OK");
             setTimeout(() => {
               this.stopwatches[this.state.activeStep]?.start();
@@ -457,7 +461,9 @@ class Composition extends React.Component {
                   color="primary"
                   disabled={loading[1]}
                   loading={loading[1]}
-                  onClick={() => this.proceedComposition()}
+                  onClick={() => {
+                    this.proceedComposition();
+                  }}
                 >
                   {t("ProceedComposition")}
                 </LoadingButton>
