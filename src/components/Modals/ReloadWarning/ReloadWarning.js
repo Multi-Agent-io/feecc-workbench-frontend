@@ -13,7 +13,7 @@ const ReloadWarning = (props) => {
     <div className={styles.contentWrapper}>
       <div className={styles.contentHeader}>{t("ImportantMessage")}</div>
       <div className={styles.contentText}>
-        Вы собираетесь перезагрузить страницу. <br/>Это <strong>может</strong>, но <strong>не должно</strong> привести к ошибкам на этом этапе. Если есть возможность не перезагружать страницу, то стоит воспользоваться её.
+        Вы собираетесь перезагрузить страницу. <br/>Это <strong>может</strong>, но <strong>не должно</strong> привести к ошибкам на этом этапе. Если есть возможность не перезагружать страницу, то стоит воспользоваться ею.
       </div>
       <div className={styles.buttonsWrapper}>
         <LoadingButton
