@@ -4,15 +4,16 @@ import { LoadingButton } from "@mui/lab";
 import { withTranslation } from "react-i18next";
 import { withContext } from "@reducers/context/withContext";
 import ReloadWarning from "../Modals/ReloadWarning/ReloadWarning";
+import ReplayIcon from '@mui/icons-material/Replay';
 
 class ReloadButton extends React.Component {
   render() {
     return (
       <div className={styles.buttonWrapper}>
         <LoadingButton
-          variant="outlined"
+          variant="contained"
           color="secondary"
-          size="medium"
+          size="small"
           onClick={() => {
             const href = window.location.href;
             const hrefElementsNum = href.split("/").length;
@@ -30,7 +31,7 @@ class ReloadButton extends React.Component {
             }
           }}
         >
-          {this.props.t("ReloadPage")}
+          <ReplayIcon fontSize="large"/>
         </LoadingButton>
       </div>
     );
