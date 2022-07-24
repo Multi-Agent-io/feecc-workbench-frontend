@@ -13,8 +13,7 @@ const ToMainMenuModal = (props) => {
   return (<div className={ styles.contentWrapper }>
     <div className={ styles.contentHeader }>{t('ImportantMessage')}</div>
     <div className={ styles.contentText }>
-      {t('IfYouAreTryingToCancel')} <strong>{t('Final')}</strong> {t('composition')}, {t('ThenYouHaveToAcknowledge')}:
-      {t('UsedComponentsAreNowNotAvailableForOthers')}. {t('RecommendToFinish')}.
+      {t('YouAreTryingToCancel')} <strong>{t('Final')}</strong> {t('composition')}. {t('YouHaveToAcknowledge')}: {t('UsedComponentsAreNowNotAvailableForOthers')}. {t('RecommendToFinish')}. {t('YouCanRecoverThisCompositionByScanningCode')}.
       <br/>
       <br/>
       {t('YouCanChooseWhatToDoNext')}.

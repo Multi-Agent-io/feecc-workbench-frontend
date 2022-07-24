@@ -424,19 +424,23 @@ class Composition extends React.Component {
                 color="secondary"
                 disabled={loading[2]}
                 loading={loading[2]}
-                onClick={() =>
-                  this.props.context.onOpen(
-                    <ToMainMenuModal
-                      onReturn={() => {
-                        this.cancelComposition().then(() => {
-                          this.props.context.onClose();
-                          this.props.goToMenu();
-                        });
-                      }}
-                      onProceed={() => this.props.context.onClose()}
-                    />
-                  )
-                }
+                onClick={() => {
+                  if (this.props.composition.unit_components !== null) {
+                    this.props.context.onOpen(
+                      <ToMainMenuModal
+                        onReturn={() => {
+                          this.cancelComposition().then(() => {
+                            this.props.context.onClose();
+                            this.props.goToMenu();
+                          });
+                        }}
+                        onProceed={() => this.props.context.onClose()}
+                      />
+                    );
+                  } else {
+                    this.cancelComposition().then(() => this.props.goToMenu());
+                  }
+                }}
               >
                 {t("CancelComposition")}
               </LoadingButton>
