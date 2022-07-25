@@ -294,3 +294,10 @@ export const newDoRemoveUnit = (dispatch) => (
     })
   })
 )
+
+export const doUpdateCompositionTimer = (dispatch, value) => {
+  dispatch({
+    type: types.STAGES__UPDATE_COMPOSITION_TIMER,
+    value
+  })
+}

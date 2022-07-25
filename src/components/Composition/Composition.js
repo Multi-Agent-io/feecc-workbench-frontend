@@ -33,6 +33,7 @@ import ToMainMenuModal from "../Modals/ToMainMenu/ToMainMenuModal";
 import ProceedNotSaved from "../Modals/ProceedNotSaved/ProceedNotSaved";
 import RepeatCloseActionButton from "../RepeatCloseActionButton/RepeatCloseActionButton";
 import {
+  doUpdateCompositionTimer,
   newDoCompositionUpload,
   newDoRemoveUnit,
 } from "../../reducers/stagesActions";
@@ -530,6 +531,7 @@ class Composition extends React.Component {
                           if (activeStep === this.props.steps?.length - 1) {
                             this.handleStageRecordStop().then(() => {
                               // this.props.setBetweenFlag(false);
+                              this.props.updateCompositionTimer(false);
                               this.setState({
                                 activeStep: activeStep + 1,
                                 loading_1: false,
@@ -725,6 +727,8 @@ export default withSnackbar(
                 successChecker,
                 errorChecker
               ),
+            updateCompositionTimer: (value) =>
+              doUpdateCompositionTimer(dispatch, value),
           })
         )(Composition)
       )

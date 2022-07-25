@@ -14,7 +14,8 @@ export const stagesInitialState = fromJS({
     unit: {},
     modalsNotifications: {},
     workbench_no: 0,
-    betweenEndAndStartFlag: false
+    betweenEndAndStartFlag: false,
+    compositionTimer: false
 })
 
 export const stagesReducer = (state={}, action) => {
@@ -68,6 +69,9 @@ export const stagesReducer = (state={}, action) => {
         case types.STAGES__SET_PRODUCTION_SCHEMAS:
             return state
               .set('productionSchemas', fromJS(action.available_schemas))
+        case types.STAGES__UPDATE_COMPOSITION_TIMER: 
+            return state
+              .set('compositionTimer', action.value)
         default:
             return state
     }
