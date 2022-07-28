@@ -148,36 +148,69 @@ class Composition extends React.Component {
                   } catch (e) {
                     throw new Error(e);
                   }
+                  newBiography = [...new Set(newBiography)];
                   this.props.setSteps(newBiography);
+
+                  let newCompleted = []
+                  try {
+                    res.unit_biography_completed.map((item) => {
+                      newCompleted = [
+                        ...newCompleted,
+                        innerRes.production_schema.production_stages.filter(
+                          (v) => v.stage_id === item.stage_schema_entry_id
+                        )[0],
+                      ];
+                    })
+                  } catch (e) {
+                    throw new Error(e);
+                  }
+                  newCompleted = [...new Set(newCompleted)]
+                  // console.log(newCompleted)
+
+                  let newPending = []
+                  try {
+                    res.unit_biography_pending.map((item) => {
+                      newPending = [
+                        ...newPending,
+                        innerRes.production_schema.production_stages.filter(
+                          (v) => v.stage_id === item.stage_schema_entry_id
+                        )[0],
+                      ];
+                    })
+                  } catch (e) {
+                    throw new Error(e);
+                  }
+                  newPending = [...new Set(newPending)]
+                  
                   // If this is after pause or recovery
                   if (inProgressFlag) {
                     // console.log("detected in progress");
                     if (this.props.compositionOngoing) {
-                      if (res.unit_biography_completed.length === 0) {
+                      if (newCompleted.length === 0) {
                         this.setState({ activeStep: 0 });
                         setTimeout(() => {
                           this.stopwatches[0]?.start();
                         }, 300);
-                      } else if (res.unit_biography_pending.length > 0) {
+                      } else if (newPending.length > 0) {
                         this.setState({
-                          activeStep: res.unit_biography_completed.length,
+                          activeStep: newCompleted.length,
                         });
                         setTimeout(() => {
                           this.stopwatches[
-                            res.unit_biography_completed.length
+                            newCompleted.length
                           ]?.start();
                         }, 300);
                       }
                     } else {
-                      if (res.unit_biography_pending.length > 0) {
+                      if (newPending.length > 0) {
                         this.setState({
-                          afterPauseStep: res.unit_biography_completed.length,
+                          afterPauseStep: newCompleted.length,
                           afterPauseStepName:
-                            res.unit_biography_pending[0].stage_name,
+                            newPending[0].stage_name,
                         });
                       } else {
                         this.setState({
-                          activeStep: res.unit_biography_completed.length,
+                          activeStep: newCompleted.length,
                         });
                       }
                     }
