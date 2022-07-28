@@ -11,11 +11,21 @@ app.get('/*', function (req, res){
 
 console.log(`Server started on port: ${port}`)
 
-app.listen(port)
+server = app.listen(port)
 
-const process = require('process')
+const process = require('process');
+const { debug } = require('console');
 
 process.on('SIGINT', () => {
-  console.info("Shutting down NodeJS server")
-  process.exit(0)
+  console.log('\n-> SIGINT. NodeJS server shotdowning..')
+  server.close(() => {
+    debug('Server is offline.')
+  })
+})
+
+process.on('SIGTERM', () => {
+  console.log('\n-> SIGTERM. NodeJS server shotdowning..')
+  server.close(() => {
+    debug('Server is offline.')
+  })
 })

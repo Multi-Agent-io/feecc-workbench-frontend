@@ -55,3 +55,17 @@
     color: var(--red1);
     font-weight: bold;
 }
+
+.notificationButton {
+    background-color: rgba(255, 255, 255, .2);
+    padding: 10px;
+    color: white;
+    border: none;
+    border-radius: 3px;
+    transition: all .3s;
+}
+
+.notificationButton:hover {
+    background-color: rgba(255, 255, 255, .5);
+    transition: all .3s;
+}

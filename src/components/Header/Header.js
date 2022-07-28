@@ -9,7 +9,7 @@ import Stopwatch from "@components/Stopwatch/Stopwatch";
 import PropTypes from "prop-types";
 import { doSetCompositionID } from "@reducers/stagesActions";
 import { setQueryValues } from "@reducers/routerActions";
-// import config from '../../../configs/config.json'
+import { doUpdateCompositionTimer } from "../../reducers/stagesActions";
 
 export default withTranslation()(connect(
   (store) => ({
@@ -18,7 +18,8 @@ export default withTranslation()(connect(
     unitID: store.stages.getIn(['composition', 'unit_internal_id']),
     finishedCompositions: store.stages.get('finishedCompositionsIDs')?.toJS(),
     usedTimestamps: store.stages.get('usedTimestamps')?.toJS(),
-    state: store.stages.getIn(['composition', 'state'])
+    state: store.stages.getIn(['composition', 'state']),
+    compositionTimer: store.stages.get('compositionTimer'),
   }),
   (dispatch) => ({
     redirectToLogin: () => dispatch(push('/')),
@@ -27,6 +28,7 @@ export default withTranslation()(connect(
     redirectToGatherComponents: () => dispatch(push('/gatherComponents')),
     setQuery: (query, url) => setQueryValues(dispatch, query, url),
     setCompositionID: (unitID) => doSetCompositionID(dispatch, unitID),
+    updateCompositionTimer: (value) => doUpdateCompositionTimer(dispatch, value)
   })
 )(class Header extends React.Component {
 
@@ -40,7 +42,6 @@ export default withTranslation()(connect(
     redirectToLogin: PropTypes.func.isRequired,
     goToMenu: PropTypes.func.isRequired,
     redirectToComposition: PropTypes.func.isRequired,
-    getBarcode: PropTypes.func.isRequired,
     setQuery: PropTypes.func.isRequired,
     setCompositionID: PropTypes.func.isRequired,
   }
@@ -55,9 +56,11 @@ export default withTranslation()(connect(
   }
 
   componentDidMount () {
-    if (!this.props.composition.employee_logged_in) {
-      this.props.redirectToLogin()
-    }
+    setTimeout(() => {
+      if (!this.props.composition.employee_logged_in) {
+        this.props.redirectToLogin()
+      }
+    }, 300)
   }
 
   componentDidUpdate (prevProps, prevState, snapshot) {
@@ -67,6 +70,8 @@ export default withTranslation()(connect(
         case 'AuthorizedIdling':
           if (page !== 'menu')
             this.props.goToMenu()
+          this.props.updateCompositionTimer(false);
+          this.stopwatchRef?.current?.stop();
           break
         case 'AwaitLogin':
           if (page !== '')
@@ -79,10 +84,19 @@ export default withTranslation()(connect(
         case 'UnitAssignedIdling':
           if (page !== 'composition')
             this.props.redirectToComposition()
+          this.stopwatchRef?.current?.stop();
           break
         case 'ProductionStageOngoing':
           if (this.stopwatchRef !== undefined) {
-            this.stopwatchRef?.current?.start()
+            
+            // this.props.updateCompositionTimer(true);
+            // setTimeout(() => this.stopwatchRef?.current?.start())
+            if(!this.props.compositionTimer) {
+              this.props.updateCompositionTimer(true);
+              setTimeout(() => this.stopwatchRef?.current?.start())
+            } else {
+              this.stopwatchRef?.current?.start()
+            }
           }
 
           if (page !== 'composition')
@@ -127,21 +141,24 @@ export default withTranslation()(connect(
           </div>
           <div className={styles.mainTimer}>
             <div className={styles.timerHeader}>
-              {composition.operation_ongoing ?
+              {/* {composition.operation_ongoing ? */}
+              {this.props.compositionTimer && (
                 <>
                   <div>{t('SessionDuration')}</div>
                   <Stopwatch ref={this.stopwatchRef}/>
                 </>
-                :
-                <>
-                  {composition.duration && (
-                    <>
-                      <div>{t('LastSessionDuration')}</div>
-                      <div>00:00:00</div>
-                    </>
-                  )}
-                </>
-              }
+              )}
+                
+                {/* : */}
+                {/* <> */}
+                  {/* {composition.duration && ( */}
+                    {/* <> */}
+                      {/* <div>{t('LastSessionDuration')}</div> */}
+                      {/* <div>00:00:00</div> */}
+                    {/* </> */}
+                  {/* )} */}
+                {/* </> */}
+              {/* } */}
             </div>
           </div>
         </div>

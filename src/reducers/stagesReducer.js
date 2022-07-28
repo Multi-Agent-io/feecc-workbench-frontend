@@ -1,7 +1,6 @@
 import React from 'react'
 import { fromJS, List } from 'immutable'
 import { types } from './common'
-import config from '../../configs/config.json'
 
 export const stagesInitialState = fromJS({
     steps: [
@@ -15,13 +14,14 @@ export const stagesInitialState = fromJS({
     unit: {},
     modalsNotifications: {},
     workbench_no: 0,
-    betweenEndAndStartFlag: false
+    betweenEndAndStartFlag: false,
+    compositionTimer: false
 })
 
 export const stagesReducer = (state={}, action) => {
     if (!action.type.startsWith('STAGES__'))
         return state
-    if (config.dev_show_reducers)
+    if (process.env.DEV_SHOW_REDUCERS)
         if (action.type !== types.STAGES__FETCH_COMPOSITION)
             console.log('reducer-stages', action)
 
@@ -69,6 +69,9 @@ export const stagesReducer = (state={}, action) => {
         case types.STAGES__SET_PRODUCTION_SCHEMAS:
             return state
               .set('productionSchemas', fromJS(action.available_schemas))
+        case types.STAGES__UPDATE_COMPOSITION_TIMER: 
+            return state
+              .set('compositionTimer', action.value)
         default:
             return state
     }
