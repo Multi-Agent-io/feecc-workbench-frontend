@@ -49,7 +49,7 @@ export const doCreateUnit = (
 };
 
 export const newDoCreateUnit = (dispatch, schemaID) => {
-  console.log('new create unit')
+  // console.log('new create unit')
   return new Promise((resolve, reject) => {
     promiseAxiosWrapper(dispatch, types.STAGES__CREATE_NEW_UNIT, {
       method: "post",
@@ -288,8 +288,8 @@ export const newDoRemoveUnit = (dispatch) => (
         method: "post",
       },
     ).then(resolve).catch(e => {
-      console.log('new do remove ')
-      console.log(e)
+      // console.log('new do remove ')
+      // console.log(e)
       reject(e)
     })
   })
