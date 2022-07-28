@@ -130,7 +130,7 @@ class Composition extends React.Component {
 
             let inProgressFlag = false;
             // If this is not new unit -> set inProgressFlag to true
-            if (res.unit_biography_completed.length > 0) inProgressFlag = true;
+            if (res.unit_biography_completed.length > 0 || this.props.compositionOngoing) inProgressFlag = true;
             this.props.doGetSchema(
               res.schema_id,
               (innerRes) => {
